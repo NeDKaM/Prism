@@ -10,6 +10,7 @@
 #ifndef H_PRISM_ECS_INCLUDED
 #define H_PRISM_ECS_INCLUDED
 
+#include <Prism/config.h>
 #include <Prism/string.h>
 
 #ifdef __cplusplus
@@ -25,27 +26,27 @@ extern "C"
 	typedef unsigned long Pr_EntityId;
 	typedef unsigned long Pr_ComponentId;
 
-	Pr_World *	Pr_NewWorld	(unsigned long);
-	Pr_EntityId	Pr_NewEntity(Pr_World *);
-	
-	void *	Pr_GetEntityComponent	(Pr_World *, Pr_EntityId, Pr_ComponentId);
-	int		Pr_HasComponentId		(Pr_World *, Pr_EntityId, Pr_ComponentId);
-	int		Pr_AddEntityComponent	(Pr_World *, Pr_EntityId, Pr_ComponentId);
-	void	Pr_DeleteEntity			(Pr_World *, Pr_EntityId *);
-	int		Pr_AddWorldSystem		(Pr_World *, Pr_System);
-	int		Pr_RegisterComponent	(Pr_World *, Pr_ComponentId, unsigned int);
-	char *	Pr_GetComponentName		(Pr_World *, Pr_ComponentId);
-	int		Pr_ComponentRegistered	(Pr_World *, Pr_ComponentId);
-	void	Pr_DeleteWorld			(Pr_World *);
-	void *	Pr_GetComponents		(Pr_ComponentList *);
-	void	Pr_UpdateWorld			(Pr_World *, float);
+	extern PRISM_API	Pr_World *	Pr_NewWorld(unsigned long);
+	extern PRISM_API	Pr_EntityId	Pr_NewEntity(Pr_World *);
 
-	Pr_ComponentList *	Pr_GetComponentListById		(Pr_World *, Pr_ComponentId);
-	Pr_ComponentList *	Pr_GetComponentListByName   (Pr_World *, char const *);
-	Pr_Strresult		Pr_SetComponentName			(Pr_World *, Pr_ComponentId, char const *);
-	unsigned long		Pr_GetComponentListSize		(Pr_ComponentList *);
+	extern PRISM_API	void *	Pr_GetEntityComponent(Pr_World *, Pr_EntityId, Pr_ComponentId);
+	extern PRISM_API	int		Pr_HasComponentId(Pr_World *, Pr_EntityId, Pr_ComponentId);
+	extern PRISM_API	int		Pr_AddEntityComponent(Pr_World *, Pr_EntityId, Pr_ComponentId);
+	extern PRISM_API	void	Pr_DeleteEntity(Pr_World *, Pr_EntityId *);
+	extern PRISM_API	int		Pr_AddWorldSystem(Pr_World *, Pr_System);
+	extern PRISM_API	int		Pr_RegisterComponent(Pr_World *, Pr_ComponentId, unsigned int);
+	extern PRISM_API	char *	Pr_GetComponentName(Pr_World *, Pr_ComponentId);
+	extern PRISM_API	int		Pr_ComponentRegistered(Pr_World *, Pr_ComponentId);
+	extern PRISM_API	void	Pr_DeleteWorld(Pr_World *);
+	extern PRISM_API	void *	Pr_GetComponents(Pr_ComponentList *);
+	extern PRISM_API	void	Pr_UpdateWorld(Pr_World *, float);
 
-	int Pr_AddWorldSystem(Pr_World *, Pr_System); 
+	extern PRISM_API	Pr_ComponentList *	Pr_GetComponentListById(Pr_World *, Pr_ComponentId);
+	extern PRISM_API	Pr_ComponentList *	Pr_GetComponentListByName(Pr_World *, char const *);
+	extern PRISM_API	Pr_Strresult		Pr_SetComponentName(Pr_World *, Pr_ComponentId, char const *);
+	extern PRISM_API	unsigned long		Pr_GetComponentListSize(Pr_ComponentList *);
+
+	extern PRISM_API	int Pr_AddWorldSystem(Pr_World *, Pr_System);
 
 #ifdef __cplusplus
 }

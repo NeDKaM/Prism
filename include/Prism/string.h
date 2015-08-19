@@ -10,6 +10,8 @@
 #ifndef H_PRISM_STRING_INCLUDED
 #define H_PRISM_STRING_INCLUDED
 
+#include <Prism/config.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -33,27 +35,27 @@ extern "C"
 
 	typedef struct pr_string_t Pr_String;
 
-	Pr_String *     Pr_NewString(void);
-	Pr_String *     Pr_NewStringStr(char const * ap_str);
-	void		    Pr_DeleteString(Pr_String * ap_this);
-	Pr_Strresult    Pr_SetStringStr(Pr_String * ap_this, char const * ap_str);
-	Pr_Strresult    Pr_SetStringChar(Pr_String * ap_this, char a_c);
-	Pr_Strresult    Pr_SetString(Pr_String * ap_this, Pr_String * ap_str);
-	Pr_Strcmpvalue  Pr_StringSizeCmp(Pr_String * ap_str1, Pr_String * ap_str2);
-	Pr_Strresult    Pr_StringStrAppend(Pr_String * ap_this, char const * ap_str);
-	Pr_Strresult    Pr_StringCharAppend(Pr_String * ap_this, char a_c);
-	Pr_String *     Pr_StringAppendResult(char const * ap_str1, char const * ap_str2);
-	Pr_Strresult    Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, char const * ap_str);
-	Pr_Strresult    Pr_StringCharInsert(Pr_String * ap_this, unsigned long a_at, char a_c);
-	Pr_Strresult    Pr_StringCut(Pr_String * ap_this, unsigned long a_at);
-	Pr_String *     Pr_StringSubStr(Pr_String * ap_str, unsigned long a_begin, unsigned long a_end);
-	Pr_String *     Pr_StringNSubStr(Pr_String * ap_str, unsigned long a_at, unsigned long a_size);
-	Pr_Strresult    Pr_StringRemove(Pr_String * ap_this, unsigned long a_begin, unsigned long a_end);
-	Pr_Strresult    Pr_StringNRemove(Pr_String * ap_this, unsigned long a_at, unsigned long a_size);
-	void            Pr_StringClear(Pr_String * ap_this);
-	unsigned long   Pr_StringSize(Pr_String * ap_this);
-	unsigned long   Pr_StringCapacity(Pr_String * ap_this);
-	char *          Pr_StringCStr(Pr_String * ap_this);
+	extern PRISM_API	Pr_String *		Pr_NewString(void);
+	extern PRISM_API	Pr_String *		Pr_NewStringStr(char const * ap_str);
+	extern PRISM_API	void			Pr_DeleteString(Pr_String * ap_this);
+	extern PRISM_API	Pr_Strresult	Pr_SetStringStr(Pr_String * ap_this, char const * ap_str);
+	extern PRISM_API	Pr_Strresult	Pr_SetStringChar(Pr_String * ap_this, char a_c);
+	extern PRISM_API	Pr_Strresult	Pr_SetString(Pr_String * ap_this, Pr_String * ap_str);
+	extern PRISM_API	Pr_Strcmpvalue	Pr_StringSizeCmp(Pr_String * ap_str1, Pr_String * ap_str2);
+	extern PRISM_API	Pr_Strresult	Pr_StringStrAppend(Pr_String * ap_this, char const * ap_str);
+	extern PRISM_API	Pr_Strresult	Pr_StringCharAppend(Pr_String * ap_this, char a_c);
+	extern PRISM_API	Pr_String *		Pr_StringAppendResult(char const * ap_str1, char const * ap_str2);
+	extern PRISM_API	Pr_Strresult	Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, char const * ap_str);
+	extern PRISM_API	Pr_Strresult	Pr_StringCharInsert(Pr_String * ap_this, unsigned long a_at, char a_c);
+	extern PRISM_API	Pr_Strresult	Pr_StringCut(Pr_String * ap_this, unsigned long a_at);
+	extern PRISM_API	Pr_String *		Pr_StringSubStr(Pr_String * ap_str, unsigned long a_begin, unsigned long a_end);
+	extern PRISM_API	Pr_String *		Pr_StringNSubStr(Pr_String * ap_str, unsigned long a_at, unsigned long a_size);
+	extern PRISM_API	Pr_Strresult	Pr_StringRemove(Pr_String * ap_this, unsigned long a_begin, unsigned long a_end);
+	extern PRISM_API	Pr_Strresult	Pr_StringNRemove(Pr_String * ap_this, unsigned long a_at, unsigned long a_size);
+	extern PRISM_API	void			Pr_StringClear(Pr_String * ap_this);
+	extern PRISM_API	unsigned long	Pr_StringSize(Pr_String * ap_this);
+	extern PRISM_API	unsigned long	Pr_StringCapacity(Pr_String * ap_this);
+	extern PRISM_API	char *			Pr_StringCStr(Pr_String * ap_this);
 
 #ifdef __cplusplus
 }

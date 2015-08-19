@@ -10,6 +10,8 @@
 #ifndef H_PRISM_VAR_INCLUDED
 #define H_PRISM_VAR_INCLUDED
 
+#include <Prism/config.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -24,15 +26,15 @@ extern "C"
 		PR_VAR_STRING
 	};
 
-	Pr_Variable *	Pr_NewVariable		(Pr_VariableType, char const *);
-	void			Pr_DeleteVariable	(Pr_Variable *);
-	void			Pr_SetVariableInt	(Pr_Variable *, long);
-	void			Pr_SetVariableFloat	(Pr_Variable *, float);
-	void			Pr_SetVariableString(Pr_Variable *, char  *);
-	void			Pr_GetVariableInt	(Pr_Variable *, long *);
-	void			Pr_GetVariableFloat	(Pr_Variable *, float *);
-	char *			Pr_GetVariableString(Pr_Variable *);
-	char *			Pr_GetVariableName	(Pr_Variable *);
+	extern PRISM_API	Pr_Variable *	Pr_NewVariable(Pr_VariableType, char const *);
+	extern PRISM_API	void			Pr_DeleteVariable(Pr_Variable *);
+	extern PRISM_API	void			Pr_SetVariableInt(Pr_Variable *, long);
+	extern PRISM_API	void			Pr_SetVariableFloat(Pr_Variable *, float);
+	extern PRISM_API	void			Pr_SetVariableString(Pr_Variable *, char  *);
+	extern PRISM_API	void			Pr_GetVariableInt(Pr_Variable *, long *);
+	extern PRISM_API	void			Pr_GetVariableFloat(Pr_Variable *, float *);
+	extern PRISM_API	char *			Pr_GetVariableString(Pr_Variable *);
+	extern PRISM_API	char *			Pr_GetVariableName(Pr_Variable *);
 
 
 #ifdef __cplusplus
