@@ -9,12 +9,12 @@ extern "C"
 {
 #endif
 
-	extern PRISM_API	int		Pr_InitApp(void);
-	extern PRISM_API	void	Pr_QuitApp(void);
-	extern PRISM_API	void	Pr_UpdateApp(void);
+	extern PRISM_API int    Pr_InitApp(void);
+	extern PRISM_API void   Pr_QuitApp(void);
+	extern PRISM_API void   Pr_UpdateApp(void);
 
 	/**< slots >*/
-	extern PRISM_API	void	Pr_Slot_QuitApp(va_list ap_args);
+	extern PRISM_API void   Pr_Slot_QuitApp(va_list ap_args);
 
 #ifdef __cplusplus
 }

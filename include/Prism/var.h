@@ -26,15 +26,15 @@ extern "C"
 		PR_VAR_STRING
 	};
 
-	extern PRISM_API	Pr_Variable *	Pr_NewVariable(Pr_VariableType, char const *);
-	extern PRISM_API	void			Pr_DeleteVariable(Pr_Variable *);
-	extern PRISM_API	void			Pr_SetVariableInt(Pr_Variable *, long);
-	extern PRISM_API	void			Pr_SetVariableFloat(Pr_Variable *, float);
-	extern PRISM_API	void			Pr_SetVariableString(Pr_Variable *, char  *);
-	extern PRISM_API	void			Pr_GetVariableInt(Pr_Variable *, long *);
-	extern PRISM_API	void			Pr_GetVariableFloat(Pr_Variable *, float *);
-	extern PRISM_API	char *			Pr_GetVariableString(Pr_Variable *);
-	extern PRISM_API	char *			Pr_GetVariableName(Pr_Variable *);
+	extern PRISM_API Pr_Variable *	Pr_NewVariable(Pr_VariableType, char const *);
+	extern PRISM_API void           Pr_DeleteVariable(Pr_Variable *);
+	extern PRISM_API void           Pr_SetVariableInt(Pr_Variable *, long);
+	extern PRISM_API void           Pr_SetVariableFloat(Pr_Variable *, float);
+	extern PRISM_API void           Pr_SetVariableString(Pr_Variable *, char  *);
+	extern PRISM_API void           Pr_GetVariableInt(Pr_Variable *, long *);
+	extern PRISM_API void           Pr_GetVariableFloat(Pr_Variable *, float *);
+	extern PRISM_API char *         Pr_GetVariableString(Pr_Variable *);
+	extern PRISM_API char *         Pr_GetVariableName(Pr_Variable *);
 
 
 #ifdef __cplusplus
