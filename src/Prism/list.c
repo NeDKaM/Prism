@@ -316,3 +316,13 @@ void Pr_SetListIteratorData(Pr_ListIterator ap_it, void * ap_data)
 	}
 }
 
+void Pr_SwapListElements(Pr_ListIterator ap_1, Pr_ListIterator ap_2)
+{
+    void * lp_tmp;
+
+    if (!ap_1 || !ap_2) return;
+
+    lp_tmp = ap_1->data;
+    ap_1->data = ap_2->data;
+    ap_2->data = lp_tmp;
+}
