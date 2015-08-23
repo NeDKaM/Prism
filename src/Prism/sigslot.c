@@ -27,13 +27,14 @@ Pr_Signal * Pr_NewSignal(void)
 
     if (lp_out) {
         lp_out->slots = Pr_NewList();
-        if (!lp_out->slots) {
-            free(lp_out);
-            lp_out = NULL;
+        if (lp_out->slots) {
+            return lp_out;
         }
+
+        free(lp_out);
     }
 
-    return lp_out;
+    return NULL;
 }
 
 void Pr_DeleteSignal(Pr_Signal * ap_sig)
