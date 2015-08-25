@@ -23,7 +23,8 @@ extern "C"
 	enum pr_variabletype_t {
 		PR_VAR_INT,
 		PR_VAR_FLOAT,
-		PR_VAR_STRING
+		PR_VAR_STRING,
+        PR_VAR_CUSTOM
 	};
 
 	extern PRISM_API Pr_Variable *  Pr_NewVariable(Pr_VariableType, char const *);

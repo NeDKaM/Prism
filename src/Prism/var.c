@@ -16,6 +16,7 @@
 struct pr_var_t {
 	Pr_VariableType type;
 	Pr_String * name;
+    Pr_String * typeName;
 	union {
 		long	d;
 		float	f;
