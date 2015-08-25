@@ -9,13 +9,15 @@
  * Last modifications : 27/7/2015
  */
 
-/**< Notes :
-     (1) : might not be standard ; casting <void*> to <void(*)(va_list)>
->*/
-
 #include <Prism/list.h>
 #include <Prism/sigslot.h>
 #include <stdlib.h>
+
+typedef struct pr_connection_t Pr_Connection;
+struct pr_connection_t {
+    Pr_Slot slot;
+    void * obj;
+};
 
 struct pr_signal_t {
     Pr_List * slots;
@@ -55,18 +57,30 @@ void Pr_Emit(Pr_Signal * ap_sig, ...)
         va_start(lp_args,ap_sig);
 
         PR_LIST_FOREACH(ap_sig->slots,lp_it) {
-            Pr_Slot lp_cb = Pr_ListIteratorData(lp_it);
-            lp_cb(lp_args);
+            Pr_Connection * lp_c = Pr_ListIteratorData(lp_it);
+            lp_c->slot(lp_c->obj,lp_args);
         }
 
         va_end(lp_args);
     }
 }
 
-int Pr_Connect(Pr_Signal * ap_sig, Pr_Slot ap_slot)
+int Pr_Connect(Pr_Signal * ap_sig, void * ap_to, Pr_Slot ap_slot)
 {
-    if (!ap_sig || !ap_slot) { return 0; }
+    Pr_Connection * lp_con;
 
-    return Pr_PushBackListData(ap_sig->slots,ap_slot);
-                                              /**< ^ : (1) >*/
+    if (!ap_sig || !ap_slot) return 0; 
+
+    lp_con = malloc(sizeof(lp_con));
+    if (!lp_con) return 0;
+
+    lp_con->obj = ap_to;
+    lp_con->slot = ap_slot;
+
+    if (Pr_PushBackListData(ap_sig->slots, lp_con)) {
+        return 1;
+    }
+
+    free(lp_con);
+    return 0;
 }

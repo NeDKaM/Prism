@@ -19,11 +19,11 @@ extern "C"
 #endif
 
 	typedef struct pr_signal_t Pr_Signal;
-	typedef void (*Pr_Slot)(va_list);
+	typedef void (*Pr_Slot)(void *, va_list);
 
 	extern PRISM_API Pr_Signal *    Pr_NewSignal(void);
 	extern PRISM_API void           Pr_DeleteSignal(Pr_Signal *);
-	extern PRISM_API int            Pr_Connect(Pr_Signal *, Pr_Slot);
+	extern PRISM_API int            Pr_Connect(Pr_Signal *, void *, Pr_Slot);
 	extern PRISM_API void           Pr_Emit(Pr_Signal *, ...);
 
 #ifdef __cplusplus
