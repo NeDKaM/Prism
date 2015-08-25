@@ -39,7 +39,7 @@ extern "C" {
 	extern PRISM_API Pr_ListIterator    Pr_NextListIterator(Pr_ListIterator ap_it);
 	extern PRISM_API void *             Pr_ListIteratorData(Pr_ListIterator ap_it);
 	extern PRISM_API void               Pr_SetListIteratorData(Pr_ListIterator ap_it, void * ap_data);
-    extern PRISM_API void               Pr_SwapListData(Pr_ListIterator ap_1, Pr_ListIterator ap_2);
+    extern PRISM_API void               Pr_SwapListElements(Pr_ListIterator ap_1, Pr_ListIterator ap_2);
 
 	#define	PR_LIST_FOREACH(list,it) \
         for ((it)=Pr_FrontListIterator(list) ; (it)!=NULL ; (it)=Pr_NextListIterator(it))

@@ -157,7 +157,11 @@ int Pr_PushBackList(Pr_List * ap_list)
 
 void Pr_PopBackList(Pr_List * ap_list)
 {
-    pr_node_t * lp_tmp = Pr_BackList(ap_list);
+    pr_node_t * lp_tmp = Pr_FrontList(ap_list);
+
+    while (lp_tmp->next) {
+        lp_tmp = lp_tmp->next;
+    }
 
     if (lp_tmp) {
         free(lp_tmp);
@@ -278,35 +282,17 @@ int Pr_PushBackListData(Pr_List * ap_list, void * ap_data)
 
 Pr_ListIterator Pr_FrontListIterator(Pr_List * ap_list)
 {
-    void * lp_out = NULL;
-
-    if (ap_list) {
-        lp_out = ap_list->first;
-    }
-
-    return lp_out;
+    return ap_list ? ap_list->first : NULL;
 }
 
 Pr_ListIterator Pr_NextListIterator(Pr_ListIterator ap_it)
 {
-    Pr_ListIterator lp_out = NULL;
-
-    if (ap_it) {
-        lp_out = ap_it->next;
-    }
-
-    return lp_out;
+    return ap_it ? ap_it->next : NULL;
 }
 
 void * Pr_ListIteratorData(Pr_ListIterator ap_it)
 {
-    void * lp_out = NULL;
-
-    if (ap_it) {
-        lp_out = ap_it->data;
-    }
-
-    return lp_out;
+    return ap_it ? ap_it->data : NULL;
 }
 
 void Pr_SetListIteratorData(Pr_ListIterator ap_it, void * ap_data)
@@ -320,7 +306,7 @@ void Pr_SwapListElements(Pr_ListIterator ap_1, Pr_ListIterator ap_2)
 {
     void * lp_tmp;
 
-    if (!ap_1 || !ap_2) return;
+    if (!ap_1 && !ap_2) return;
 
     lp_tmp = ap_1->data;
     ap_1->data = ap_2->data;
