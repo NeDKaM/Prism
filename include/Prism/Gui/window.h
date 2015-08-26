@@ -3,6 +3,7 @@
 
 #include <Prism/config.h>
 #include <Prism/sigslot.h>
+#include <Prism/Gui/renderer.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -13,6 +14,7 @@ extern "C"
 
     extern PRISM_API Pr_Window *    Pr_NewWindow(void);
     extern PRISM_API void           Pr_DeleteWindow(Pr_Window *);
+    extern PRISM_API int            Pr_AttachRenderer(Pr_Window *, Pr_Renderer *);
     extern PRISM_API unsigned long  Pr_GetWindowId(Pr_Window *);
     extern PRISM_API void           Pr_SetWindowTitle(Pr_Window *, char const *);
     extern PRISM_API void           Pr_SetWindowPosition(Pr_Window *, int, int);

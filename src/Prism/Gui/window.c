@@ -3,6 +3,8 @@
 #include <Prism/Gui/window.h>
 #include <Prism/Gui/Internal/request.h>
 #include <Prism/array.h>
+#include <Prism/Gui/renderer.h>
+#include <string.h>
 
 enum {
     PR_SHOWN = 0,
@@ -26,10 +28,8 @@ enum {
 struct pr_window_t {
 
     SDL_Window * wnd;
-    SDL_Renderer * rnd;
-#ifdef PRISM_OPENGL
-    SDL_GLContext ctx;
-#endif
+    Pr_Renderer rndImpl;
+    Pr_Renderer rndBase;
 
     unsigned long id;
     int available;
@@ -60,6 +60,17 @@ static int s_Pr_CreateWindowSignals(Pr_Window * ap_wnd)
     return 1;
 }
 
+static int s_Pr_SetBaseRenderer(Pr_Window * ap_wnd)
+{
+    ap_wnd->rndBase.impl = SDL_CreateRenderer(ap_wnd->wnd,-1,
+        SDL_RENDERER_ACCELERATED|SDL_RENDERER_TARGETTEXTURE
+    );
+
+    if (!ap_wnd->rndBase.impl) return 0;
+
+    return 1;
+}
+
 Pr_Window * Pr_NewWindow(void)
 {
     Pr_Window * lp_out;
@@ -67,29 +78,25 @@ Pr_Window * Pr_NewWindow(void)
     lp_out = calloc(1,sizeof(Pr_Window));
     if (!lp_out) return NULL;
 
-    lp_out->wnd = SDL_CreateWindow("Prism Application" 
-#ifdef PRISM_OPENGL 
-    " - OpenGL" 
-#endif
-        ,
+    lp_out->wnd = SDL_CreateWindow("Prism Application" ,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_SHOWN
-#ifdef PRISM_OPENGL
-        |SDL_WINDOW_OPENGL
-#endif
-        );
+    );
 
     if (lp_out->wnd) {
-        lp_out->rnd = SDL_CreateRenderer(lp_out->wnd,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_TARGETTEXTURE);
-        if (lp_out->rnd && s_Pr_CreateWindowSignals(lp_out)) {
-            lp_out->id = SDL_GetWindowID(lp_out->wnd);
-#ifdef PRISM_OPENGL
-            lp_out->ctx = SDL_GL_CreateContext(lp_out->wnd);
-#endif
-            lp_out->available = Pr_Request_NewWindow(lp_out);
-            return lp_out;
+        lp_out->rndBase.impl = NULL;
+        lp_out->rndImpl.impl = NULL;
+        if (s_Pr_CreateWindowSignals(lp_out)) {
+            if (s_Pr_SetBaseRenderer(lp_out)) {
+                lp_out->available = Pr_Request_NewWindow(lp_out);
+                if (lp_out->available) {
+                    lp_out->id = SDL_GetWindowID(lp_out->wnd);
+                    Pr_AttachRenderer(lp_out,NULL);
+                    return lp_out;
+                }
+            }
         }
 
-        SDL_DestroyRenderer(lp_out->rnd);
+        SDL_DestroyRenderer(lp_out->rndBase.impl);
         SDL_DestroyWindow(lp_out->wnd);
         Pr_ClearArray(lp_out->signals);
     } 
@@ -97,6 +104,19 @@ Pr_Window * Pr_NewWindow(void)
     free(lp_out);
 
     return NULL;
+}
+
+int Pr_AttachRenderer(Pr_Window * ap_wnd, Pr_Renderer * ap_rnd)
+{
+    if (!ap_wnd) return 0;
+
+    if (ap_rnd) {
+        memcpy(&ap_wnd->rndImpl, ap_rnd, sizeof(Pr_Renderer));
+    } else {
+        memcpy(&ap_wnd->rndImpl, &ap_wnd->rndBase, sizeof(Pr_Renderer));
+    }
+
+    return 1;
 }
 
 void Pr_DeleteWindow(Pr_Window * ap_wnd)
@@ -110,10 +130,8 @@ void Pr_DeleteWindow(Pr_Window * ap_wnd)
             Pr_DeleteSignal(ap_wnd->signals.list[l_i]);
         }
 
-        SDL_DestroyRenderer(ap_wnd->rnd);
-#ifdef PRISM_OPENGL
-        SDL_GL_DeleteContext(ap_wnd->ctx);
-#endif
+        Pr_ClearArray(ap_wnd->signals);
+        SDL_DestroyRenderer(ap_wnd->rndBase.impl);
         SDL_DestroyWindow(ap_wnd->wnd);
         free(ap_wnd);
     }
@@ -203,21 +221,6 @@ void Pr_SetWindowTitle(Pr_Window * ap_wnd, char const * ap_text)
     SDL_SetWindowTitle(ap_wnd->wnd, ap_text);
 }
 
-void Pr_Slot_SetWindowTitle(void * ap_obj, va_list ap_args)
-        {
-            Pr_Window * lp_wnd;
-            char const * lp_text;
-
-            if (!ap_args || !ap_obj) return;
-
-            lp_wnd = ap_obj;
-            lp_text = va_arg(ap_args, char const *);
-  
-            if (!lp_wnd || !lp_text) return;
-
-            SDL_SetWindowTitle(lp_wnd->wnd,lp_text);
-        }
-
 void Pr_SetWindowPosition(Pr_Window * ap_wnd, int a_x, int a_y)
 {
     if (!ap_wnd) return;
@@ -226,23 +229,6 @@ void Pr_SetWindowPosition(Pr_Window * ap_wnd, int a_x, int a_y)
 
     Pr_Emit(Pr_WindowMoved(ap_wnd), a_x, a_y);
 }
-
-void Pr_Slot_SetWindowPosition(void * ap_obj, va_list ap_args)
-        {
-            Pr_Window * lp_wnd;
-            int l_x;
-            int l_y;
-
-            if (!ap_args || !ap_obj) return;
-
-            lp_wnd = ap_obj;
-            l_x = va_arg(ap_args, int);
-            l_y = va_arg(ap_args, int);
-
-            SDL_SetWindowPosition(lp_wnd->wnd,l_x,l_y);
-
-            Pr_Emit(Pr_WindowMoved(lp_wnd),l_x,l_y);
-        }
 
 void Pr_SetWindowSize(Pr_Window * ap_wnd, unsigned int a_w, unsigned int a_h)
 {
@@ -253,20 +239,56 @@ void Pr_SetWindowSize(Pr_Window * ap_wnd, unsigned int a_w, unsigned int a_h)
     Pr_Emit(Pr_WindowSizeChanged(ap_wnd), a_w, a_h);
 }
 
-void Pr_Slot_SetWindowSize(void * ap_obj, va_list ap_args)
-        {
-            Pr_Window * lp_wnd;
-            unsigned int l_w;
-            unsigned int l_h;
 
-            if (!ap_args || !ap_obj) return;
+#define PR_SLOT_IMPL(name) void name(void * ap_obj, va_list ap_args)
 
-            lp_wnd = ap_obj;
-            l_w = va_arg(ap_args, unsigned int);
-            l_h = va_arg(ap_args, unsigned int);
+PR_SLOT_IMPL(Pr_Slot_SetWindowTitle)
+{
+    Pr_Window * lp_wnd;
+    char const * lp_text;
 
-            SDL_SetWindowSize(lp_wnd->wnd,l_w,l_h);
+    if (!ap_args || !ap_obj) return;
 
-            Pr_Emit(Pr_WindowSizeChanged(lp_wnd),l_w,l_h);
-        }
+    lp_wnd = ap_obj;
+    lp_text = va_arg(ap_args, char const *);
+  
+    if (!lp_wnd || !lp_text) return;
+
+    SDL_SetWindowTitle(lp_wnd->wnd,lp_text);
+}
+
+
+PR_SLOT_IMPL(Pr_Slot_SetWindowPosition)
+{
+    Pr_Window * lp_wnd;
+    int l_x;
+    int l_y;
+
+    if (!ap_args || !ap_obj) return;
+
+    lp_wnd = ap_obj;
+    l_x = va_arg(ap_args, int);
+    l_y = va_arg(ap_args, int);
+
+    SDL_SetWindowPosition(lp_wnd->wnd,l_x,l_y);
+
+    Pr_Emit(Pr_WindowMoved(lp_wnd),l_x,l_y);
+}
+
+PR_SLOT_IMPL(Pr_Slot_SetWindowSize)
+{
+    Pr_Window * lp_wnd;
+    unsigned int l_w;
+    unsigned int l_h;
+
+    if (!ap_args || !ap_obj) return;
+
+    lp_wnd = ap_obj;
+    l_w = va_arg(ap_args, unsigned int);
+    l_h = va_arg(ap_args, unsigned int);
+
+    SDL_SetWindowSize(lp_wnd->wnd,l_w,l_h);
+
+    Pr_Emit(Pr_WindowSizeChanged(lp_wnd),l_w,l_h);
+}
 
