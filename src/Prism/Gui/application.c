@@ -196,7 +196,7 @@ void Pr_Slot_QuitApp(va_list ap_args)
 
     Pr_DeleteList(s_wndlist);
 
-    for (l_i = 0; l_i < PR_SIGNALS_COUNT; l_i++) {
+    for (l_i = 0; l_i < s_signals.size ; l_i++) {
         Pr_DeleteSignal(s_signals.list[l_i]);
     }
 
