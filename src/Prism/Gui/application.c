@@ -9,6 +9,8 @@ static int              s_initialized   = 0;
 static Pr_List *        s_wndlist       = NULL;
 PR_ARRAY(Pr_Signal *,   s_signals);
 
+#define PR_SLOT_IMPL(name) void name(void * ap_obj, va_list ap_args)
+
 enum {
     PR_QUIT = 0,
 
@@ -46,6 +48,86 @@ static int s_Pr_CreateSignals(void)
     return 1;
 }
 
+static void s_Pr_UpdateApp(void)
+{
+    SDL_Event l_ev;
+
+    if (!s_initialized) return;
+
+    while (SDL_PollEvent(&l_ev)) {
+        Pr_ListIterator l_it;
+
+        PR_LIST_FOREACH(s_wndlist, l_it)
+        {
+            Pr_Window * lp_wnd = Pr_ListIteratorData(l_it);
+            Pr_HandleWindowEvent(lp_wnd, &l_ev);
+            Pr_Emit(Pr_WindowUpdated(lp_wnd));
+        }
+
+        switch (l_ev.type) {
+            case SDL_MOUSEMOTION:
+                Pr_Emit(Pr_MouseMoved(), l_ev.motion.x, l_ev.motion.y);
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                Pr_Emit(Pr_MouseButtonDown(), l_ev.button.button);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                Pr_Emit(Pr_MouseButtonUp(), l_ev.button.button);
+                break;
+            case SDL_MOUSEWHEEL:
+                break;
+            case SDL_KEYDOWN:
+                Pr_Emit(Pr_KeyDown(), l_ev.key.keysym.sym);
+                break;
+            case SDL_KEYUP:
+                Pr_Emit(Pr_KeyUp(), l_ev.key.keysym.sym);
+                break;
+            case SDL_TEXTEDITING:
+                break;
+            case SDL_TEXTINPUT:
+                break;
+
+            default:
+                break;
+            }
+    }
+}
+
+static void s_Pr_QuitApp(void)
+{
+    unsigned int l_i;
+
+    while (Pr_ListSize(s_wndlist)) {
+        Pr_DeleteWindow(Pr_FrontList(s_wndlist));
+    }
+
+    Pr_DeleteList(s_wndlist);
+
+    for (l_i = 0; l_i < s_signals.size ; l_i++) {
+        Pr_DeleteSignal(s_signals.list[l_i]);
+    }
+
+    Pr_ClearArray(s_signals);
+
+    SDL_Quit();
+
+    s_initialized = 0;
+    s_wndlist = NULL;
+}
+
+int Pr_ExecApp(void)
+{
+    if (!s_initialized) return -1;
+
+    while (s_initialized) {
+        s_Pr_UpdateApp();
+    }
+
+    s_Pr_QuitApp();
+
+    return 0;
+}
+
 int Pr_InitApp(void)
 {
 	if (s_initialized) return 1;
@@ -65,6 +147,13 @@ int Pr_InitApp(void)
     SDL_Quit();
 
 	return 0;
+}
+
+int Pr_LoadApp(char const * ap_file)
+{
+    if (!ap_file) return 0;
+
+    return 0;
 }
 
 Pr_Signal * Pr_KeyUp(void)
@@ -100,49 +189,6 @@ Pr_Signal * Pr_MouseMoved(void)
     if (!s_initialized) return NULL;
 
     return s_signals.list[PR_MOUSE_MOVED];
-}
-
-void Pr_UpdateApp(void)
-{
-    SDL_Event l_ev;
-
-    if (!s_initialized) return;
-
-    while (SDL_PollEvent(&l_ev)) {
-        Pr_ListIterator l_it;
-
-        PR_LIST_FOREACH(s_wndlist, l_it) {
-            Pr_Window * lp_wnd = Pr_ListIteratorData(l_it);
-            Pr_HandleWindowEvent(lp_wnd,&l_ev);
-        }
-
-        switch (l_ev.type) {
-            case SDL_MOUSEMOTION:
-                Pr_Emit(Pr_MouseMoved(), l_ev.motion.x, l_ev.motion.y);
-                break;
-            case SDL_MOUSEBUTTONDOWN:
-                Pr_Emit(Pr_MouseButtonDown(), l_ev.button.button);
-                break;
-            case SDL_MOUSEBUTTONUP:
-                Pr_Emit(Pr_MouseButtonUp(), l_ev.button.button);
-                break;
-            case SDL_MOUSEWHEEL:
-                break;
-            case SDL_KEYDOWN:
-                Pr_Emit(Pr_KeyDown(), l_ev.key.keysym.sym);
-                break;
-            case SDL_KEYUP:
-                Pr_Emit(Pr_KeyUp(), l_ev.key.keysym.sym);
-                break;
-            case SDL_TEXTEDITING:
-                break;
-            case SDL_TEXTINPUT:
-                break;
-
-            default:
-                break;
-        }
-    }
 }
 
 int Pr_Request_NewWindow(Pr_Window * ap_wnd)
@@ -182,34 +228,11 @@ int Pr_Request_DeleteWindow(Pr_Window * ap_wnd)
     return 0;
 }
 
-void Pr_Slot_QuitApp(va_list ap_args)
+PR_SLOT_IMPL(Pr_Slot_QuitApp)
 {
-    int l_i;
-
-    (void)ap_args;
-
-    if (!s_initialized) return;
-
-    while (Pr_ListSize(s_wndlist)) {
-        Pr_DeleteWindow(Pr_FrontList(s_wndlist));
-    }
-
-    Pr_DeleteList(s_wndlist);
-
-    for (l_i = 0; l_i < s_signals.size ; l_i++) {
-        Pr_DeleteSignal(s_signals.list[l_i]);
-    }
-
-    Pr_ClearArray(s_signals);
-
-    SDL_Quit();
-
     s_initialized = 0;
-    s_wndlist = NULL;
 }
 
-void Pr_QuitApp(void)
-{
-    Pr_Slot_QuitApp(NULL);
-}
+
+
 

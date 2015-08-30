@@ -10,8 +10,8 @@ extern "C"
 #endif
 
 	extern PRISM_API int            Pr_InitApp(void);
-	extern PRISM_API void           Pr_UpdateApp(void);
-    extern PRISM_API void           Pr_QuitApp(void);
+    extern PRISM_API int            Pr_LoadApp(char const *);
+    extern PRISM_API int            Pr_ExecApp(void);
 
     /**< signals >*/
 
@@ -25,6 +25,13 @@ extern "C"
     /**<                            (int) >*/
     extern PRISM_API Pr_Signal *    Pr_MouseMoved(void);
     /**<                            (int, int) >*/
+    extern PRISM_API Pr_Signal *    Pr_AppStarted(void);
+    /**<                            (void) >*/
+
+    /**< slots >*/
+
+#define PR_SLOT(name) void name(void *, va_list)
+    extern PRISM_API PR_SLOT(Pr_Slot_QuitApp);
 
 #ifdef __cplusplus
 }
