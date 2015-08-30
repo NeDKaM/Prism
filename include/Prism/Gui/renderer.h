@@ -1,6 +1,8 @@
 #ifndef H_PRISM_RENDERER_INCLUDED
 #define H_PRISM_RENDERER_INCLUDED
 
+#include <Prism/config.h>
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -24,20 +26,16 @@ extern "C"
         void    (*textSize)(Pr_Renderer *, Pr_Font *, void *);
 
         void    (*drawLine)(Pr_Renderer *, int, int, int, int);
-        void    (*drawLines)(Pr_Renderer *, int, void *);
         void    (*drawPoint)(Pr_Renderer *, int, int);
-        void    (*drawPoints)(Pr_Renderer *, int, void *);
-        void    (*drawRect)(Pr_Renderer *, void *);
-        void    (*drawRects)(Pr_Renderer *, int, void *);
-        void    (*drawFilledRect)(Pr_Renderer *, void *);
-        void    (*drawFilledRects)(Pr_Renderer *, int, void *);
+        void    (*drawRect)(Pr_Renderer *, int, int, unsigned int, unsigned int);
+        void    (*drawFilledRect)(Pr_Renderer *, int, int, unsigned int, unsigned int);
 
         void    (*setDrawColor)(Pr_Renderer *, int, int, int, int);
         void    (*setDrawBlendMode)(Pr_Renderer *, int);
 
         void    (*renderClear)(Pr_Renderer *);
         void    (*renderDisplay)(Pr_Renderer *);
-};
+    };
 
 #ifdef __cplusplus
 }
