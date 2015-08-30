@@ -15,6 +15,7 @@ extern "C"
     extern PRISM_API Pr_Window *    Pr_NewWindow(void);
     extern PRISM_API void           Pr_DeleteWindow(Pr_Window *);
     extern PRISM_API int            Pr_AttachRenderer(Pr_Window *, Pr_Renderer *);
+    extern PRISM_API Pr_Renderer *  Pr_GetWindowRenderer(Pr_Window *);
     extern PRISM_API unsigned long  Pr_GetWindowId(Pr_Window *);
     extern PRISM_API void           Pr_SetWindowTitle(Pr_Window *, char const *);
     extern PRISM_API void           Pr_SetWindowPosition(Pr_Window *, int, int);
@@ -22,10 +23,11 @@ extern "C"
     extern PRISM_API void           Pr_CloseWindow(Pr_Window *);
     extern PRISM_API void           Pr_SetWindowMinimized(Pr_Window *);
     extern PRISM_API void           Pr_SetWindowMaximized(Pr_Window *);
+    extern PRISM_API void           Pr_SetWindowBordered(Pr_Window *, int);
 
     /* PRIVATE */ extern PRISM_API void Pr_HandleWindowEvent(Pr_Window *, void *);
 
-    /**< signals >*/
+    /**< signals >*/                /**< parameters >*/
 
     extern PRISM_API Pr_Signal *    Pr_WindowClosed(Pr_Window *);
     /**<                            (void) >*/
@@ -42,7 +44,13 @@ extern "C"
     extern PRISM_API Pr_Signal *    Pr_WindowRestored(Pr_Window *);
     /**</                           (void) >*/
     extern PRISM_API Pr_Signal *    Pr_WindowHidden(Pr_Window *);
-    /**<                            (void) >*/       
+    /**<                            (void) >*/
+    extern PRISM_API Pr_Signal *    Pr_WindowFramed(Pr_Window *);
+    /**<                            (int) >*/
+    extern PRISM_API Pr_Signal *    Pr_WindowUpdated(Pr_Window *);
+    /**<                            (void) >*/
+    extern PRISM_API Pr_Signal *    Pr_WindowPainted(Pr_Window *);
+    /**<                            (void) >*/
 
     /**< slots >*/
 
@@ -53,6 +61,7 @@ extern "C"
     extern PRISM_API PR_SLOT(Pr_Slot_SetWindowSize);
     extern PRISM_API PR_SLOT(Pr_Slot_SetWindowMinimized);
     extern PRISM_API PR_SLOT(Pr_Slot_SetWindowMaximized);
+    extern PRISM_API PR_SLOT(Pr_Slot_SetWindowFramed);
 
 #ifdef __cplusplus
 }

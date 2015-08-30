@@ -2,12 +2,15 @@
 #include <Prism/Gui/application.h>
 #include <Prism/Gui/window.h>
 #include <Prism/Gui/Internal/request.h>
+#include <Prism/Gui/Internal/sdl2renderer.h>
 #include <Prism/array.h>
-#include <Prism/Gui/renderer.h>
 #include <string.h>
 
 enum {
-    PR_SHOWN = 0,
+    PR_UPDATED = 0,
+    PR_PAINTED,
+
+    PR_SHOWN,
     PR_HIDDEN,
     PR_EXPOSED,
     PR_SIZE_CHANGED,
@@ -21,6 +24,7 @@ enum {
     PR_CLOSED,
     PR_MOVED,
     PR_RESTORED,
+    PR_FRAMED,
 
     PR_SIGNALS_COUNT
 };
@@ -68,6 +72,8 @@ static int s_Pr_SetBaseRenderer(Pr_Window * ap_wnd)
 
     if (!ap_wnd->rndBase.impl) return 0;
 
+    Pr_SetSDL2Renderer(&ap_wnd->rndBase);
+
     return 1;
 }
 
@@ -104,6 +110,11 @@ Pr_Window * Pr_NewWindow(void)
     free(lp_out);
 
     return NULL;
+}
+
+Pr_Renderer * Pr_GetWindowRenderer(Pr_Window * ap_wnd)
+{
+    return ap_wnd ? &ap_wnd->rndImpl : NULL;
 }
 
 int Pr_AttachRenderer(Pr_Window * ap_wnd, Pr_Renderer * ap_rnd)
@@ -159,6 +170,30 @@ Pr_Signal * Pr_WindowSizeChanged(Pr_Window * ap_wnd)
     if (!ap_wnd->available) return NULL;
 
     return ap_wnd->signals.list[PR_SIZE_CHANGED];
+}
+
+Pr_Signal * Pr_WindowFramed(Pr_Window * ap_wnd)
+{
+    if (!ap_wnd) return NULL;
+    if (!ap_wnd->available) return NULL;
+
+    return ap_wnd->signals.list[PR_FRAMED];
+}
+
+Pr_Signal * Pr_WindowUpdated(Pr_Window * ap_wnd)
+{
+    if (!ap_wnd) return NULL;
+    if (!ap_wnd->available) return NULL;
+
+    return ap_wnd->signals.list[PR_UPDATED];
+}
+
+Pr_Signal * Pr_WindowPainted(Pr_Window * ap_wnd)
+{
+    if (!ap_wnd) return NULL;
+    if (!ap_wnd->available) return NULL;
+
+    return ap_wnd->signals.list[PR_PAINTED];
 }
 
 void Pr_HandleWindowEvent(Pr_Window * ap_wnd, void * ap_ev)
@@ -239,6 +274,15 @@ void Pr_SetWindowSize(Pr_Window * ap_wnd, unsigned int a_w, unsigned int a_h)
     Pr_Emit(Pr_WindowSizeChanged(ap_wnd), a_w, a_h);
 }
 
+void Pr_SetWindowFramed(Pr_Window * ap_wnd, int a_bool)
+{
+    if (!ap_wnd) return;
+
+    SDL_SetWindowBordered(ap_wnd->wnd,a_bool);
+
+    Pr_Emit(Pr_WindowFramed(ap_wnd), a_bool);
+}
+
 
 #define PR_SLOT_IMPL(name) void name(void * ap_obj, va_list ap_args)
 
@@ -291,4 +335,20 @@ PR_SLOT_IMPL(Pr_Slot_SetWindowSize)
 
     Pr_Emit(Pr_WindowSizeChanged(lp_wnd),l_w,l_h);
 }
+
+PR_SLOT_IMPL(Pr_Slot_SetWindowBordered)
+{
+    Pr_Window * lp_wnd;
+    int l_bool;
+
+    if (!ap_args || !ap_obj) return;
+
+    lp_wnd = ap_obj;
+    l_bool = va_arg(ap_args,  int);
+
+    SDL_SetWindowBordered(lp_wnd->wnd,l_bool);
+
+    Pr_Emit(Pr_WindowFramed(lp_wnd), l_bool);
+}
+
 
