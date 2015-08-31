@@ -26,6 +26,8 @@ enum {
     PR_RESTORED,
     PR_FRAMED,
 
+    PR_DELETED,
+
     PR_SIGNALS_COUNT
 };
 
@@ -64,6 +66,7 @@ PR_SIG_IMPL(Pr_WindowFocusLost, PR_FOCUS_LOST)
 PR_SIG_IMPL(Pr_WindowEntered, PR_ENTER)
 PR_SIG_IMPL(Pr_WindowLeaved, PR_LEAVE)
 PR_SIG_IMPL(Pr_WindowRestored, PR_RESTORED)
+PR_SIG_IMPL(Pr_WindowDeleted, PR_DELETED)
 
 static int s_Pr_CreateWindowSignals(Pr_Window * ap_wnd)
 {
@@ -160,6 +163,8 @@ void Pr_DeleteWindow(Pr_Window * ap_wnd)
         int l_i;
 
         Pr_Request_DeleteWindow(ap_wnd);
+
+        Pr_Emit(Pr_WindowDeleted(ap_wnd));
 
         for (l_i = 0; l_i < PR_SIGNALS_COUNT; l_i++) {
             Pr_DeleteSignal(ap_wnd->signals.list[l_i]);
