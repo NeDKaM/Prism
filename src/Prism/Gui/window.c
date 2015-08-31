@@ -41,6 +41,30 @@ struct pr_window_t {
     PR_ARRAY(Pr_Signal *,signals);
 };
 
+#define PR_SIG_IMPL(name,signalVal) \
+    Pr_Signal * name(Pr_Window * ap_wnd) \
+    { \
+        if (!ap_wnd) return NULL; \
+        if (!ap_wnd->available) return NULL; \
+        return ap_wnd->signals.list[signalVal]; \
+    } 
+
+PR_SIG_IMPL(Pr_WindowClosed, PR_CLOSED)
+PR_SIG_IMPL(Pr_WindowMoved, PR_MOVED)
+PR_SIG_IMPL(Pr_WindowSizeChanged, PR_SIZE_CHANGED)
+PR_SIG_IMPL(Pr_WindowFramed, PR_FRAMED)
+PR_SIG_IMPL(Pr_WindowUpdated, PR_UPDATED)
+PR_SIG_IMPL(Pr_WindowPainted, PR_PAINTED)
+PR_SIG_IMPL(Pr_WindowHidden, PR_HIDDEN)
+PR_SIG_IMPL(Pr_WindowShown, PR_SHOWN)
+PR_SIG_IMPL(Pr_WindowMinimized, PR_MINIMIZED)
+PR_SIG_IMPL(Pr_WindowMaximized, PR_MAXIMIZED)
+PR_SIG_IMPL(Pr_WindowFocusGained, PR_FOCUS_GAINED)
+PR_SIG_IMPL(Pr_WindowFocusLost, PR_FOCUS_LOST)
+PR_SIG_IMPL(Pr_WindowEntered, PR_ENTER)
+PR_SIG_IMPL(Pr_WindowLeaved, PR_LEAVE)
+PR_SIG_IMPL(Pr_WindowRestored, PR_RESTORED)
+
 static int s_Pr_CreateWindowSignals(Pr_Window * ap_wnd)
 {
     int l_i;
@@ -148,54 +172,6 @@ void Pr_DeleteWindow(Pr_Window * ap_wnd)
     }
 }
 
-Pr_Signal * Pr_WindowClosed(Pr_Window * ap_wnd)
-{
-    if (!ap_wnd) return NULL;
-    if (!ap_wnd->available) return NULL;
-
-    return ap_wnd->signals.list[PR_CLOSED];
-}
-
-Pr_Signal * Pr_WindowMoved(Pr_Window * ap_wnd)
-{
-    if (!ap_wnd) return NULL;
-    if (!ap_wnd->available) return NULL;
-
-    return ap_wnd->signals.list[PR_MOVED];
-}
-
-Pr_Signal * Pr_WindowSizeChanged(Pr_Window * ap_wnd)
-{
-    if (!ap_wnd) return NULL;
-    if (!ap_wnd->available) return NULL;
-
-    return ap_wnd->signals.list[PR_SIZE_CHANGED];
-}
-
-Pr_Signal * Pr_WindowFramed(Pr_Window * ap_wnd)
-{
-    if (!ap_wnd) return NULL;
-    if (!ap_wnd->available) return NULL;
-
-    return ap_wnd->signals.list[PR_FRAMED];
-}
-
-Pr_Signal * Pr_WindowUpdated(Pr_Window * ap_wnd)
-{
-    if (!ap_wnd) return NULL;
-    if (!ap_wnd->available) return NULL;
-
-    return ap_wnd->signals.list[PR_UPDATED];
-}
-
-Pr_Signal * Pr_WindowPainted(Pr_Window * ap_wnd)
-{
-    if (!ap_wnd) return NULL;
-    if (!ap_wnd->available) return NULL;
-
-    return ap_wnd->signals.list[PR_PAINTED];
-}
-
 void Pr_HandleWindowEvent(Pr_Window * ap_wnd, void * ap_ev)
 {
     SDL_Event * lp_ev = ap_ev;
@@ -206,38 +182,49 @@ void Pr_HandleWindowEvent(Pr_Window * ap_wnd, void * ap_ev)
     if (lp_ev->type == SDL_WINDOWEVENT && lp_ev->window.windowID == ap_wnd->id) {
         switch (lp_ev->window.event) {
             case SDL_WINDOWEVENT_SHOWN:
+                Pr_Emit(Pr_WindowShown(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_HIDDEN:
+                Pr_Emit(Pr_WindowHidden(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_EXPOSED:
                 break;
             case SDL_WINDOWEVENT_SIZE_CHANGED:
+                Pr_Emit(Pr_WindowSizeChanged(ap_wnd),
+                    lp_ev->window.data1,lp_ev->window.data2
+                );
                 break;
             case SDL_WINDOWEVENT_RESIZED:
                 break;
             case SDL_WINDOWEVENT_ENTER:
+                Pr_Emit(Pr_WindowEntered(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_LEAVE:
+                Pr_Emit(Pr_WindowLeaved(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_FOCUS_GAINED:
+                Pr_Emit(Pr_WindowFocusGained(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_FOCUS_LOST:
+                Pr_Emit(Pr_WindowFocusLost(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_MINIMIZED:
+                Pr_Emit(Pr_WindowMinimized(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_MAXIMIZED:
+                Pr_Emit(Pr_WindowMaximized(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_RESTORED:
+                Pr_Emit(Pr_WindowRestored(ap_wnd));
                 break;
             case SDL_WINDOWEVENT_CLOSE:
                 Pr_Emit(Pr_WindowClosed(ap_wnd));
                 break;
-            case SDL_WINDOWEVENT_MOVED: {
-                int l_x, l_y;
-                SDL_GetWindowPosition(ap_wnd->wnd,&l_x,&l_y);
-                Pr_Emit(Pr_WindowMoved(ap_wnd),l_x,l_y);
+            case SDL_WINDOWEVENT_MOVED: 
+                Pr_Emit(Pr_WindowMoved(ap_wnd),
+                    lp_ev->window.data1,lp_ev->window.data2
+                );
                 break;
-            } 
             default:
                 break;
         }
@@ -283,6 +270,20 @@ void Pr_SetWindowFramed(Pr_Window * ap_wnd, int a_bool)
     Pr_Emit(Pr_WindowFramed(ap_wnd), a_bool);
 }
 
+void Pr_HideWindow(Pr_Window * ap_wnd)
+{
+    if (!ap_wnd) return;
+
+    SDL_HideWindow(ap_wnd->wnd);
+}
+
+void Pr_ShowWindow(Pr_Window * ap_wnd)
+{
+    if (!ap_wnd) return;
+
+    SDL_ShowWindow(ap_wnd->wnd);
+
+}
 
 #define PR_SLOT_IMPL(name) void name(void * ap_obj, va_list ap_args)
 
