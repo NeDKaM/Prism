@@ -9,24 +9,20 @@ extern "C"
 {
 #endif
 
-	extern PRISM_API int            Pr_InitApp(void);
-    extern PRISM_API int            Pr_LoadApp(char const *);
-    extern PRISM_API int            Pr_ExecApp(void);
+    extern PRISM_API int    Pr_InitApp(void);
+    extern PRISM_API int    Pr_LoadApp(char const *);
+    extern PRISM_API int    Pr_ExecApp(void);
 
     /**< signals >*/
 
-    extern PRISM_API Pr_Signal *    Pr_KeyDown(void);
-    /**<                            (int) >*/
-    extern PRISM_API Pr_Signal *    Pr_KeyUp(void);
-    /**<                            (int) >*/
-    extern PRISM_API Pr_Signal *    Pr_MouseButtonDown(void);
-    /**<                            (int) >*/
-    extern PRISM_API Pr_Signal *    Pr_MouseButtonUp(void);
-    /**<                            (int) >*/
-    extern PRISM_API Pr_Signal *    Pr_MouseMoved(void);
-    /**<                            (int, int) >*/
-    extern PRISM_API Pr_Signal *    Pr_AppStarted(void);
-    /**<                            (void) >*/
+#define PR_SIGNAL(name) Pr_Signal * name(void)
+    extern PRISM_API PR_SIGNAL(Pr_KeyDown);         /**< (int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_KeyUp);           /**< (int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseButtonDown); /**< (int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseButtonUp);   /**< (int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseMoved);      /**< (int,int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_AppStarted);      /**< (void) >*/
+#undef PR_SIGNAL
 
     /**< slots >*/
 
