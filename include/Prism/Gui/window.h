@@ -23,34 +23,28 @@ extern "C"
     extern PRISM_API void           Pr_CloseWindow(Pr_Window *);
     extern PRISM_API void           Pr_SetWindowMinimized(Pr_Window *);
     extern PRISM_API void           Pr_SetWindowMaximized(Pr_Window *);
-    extern PRISM_API void           Pr_SetWindowBordered(Pr_Window *, int);
+    extern PRISM_API void           Pr_SetWindowFramed(Pr_Window *, int);
+    extern PRISM_API void           Pr_HideWindow(Pr_Window *);
+    extern PRISM_API void           Pr_ShowWindow(Pr_Window *);
 
     /* PRIVATE */ extern PRISM_API void Pr_HandleWindowEvent(Pr_Window *, void *);
 
-    /**< signals >*/                /**< parameters >*/
+    /**< signals >*/               
 
-    extern PRISM_API Pr_Signal *    Pr_WindowClosed(Pr_Window *);
-    /**<                            (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowMoved(Pr_Window *);
-    /**<                            (int, int) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowSizeChanged(Pr_Window *);
-    /**<                            (unsigned int, unsigned int) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowMinimized(Pr_Window *);
-    /**<                            (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowMaximized(Pr_Window *);
-    /**<                            (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowShown(Pr_Window *);
-    /**<                            (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowRestored(Pr_Window *);
-    /**</                           (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowHidden(Pr_Window *);
-    /**<                            (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowFramed(Pr_Window *);
-    /**<                            (int) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowUpdated(Pr_Window *);
-    /**<                            (void) >*/
-    extern PRISM_API Pr_Signal *    Pr_WindowPainted(Pr_Window *);
-    /**<                            (void) >*/
+#define PR_SIGNAL(name) Pr_Signal * name(Pr_Window *)
+    extern PRISM_API PR_SIGNAL(Pr_WindowClosed);        /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowMoved);         /**< (int, int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowSizeChanged);   /**< (unsigned int, unsigned int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowMinimized);     /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowMaximized);     /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowShown);         /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowRestored);      /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowHidden);        /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowFramed);        /**< (int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowUpdated);       /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowPainted);       /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowLeaved);        /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowEntered);       /**< (void) >*/
 
     /**< slots >*/
 
