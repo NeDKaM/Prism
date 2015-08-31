@@ -275,6 +275,8 @@ void Pr_HideWindow(Pr_Window * ap_wnd)
     if (!ap_wnd) return;
 
     SDL_HideWindow(ap_wnd->wnd);
+
+    Pr_Emit(Pr_WindowHidden(ap_wnd));
 }
 
 void Pr_ShowWindow(Pr_Window * ap_wnd)
@@ -282,6 +284,8 @@ void Pr_ShowWindow(Pr_Window * ap_wnd)
     if (!ap_wnd) return;
 
     SDL_ShowWindow(ap_wnd->wnd);
+
+    Pr_Emit(Pr_WindowShown(ap_wnd));
 
 }
 
