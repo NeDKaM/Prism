@@ -46,6 +46,7 @@ extern "C"
     extern PRISM_API PR_SIGNAL(Pr_WindowLeaved);        /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowEntered);       /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowDeleted);       /**< (void) >*/
+#undef PR_SIGNAL
 
     /**< slots >*/
 
