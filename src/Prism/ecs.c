@@ -8,7 +8,6 @@
 					<Prism/array.h>, 
 					<string.h>,
 					<stdio.h>
- * Last modifications : 29/7/2015
  */
 
 #include <Prism/ecs.h>
@@ -23,14 +22,14 @@ struct pr_componentlist_t {
 	Pr_ComponentId id;
 	unsigned int sizeAlloc;
 	unsigned long freeIndex;
-	PR_ARRAY(char, list);
+	PR_ARRAY(char) list;
 };
 
 struct pr_world_t {
 	Pr_List * systems;
 	Pr_List * components;
 	Pr_EntityId index;
-	PR_ARRAY(Pr_List *, entities);
+	PR_ARRAY(Pr_List *) entities;
 };
 
 typedef struct pr_componentlink_t Pr_ComponentLink;
@@ -130,7 +129,7 @@ static void s_Pr_RemoveEntities(Pr_World * ap_world)
 {
 	unsigned int l_i;
 
-	for (l_i = 1; l_i <= ap_world->entities.size ; l_i++) {
+	for (l_i = 1; l_i <= Pr_ArraySize(ap_world->entities) ; l_i++) {
 		Pr_EntityId l_tmp = l_i;
 		Pr_DeleteEntity(ap_world,&l_tmp);
 	}
@@ -140,14 +139,14 @@ static int s_Pr_CreateEntities(Pr_World * ap_world, unsigned long a_size)
 {
 	Pr_MakeSizedArray(ap_world->entities,a_size);
 
-	if (!ap_world->entities.size) return 0;
+    if (!Pr_ArraySize(ap_world->entities)) return 0;
 
-	memset(ap_world->entities.list,0,a_size*sizeof(Pr_List*));
+    memset(&Pr_ArrayAt(ap_world->entities,0), 0, a_size*sizeof(Pr_List*));
 
 	return 1;
 }
 
-Pr_World * Pr_NewWorld(unsigned long a_size)
+Pr_World * P_NewWorld(unsigned long a_size)
 {
 	Pr_World * lp_out;
 	Pr_List * lp_sys = NULL;
@@ -261,8 +260,9 @@ static void s_Pr_FindNextEntitySlot(Pr_World * ap_world)
 {
 	unsigned l_i;
 	
-	for (l_i = 0; l_i < ap_world->entities.size; l_i++) {
-		if (!ap_world->entities.list[l_i]) {
+    for (l_i = 0; l_i < Pr_ArraySize(ap_world->entities); l_i++)
+    {
+		if (!Pr_ArrayAt(ap_world->entities,l_i)) {
 			ap_world->index = l_i + 1;
 			return;
 		}
@@ -284,7 +284,7 @@ Pr_EntityId	Pr_NewEntity(Pr_World * ap_world)
 
 	if (!lp_list) return 0;
 
-	ap_world->entities.list[ap_world->index - 1] = lp_list;
+    Pr_ArrayAt(ap_world->entities, ap_world->index - 1) = lp_list;
 
 	l_out = ap_world->index;
 
@@ -317,7 +317,7 @@ void Pr_DeleteEntity(Pr_World * ap_world, Pr_EntityId * ap_id)
 	if (!ap_world->entities.size) return;
 	if (!ap_world->components || !*ap_id) return;
 
-	lp_list = ap_world->entities.list[*ap_id-1];
+    lp_list = Pr_ArrayAt(ap_world->entities,*ap_id-1);
 
 	if (!lp_list) return;
 
@@ -331,14 +331,14 @@ void Pr_DeleteEntity(Pr_World * ap_world, Pr_EntityId * ap_id)
 	}
 
 	Pr_DeleteList(lp_list);
-	ap_world->entities.list[*ap_id-1] = NULL;
+    Pr_ArrayAt(ap_world->entities, *ap_id - 1) = NULL;
 
 	*ap_id = 0;
 }
 
 static int s_Pr_AddFastComponnent(Pr_ComponentList * ap_clist, unsigned long * ap_index)
 {
-	unsigned long l_i = ap_clist->list.size / ap_clist->sizeAlloc;
+	unsigned long l_i = Pr_ArraySize(ap_clist->list) / ap_clist->sizeAlloc;
 
 	if (ap_clist->freeIndex >= l_i) {
 		Pr_ExtendArray(ap_clist->list, ap_clist->sizeAlloc);
@@ -347,7 +347,7 @@ static int s_Pr_AddFastComponnent(Pr_ComponentList * ap_clist, unsigned long * a
 		l_i = ap_clist->freeIndex;
 	}
 
-	ap_clist->freeIndex = ap_clist->list.size / ap_clist->sizeAlloc;
+    ap_clist->freeIndex = Pr_ArraySize(ap_clist->list) / ap_clist->sizeAlloc;
 	*ap_index = l_i;
 
 	return 1;
@@ -364,7 +364,7 @@ int	Pr_AddEntityComponent(Pr_World * ap_world, Pr_EntityId a_entity, Pr_Componen
 	if (!Pr_ComponentRegistered(ap_world, a_component)) return 0;
 	if (Pr_HasComponentId(ap_world, a_entity, a_component)) return 0;
 
-	lp_components = ap_world->entities.list[a_entity - 1];
+    lp_components = Pr_ArrayAt(ap_world->entities, a_entity - 1);
 	if (!lp_components) return 0;
 
 	lp_clist = Pr_GetComponentListById(ap_world, a_component);
@@ -393,14 +393,14 @@ int	Pr_HasComponentId(Pr_World * ap_world, Pr_EntityId a_entity, Pr_ComponentId 
 
 	if (!ap_world || !a_entity) return 0;
 
-	lp_list = ap_world->entities.list[a_entity];
+    lp_list = Pr_ArrayAt(ap_world->entities,a_entity);
 	if (!lp_list) return 0;
 
 	PR_LIST_FOREACH(lp_list, l_it) {
 		Pr_ComponentLink * lp_link = Pr_ListIteratorData(l_it);
 		if (lp_link) {
 			if (lp_link->id == a_component) {
-				return 1;
+				return 1; 
 			}
 		}
 	}
@@ -419,14 +419,14 @@ void * Pr_GetEntityComponent(Pr_World * ap_world, Pr_EntityId a_entity, Pr_Compo
 	lp_clist = Pr_GetComponentListById(ap_world,a_component);
 	if (!lp_clist) return NULL;
 
-	lp_list = ap_world->entities.list[a_entity-1];
+    lp_list = Pr_ArrayAt(ap_world->entities, a_entity - 1);
 	if (!lp_list) return NULL;
 
 	PR_LIST_FOREACH(lp_list, l_it) {
 		Pr_ComponentLink * lp_link = Pr_ListIteratorData(l_it);
 		if (lp_link) {
 			if (lp_link->id == a_component) {
-				return lp_clist->list.list + lp_link->index * lp_clist->sizeAlloc;
+                return & Pr_ArrayAt(lp_clist->list, lp_link->index * lp_clist->sizeAlloc);
 			}
 		}
 	}
@@ -444,7 +444,7 @@ unsigned long Pr_GetComponentListSize(Pr_ComponentList * ap_clist)
 	return ap_clist ? ap_clist->list.size : 0;
 }
 
-void Pr_UpdateWorld(Pr_World * ap_world, float a_dT)
+void Pr_UpdateWorld(Pr_World * ap_world, float a_dt)
 {
 	Pr_ListIterator l_it;
 
@@ -453,6 +453,6 @@ void Pr_UpdateWorld(Pr_World * ap_world, float a_dT)
 
 	PR_LIST_FOREACH(ap_world->systems, l_it) {
 		Pr_System lp_sys = Pr_ListIteratorData(l_it);
-		lp_sys(ap_world,a_dT);
+		lp_sys(ap_world,a_dt);
 	}
 }
