@@ -341,5 +341,44 @@ char * Pr_StringCStr(Pr_String * ap_this)
     return (ap_this) ? ap_this->str : NULL;
 }
 
+long Pr_StringFind(Pr_String * ap_this, char const * ap_str)
+{
+    char const * lp_tmp;
+
+    if (!ap_this) return -1;
+    if (!ap_str) return -1;
+    if (!ap_str[0]) return -1;
+
+    lp_tmp = strstr(ap_this->str, ap_str);
+
+    return (lp_tmp) ? (lp_tmp - ap_this->str) : -1;
+}
+
+unsigned long Pr_StringReplace(Pr_String * ap_this, char const * ap_str, char const * ap_by)
+{
+    unsigned long l_count = 0;
+    size_t l_i, l_strlen, l_bylen;
+    
+    if (!ap_this) return 0;
+    if (!ap_str) return 0;
+    if (!ap_str[0]) return 0;
+    if (!ap_by) return 0;
+
+    l_strlen = strlen(ap_str);
+    l_bylen = (ap_by) ? strlen(ap_by) : 0;
+
+    for (l_i = 0 ; l_i < ap_this->size ; l_i++) {
+        long l_pos = Pr_StringFind(ap_this,ap_str);
+        if (l_pos > -1) {
+            Pr_StringNRemove(ap_this,l_pos,l_strlen);
+            Pr_StringStrInsert(ap_this,l_pos,ap_by);
+            l_i += l_bylen;
+            l_count++;
+        }
+    }
+
+    return l_count;
+}  
+
 #undef STRING_UNIT
 

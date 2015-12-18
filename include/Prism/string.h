@@ -56,6 +56,8 @@ extern "C"
 	extern PRISM_API unsigned long  Pr_StringSize(Pr_String * ap_this);
 	extern PRISM_API unsigned long  Pr_StringCapacity(Pr_String * ap_this);
 	extern PRISM_API char *         Pr_StringCStr(Pr_String * ap_this);
+    extern PRISM_API unsigned long  Pr_StringReplace(Pr_String * ap_this, char const * ap_str, char const * ap_by);
+    extern PRISM_API long           Pr_StringFind(Pr_String * ap_this, char const * ap_str);
 
 #ifdef __cplusplus
 }
