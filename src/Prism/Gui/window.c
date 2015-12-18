@@ -40,7 +40,7 @@ struct pr_window_t {
     unsigned long id;
     int available;
 
-    PR_ARRAY(Pr_Signal *,signals);
+    PR_ARRAY(Pr_Signal *) signals;
 };
 
 #define PR_SIG_IMPL(name,signalVal) \
@@ -167,7 +167,7 @@ void Pr_DeleteWindow(Pr_Window * ap_wnd)
         Pr_Emit(Pr_WindowDeleted(ap_wnd));
 
         for (l_i = 0; l_i < PR_SIGNALS_COUNT; l_i++) {
-            Pr_DeleteSignal(ap_wnd->signals.list[l_i]);
+            Pr_DeleteSignal(Pr_ArrayAt(ap_wnd->signals,l_i));
         }
 
         Pr_ClearArray(ap_wnd->signals);
