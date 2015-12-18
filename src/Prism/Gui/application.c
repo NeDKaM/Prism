@@ -4,12 +4,13 @@
 #include <Prism/list.h>
 #include <Prism/Gui/Internal/request.h>
 #include <Prism/array.h>
+#include <Prism/string.h>
+#include <stdio.h>
+#include <Prism/Gui/class.h>
 
 static int              s_initialized   = 0;
 static Pr_List *        s_wndlist       = NULL;
-PR_ARRAY(Pr_Signal *,   s_signals);
-
-#define PR_SLOT_IMPL(name) void name(void * ap_obj, va_list ap_args)
+PR_ARRAY(Pr_Signal *)   s_signals;
 
 enum {
     PR_QUIT = 0,
@@ -33,7 +34,7 @@ static int s_Pr_CreateSignals(void)
     if (!s_signals.size) return 0;
 
     for (l_i = 0; l_i<PR_SIGNALS_COUNT; l_i++) {
-        Pr_Signal ** lp_tmp = &s_signals.list[l_i];
+        Pr_Signal ** lp_tmp = & Pr_ArrayAt(s_signals, l_i);
         *lp_tmp = Pr_NewSignal();
         if (!*lp_tmp) {
             for (l_i = l_i - 1; l_i >= 0; l_i--) {
@@ -52,13 +53,10 @@ static void s_Pr_UpdateApp(void)
 {
     SDL_Event l_ev;
 
-    if (!s_initialized) return;
-
     while (SDL_PollEvent(&l_ev)) {
         Pr_ListIterator l_it;
 
-        PR_LIST_FOREACH(s_wndlist, l_it)
-        {
+        PR_LIST_FOREACH(s_wndlist, l_it) {
             Pr_Window * lp_wnd = Pr_ListIteratorData(l_it);
             Pr_HandleWindowEvent(lp_wnd, &l_ev);
             Pr_Emit(Pr_WindowUpdated(lp_wnd));
@@ -103,8 +101,8 @@ static void s_Pr_QuitApp(void)
 
     Pr_DeleteList(s_wndlist);
 
-    for (l_i = 0; l_i < s_signals.size ; l_i++) {
-        Pr_DeleteSignal(s_signals.list[l_i]);
+    for (l_i = 0; l_i < Pr_ArraySize(s_signals); l_i++) {
+        Pr_DeleteSignal(Pr_ArrayAt(s_signals,l_i));
     }
 
     Pr_ClearArray(s_signals);
@@ -149,47 +147,78 @@ int Pr_InitApp(void)
 	return 0;
 }
 
-int Pr_LoadApp(char const * ap_file)
+int Pr_LoadApp(char const * ap_code)
 {
-    if (!ap_file) return 0;
+    Pr_String * lp_code;
+
+    if (!ap_code) return 0;
+    if (!ap_code[0]) return 0;
+
+    lp_code = Pr_NewStringStr(ap_code);
+    if (!lp_code) return 0;
+
+    Pr_StringReplace(lp_code,  " ", "");
+    Pr_StringReplace(lp_code, "\n", "");
+    Pr_StringReplace(lp_code, "\t", "");
+    puts(Pr_StringCStr(lp_code));
+
+    /**< should load a file like this one >*/
+    /**<
+            [hydrogen]
+
+            PrApplication : app {
+                PrWindow : wnd {
+                    background  = 0xffffff;
+                    width       = 640;
+                    height      = 480;
+                    title       = "Main application";
+
+                    PrButton : b_info {
+                        onclick -> window2 . show;
+                        text = "Show";
+                    }
+
+                    PrButton : b_quit {
+                        onclick -> app . quit;
+                        text = "Quit";
+                    }
+                }
+
+                PrWindow : window2 {
+                    x           = 50;
+                    y           = 50;
+                    width       = wnd . width;
+                    title       = "New window";
+                    background  = 0x0;
+                }
+
+                PrButton : b_close {
+                    width   = 150;
+                    height  = 25;
+                    owner   = window2;
+                    onclick -> window2 . close;
+                    text = "Close";
+                }
+            }
+    >*/
+
+    Pr_DeleteString(lp_code);
 
     return 0;
 }
 
-Pr_Signal * Pr_KeyUp(void)
-{
-    if (!s_initialized) return NULL;
+#define PR_SIG_IMPL(name,value) \
+    Pr_Signal * name(void) \
+    { \
+        if (!s_initialized) return NULL; \
+        return Pr_ArrayAt(s_signals,value); \
+    }
 
-    return s_signals.list[PR_KEY_UP];
-}
-
-Pr_Signal * Pr_KeyDown(void)
-{
-    if (!s_initialized) return NULL;
-
-    return s_signals.list[PR_KEY_DOWN];
-}
-
-Pr_Signal * Pr_MouseButtonUp(void)
-{
-    if (!s_initialized) return NULL;
-
-    return s_signals.list[PR_MOUSEBUTTON_UP];
-}
-
-Pr_Signal * Pr_MouseButtonDown(void)
-{
-    if (!s_initialized) return NULL;
-
-    return s_signals.list[PR_KEY_DOWN];
-}
-
-Pr_Signal * Pr_MouseMoved(void)
-{
-    if (!s_initialized) return NULL;
-
-    return s_signals.list[PR_MOUSE_MOVED];
-}
+PR_SIG_IMPL(Pr_KeyUp, PR_KEY_UP)
+PR_SIG_IMPL(Pr_KeyDown, PR_KEY_DOWN)
+PR_SIG_IMPL(Pr_MouseButtonUp, PR_MOUSEBUTTON_UP)
+PR_SIG_IMPL(Pr_MouseButtonDown, PR_MOUSEBUTTON_DOWN)
+PR_SIG_IMPL(Pr_MouseMoved, PR_MOUSE_MOVED)
 
 int Pr_Request_NewWindow(Pr_Window * ap_wnd)
 {
@@ -227,6 +256,8 @@ int Pr_Request_DeleteWindow(Pr_Window * ap_wnd)
 
     return 0;
 }
+
+#define PR_SLOT_IMPL(name) void name(void * ap_obj, va_list ap_args)
 
 PR_SLOT_IMPL(Pr_Slot_QuitApp)
 {
