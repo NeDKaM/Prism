@@ -4,7 +4,6 @@
  * Creation : 2015
  * Desc. : C Array implementation
  * Dependencies :	<stdlib.h>
- * Last modifications : 24/7/2015
  */
 
 #ifndef H_PRISM_ARRAY_INCLUDED
@@ -16,14 +15,19 @@
 extern "C"
 {
 #endif
+    
+    /* Utility functions ;) */
+    #define Pr_ArrayAt(a_array,a_at)  (a_array).list[(a_at)]
+    #define Pr_ArraySize(a_array)     (a_array).size
+    #define Pr_ArrayCapacity(a_array) (a_array).capacity
 
-    #define PR_ARRAY(a_Type,a_Name) \
-        struct Pr_##a_Name { \
+    #define PR_ARRAY(a_Type) \
+        struct { \
             a_Type * list; \
             unsigned long size; \
             unsigned long capacity; \
             int reducible; \
-        } a_Name
+        } 
 
     #define Pr_SetArrayDynamic(a_array,a_bool) \
         do { \
