@@ -4,7 +4,6 @@
  * Creation : 2015
  * Desc. : C Entity Component System implementation
  * Dependencies :	<Prism/string.h>
- * Last modifications : 29/7/2015
  */
 
 #ifndef H_PRISM_ECS_INCLUDED
