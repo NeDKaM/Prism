@@ -11,7 +11,7 @@ extern "C"
 
     extern PRISM_API int    Pr_InitApp(void);
     extern PRISM_API int    Pr_ExecApp(void);
-    /**< Factory update >*/ extern PRISM_API int Pr_LoadApp(char const *);
+    extern PRISM_API int    Pr_LoadApp(char const *);
 
     /**< signals >*/
 
@@ -28,7 +28,7 @@ extern "C"
 
 #define PR_SLOT(name) void name(void *, va_list)
     extern PRISM_API PR_SLOT(Pr_Slot_QuitApp);
-    /**< Factory update >*/ extern PRISM_API PR_SLOT(Pr_Slot_LoadApp);
+    extern PRISM_API PR_SLOT(Pr_Slot_LoadApp);
 
 #ifdef __cplusplus
 }
