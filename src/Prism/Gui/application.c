@@ -6,7 +6,6 @@
 #include <Prism/array.h>
 #include <Prism/string.h>
 #include <stdio.h>
-#include <Prism/Gui/class.h>
 
 static int              s_initialized   = 0;
 static Pr_List *        s_wndlist       = NULL;
@@ -14,6 +13,7 @@ PR_ARRAY(Pr_Signal *)   s_signals;
 
 enum {
     PR_QUIT = 0,
+    PR_START,
 
     PR_MOUSE_MOVED,
     PR_MOUSEBUTTON_UP,
@@ -117,6 +117,8 @@ int Pr_ExecApp(void)
 {
     if (!s_initialized) return -1;
 
+    Pr_Emit(Pr_AppStarted());
+
     while (s_initialized) {
         s_Pr_UpdateApp();
     }
@@ -219,6 +221,7 @@ PR_SIG_IMPL(Pr_KeyDown, PR_KEY_DOWN)
 PR_SIG_IMPL(Pr_MouseButtonUp, PR_MOUSEBUTTON_UP)
 PR_SIG_IMPL(Pr_MouseButtonDown, PR_MOUSEBUTTON_DOWN)
 PR_SIG_IMPL(Pr_MouseMoved, PR_MOUSE_MOVED)
+PR_SIG_IMPL(Pr_AppStarted, PR_START)
 
 int Pr_Request_NewWindow(Pr_Window * ap_wnd)
 {
@@ -263,7 +266,4 @@ PR_SLOT_IMPL(Pr_Slot_QuitApp)
 {
     s_initialized = 0;
 }
-
-
-
 
