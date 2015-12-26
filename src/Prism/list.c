@@ -129,7 +129,7 @@ void * Pr_ListAt(Pr_List * ap_list, unsigned int a_n)
 
 unsigned int Pr_ListSize(Pr_List * ap_list)
 {
-    return ap_list->size;
+    return (ap_list) ? ap_list->size : 0;
 }
 
 int Pr_PushBackList(Pr_List * ap_list)
