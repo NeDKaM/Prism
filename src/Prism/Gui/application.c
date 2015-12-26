@@ -5,11 +5,13 @@
 #include <Prism/Gui/Internal/request.h>
 #include <Prism/array.h>
 #include <Prism/string.h>
+#include <Prism/Gui/library.h>
 #include <stdio.h>
 
 static int              s_initialized   = 0;
 static Pr_List *        s_wndlist       = NULL;
 PR_ARRAY(Pr_Signal *)   s_signals;
+static Pr_Library *     s_library       = NULL;
 
 enum {
     PR_QUIT = 0,
@@ -128,21 +130,76 @@ int Pr_ExecApp(void)
     return 0;
 }
 
+static void * s_Pr_IntegerCons(void)
+{
+    return calloc(1,sizeof(long));
+}
+
+static void s_Pr_IntergerDel(void * ap_that)
+{
+    if (!ap_that) return;
+    free(ap_that);
+}
+
+static void s_Pr_StringDel(void * ap_that)
+{
+    if (!ap_that) return;
+    Pr_DeleteString(ap_that);
+}
+
+static int s_Pr_LoadStdLibrary(void)
+{
+    int         l_err = 0;
+    Pr_Class *  lp_integerCls;
+    Pr_Class *  lp_appCls;
+    Pr_Class *  lp_stringCls;
+    
+    s_library       = Pr_NewLibrary("PrAppLib");
+
+    if (!s_library)     return 0;
+
+    lp_integerCls   = Pr_NewClass("PrInteger",s_Pr_IntegerCons,s_Pr_IntergerDel,NULL);
+    if (!Pr_RegisterClass(s_library,lp_integerCls)) l_err++;
+
+    lp_stringCls    = Pr_NewClass("PrString",Pr_NewString,s_Pr_StringDel,NULL);
+    if (!Pr_RegisterClass(s_library,lp_stringCls))  l_err++;
+
+    lp_appCls       = Pr_NewClass("PrApplication",NULL,NULL,NULL);
+    /* TODO: Add signals */
+    if (!Pr_RegisterClass(s_library,lp_appCls))     l_err++;
+
+    if (!l_err)         return 1;
+
+    if (!Pr_ClassRegistered(s_library, "PrInteger"))        Pr_DeleteClass(lp_integerCls);
+    if (!Pr_ClassRegistered(s_library, "PrString"))         Pr_DeleteClass(lp_appCls);
+    if (!Pr_ClassRegistered(s_library, "PrApplication"))    Pr_DeleteClass(lp_appCls);
+
+    return 0;
+}
+
 int Pr_InitApp(void)
 {
+    int l_retSig;
+    int l_retLib;
+
 	if (s_initialized) return 1;
 
 	if (SDL_Init(SDL_INIT_VIDEO)) return 0;
 
     s_wndlist = Pr_NewList();
+    l_retSig = s_Pr_CreateSignals();
+    l_retLib = s_Pr_LoadStdLibrary();
 
-    if (s_wndlist && s_Pr_CreateSignals()) {
+    if (s_wndlist && l_retSig && l_retLib) {
 	    s_initialized = 1;
         return 1;
     }
 
     Pr_DeleteList(s_wndlist);
+    s_wndlist = NULL;
     Pr_ClearArray(s_signals);
+    Pr_DeleteLibrary(s_library);
+    s_library = NULL;
 
     SDL_Quit();
 
@@ -170,9 +227,9 @@ int Pr_LoadApp(char const * ap_code)
 
             PrApplication : app {
                 PrWindow : wnd {
-                    background  = 0xffffff;
-                    width       = 640;
-                    height      = 480;
+                    background  = "0xffffff";
+                    width       = "640";
+                    height      = "480";
                     title       = "Main application";
 
                     PrButton : b_info {
@@ -187,16 +244,16 @@ int Pr_LoadApp(char const * ap_code)
                 }
 
                 PrWindow : window2 {
-                    x           = 50;
-                    y           = 50;
+                    x           = "50";
+                    y           = "50";
                     width       = wnd . width;
                     title       = "New window";
-                    background  = 0x0;
+                    background  = "0x0";
                 }
 
                 PrButton : b_close {
-                    width   = 150;
-                    height  = 25;
+                    width   = "150";
+                    height  = "25";
                     owner   = window2;
                     onclick -> window2 . close;
                     text = "Close";
