@@ -171,7 +171,7 @@ static int s_Pr_LoadStdLibrary(void)
     if (!l_err)         return 1;
 
     if (!Pr_ClassRegistered(s_library, "PrInteger"))        Pr_DeleteClass(lp_integerCls);
-    if (!Pr_ClassRegistered(s_library, "PrString"))         Pr_DeleteClass(lp_appCls);
+    if (!Pr_ClassRegistered(s_library, "PrString"))         Pr_DeleteClass(lp_stringCls);
     if (!Pr_ClassRegistered(s_library, "PrApplication"))    Pr_DeleteClass(lp_appCls);
 
     return 0;
