@@ -3,7 +3,8 @@
  * Author : Alexandre DUBUJET
  * Creation : 2015
  * Desc. : C Entity Component System implementation
- * Dependencies :	<Prism/string.h>
+ * Dependencies :	<Prism/config.h>,
+                    <Prism/string.h>
  */
 
 #ifndef H_PRISM_ECS_INCLUDED

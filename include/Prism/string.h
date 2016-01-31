@@ -3,8 +3,7 @@
  * Author : Alexandre DUBUJET
  * Creation : 2013
  * Desc. : C string implementation
- * Dependencies : -
- * Last modifications : 18/7/2015
+ * Dependencies :   <Prism/config.h>
  */
 
 #ifndef H_PRISM_STRING_INCLUDED

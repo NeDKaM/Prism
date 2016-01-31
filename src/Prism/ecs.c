@@ -3,15 +3,10 @@
  * Author : Alexandre DUBUJET
  * Creation : 2015
  * Desc. : C Entity Component System implementation
- * Dependencies :	<Prism/ecs.h>
-					<Prism/list.h>, 
-					<Prism/array.h>, 
-					<string.h>,
-					<stdio.h>
+ * Dependencies :	--
  */
 
 #include <Prism/ecs.h>
-
 #include <Prism/list.h>
 #include <Prism/array.h>
 #include <string.h>

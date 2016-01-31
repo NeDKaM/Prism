@@ -6,7 +6,6 @@
  * Dependencies :	<Prism/list.h>, 
 					<Prism/sigslot.h>,
 					<stdlib.h>
- * Last modifications : 27/7/2015
  */
 
 #include <Prism/list.h>

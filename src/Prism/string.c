@@ -7,11 +7,9 @@
 					<stdlib.h>, 
 					<string.h>, 
 					<stdio.h>, 
- * Last modifications : 27/7/2015
  */
 
 #include <Prism/string.h>
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

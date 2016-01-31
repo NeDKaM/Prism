@@ -3,6 +3,8 @@
 
 #if defined(_WIN32)
 	#define PRISM_SYSTEM_WINDOWS
+#else 
+    #error("Not ready for Linux and co...")
 #endif
 
 #if defined(PRISM_SYSTEM_WINDOWS)
@@ -15,5 +17,6 @@
 #else
 	#define PRISM_API PRISM_API_IMPORT
 #endif
+
 
 #endif /* H_PRISM_CONFIG_INCLUDED */
