@@ -1,9 +1,9 @@
 /* File name : class.h
-*  File type : Header
-*  Author : Alexandre DUBUJET
-*  Creation : 2015
-*  Desc. : Prism class implementation
-*  Dependencies :	-
+ * File type : Header
+ * Author : Alexandre DUBUJET
+ * Creation : 2015
+ * Desc. : Prism class implementation
+ * Dependencies :   <Prism/config.h>
 */
 
 #ifndef H_PRISM_CLASS_INCLUDED
