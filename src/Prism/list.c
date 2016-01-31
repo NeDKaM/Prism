@@ -5,7 +5,6 @@
  * Desc. : C Linked list implementation
  * Dependencies :	<stdlib.h>, 
 					<Prism/list.h>
- * Last modifications : 18/7/2015
  */
 
 #include <stdlib.h>
@@ -311,4 +310,26 @@ void Pr_SwapListElements(Pr_ListIterator ap_1, Pr_ListIterator ap_2)
     lp_tmp = ap_1->data;
     ap_1->data = ap_2->data;
     ap_2->data = lp_tmp;
+}
+
+Pr_List * Pr_CopyList(Pr_List * ap_list)
+{
+    Pr_List * lp_out;
+    Pr_ListIterator lp_it;
+
+    if (!ap_list) return NULL;
+
+    lp_out = Pr_NewList();
+    if (!lp_out) return NULL;
+
+    lp_out->size = ap_list->size;
+
+    PR_LIST_FOREACH(ap_list, lp_it) {
+        if (!Pr_PushBackListData(lp_out, Pr_ListIteratorData(lp_it))) {
+            Pr_DeleteList(lp_out);
+            return NULL;
+        }
+    }
+
+    return lp_out;
 }

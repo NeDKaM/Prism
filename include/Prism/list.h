@@ -3,8 +3,7 @@
  * Author : Alexandre DUBUJET
  * Creation : 2013
  * Desc. : C Linked list implementation
- * Dependencies : -
- * Last modifications : 06/7/2015
+ * Dependencies :   <Prism/config.h>
  */
 
 #ifndef H_PRISM_LIST_INCLUDED
@@ -40,6 +39,7 @@ extern "C" {
     extern PRISM_API void *             Pr_ListIteratorData(Pr_ListIterator ap_it);
     extern PRISM_API void               Pr_SetListIteratorData(Pr_ListIterator ap_it, void * ap_data);
     extern PRISM_API void               Pr_SwapListElements(Pr_ListIterator ap_1, Pr_ListIterator ap_2);
+    extern PRISM_API Pr_List *          Pr_CopyList(Pr_List * ap_list);
 
 	#define	PR_LIST_FOREACH(list,it) \
         for ((it)=Pr_FrontListIterator(list) ; (it)!=NULL ; (it)=Pr_NextListIterator(it))
