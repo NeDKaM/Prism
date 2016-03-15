@@ -19,7 +19,7 @@ struct pr_class_t {
     Pr_ClassId      id;
     Pr_Constructor  constructor;
     Pr_Deleter      deleter;
-    Pr_Class *      inherit;
+    Pr_ClassRef     inherit;
     unsigned long   sizealloc;
 };
 
@@ -45,7 +45,7 @@ static int s_Pr_CheckName(char const * ap_name)
     return 1;
 }
 
-Pr_Class * Pr_NewClass(char const * ap_name, Pr_Constructor ap_con, Pr_Deleter ap_del, Pr_Class * ap_inh)
+Pr_Class * Pr_NewClass(char const * ap_name, Pr_Constructor ap_con, Pr_Deleter ap_del, Pr_ClassRef ap_inh)
 {
     Pr_Class * lp_out = NULL;
 
@@ -87,7 +87,7 @@ void Pr_DeleteClass(Pr_Class * ap_cls)
     free(ap_cls);
 }
 
-int Pr_SetClassParameter(Pr_Class * ap_that, Pr_Class * ap_class, char const * ap_name)
+int Pr_SetClassParameter(Pr_Class * ap_that, Pr_ClassRef ap_class, char const * ap_name)
 {
     Pr_ListIterator lp_it;
     Pr_Class * lp_cls;
@@ -107,7 +107,7 @@ int Pr_SetClassParameter(Pr_Class * ap_that, Pr_Class * ap_class, char const * a
         }
     }
 
-    lp_cls = ap_that->inherit;
+    lp_cls = (Pr_Class *)ap_that->inherit;
 
     while (lp_cls != NULL) {
         PR_LIST_FOREACH(lp_cls->members, lp_it) {
@@ -117,7 +117,7 @@ int Pr_SetClassParameter(Pr_Class * ap_that, Pr_Class * ap_class, char const * a
             }
         }
 
-        lp_cls = lp_cls->inherit;
+        lp_cls = (Pr_Class *)lp_cls->inherit;
     }
 
     lp_var = Pr_NewVariable(ap_name, ap_class);
@@ -129,12 +129,12 @@ int Pr_SetClassParameter(Pr_Class * ap_that, Pr_Class * ap_class, char const * a
     return 0;
 }
 
-Pr_ClassId Pr_GetClassId(Pr_Class * ap_class)
+Pr_ClassId Pr_GetClassId(Pr_ClassRef ap_class)
 {
     return (ap_class) ? ap_class->id : 0;
 }
 
-char * Pr_GetClassName(Pr_Class * ap_class)
+char const * Pr_GetClassName(Pr_ClassRef ap_class)
 {
     return (ap_class) ? Pr_StringCStr(ap_class->name) : NULL;
 }

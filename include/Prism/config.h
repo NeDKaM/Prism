@@ -18,5 +18,17 @@
 	#define PRISM_API PRISM_API_IMPORT
 #endif
 
+#ifdef __cplusplus
+    #define PR_CPP_PROTECT_ON  extern "C" {
+    #define PR_CPP_PROTECT_OFF }
+#else
+    #define PR_CPP_PROTECT_ON
+    #define PR_CPP_PROTECT_OFF
+#endif
+
+#define PR_STRUCT(name_t,name) \
+    typedef struct name_t name; \
+    typedef const name * name##Ref; \
+    struct name_t
 
 #endif /* H_PRISM_CONFIG_INCLUDED */

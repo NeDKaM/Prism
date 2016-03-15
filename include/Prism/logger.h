@@ -13,23 +13,19 @@
 #include <Prism/config.h>
 #include <Prism/sigslot.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+PR_CPP_PROTECT_ON
 
-    typedef struct pr_logger_t Pr_Logger;
+    PR_STRUCT(pr_logger_t, Pr_Logger);
 
     extern PRISM_API Pr_Logger *    Pr_NewLogger(void);
     extern PRISM_API void           Pr_DeleteLogger(Pr_Logger *);
 
-    extern PRISM_API PR_SIGNAL(Pr_LogUpdated)(Pr_Logger *);     /**< (char *) >*/
+    extern PRISM_API PR_SIGNAL(Pr_LogUpdated)(Pr_LoggerRef);     /**< (char *) >*/
 
     PR_SLOT_EXTERN_API(Pr_WriteLog)(Pr_Logger *, char *);
     PR_SLOT_EXTERN_API(Pr_ClearLog)(Pr_Logger *);
     PR_SLOT_EXTERN_API(Pr_SetLogCapacity)(Pr_Logger *, unsigned long);
 
-#ifdef __cplusplus
-}
-#endif
+PR_CPP_PROTECT_OFF
 
 #endif /* H_PRISM_LOGGER_INCLUDED */

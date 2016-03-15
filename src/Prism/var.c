@@ -34,7 +34,7 @@ static int s_Pr_CheckName(char const * ap_name)
     return 1;
 }
 
-Pr_Variable * Pr_NewVariable(char const * ap_name, Pr_Class * ap_class)
+Pr_Variable * Pr_NewVariable(char const * ap_name, Pr_ClassRef ap_class)
 {
     Pr_Variable * lp_out;
 

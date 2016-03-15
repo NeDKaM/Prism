@@ -13,18 +13,16 @@
 #include <Prism/config.h>
 #include <stdarg.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PR_CPP_PROTECT_ON
 
-	typedef struct pr_signal_t Pr_Signal;
+	PR_STRUCT(pr_signal_t, Pr_Signal);
+
 	typedef void (*Pr_Slot)(void *, va_list);
 
 	extern PRISM_API Pr_Signal *    Pr_NewSignal(void);
 	extern PRISM_API void           Pr_DeleteSignal(Pr_Signal *);
 	extern PRISM_API int            Pr_Connect(Pr_Signal *, void *, Pr_Slot);
-	extern PRISM_API void           Pr_Emit(Pr_Signal *, ...);
+	extern PRISM_API void           Pr_Emit(Pr_SignalRef, ...);
 
 #define PR_SIGNAL(name)             Pr_Signal * name
 #define PR_SLOT(name)               void name(void *, va_list); \
@@ -33,8 +31,6 @@ extern "C"
                                     extern PRISM_API void name
 
 
-#ifdef __cplusplus
-}
-#endif
+PR_CPP_PROTECT_OFF
 
 #endif /* H_PRISM_SIGSLOT_INCLUDED */

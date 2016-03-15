@@ -17,14 +17,14 @@ struct pr_componentlist_t {
 	Pr_ComponentId id;
 	unsigned int sizeAlloc;
 	unsigned long freeIndex;
-	PR_ARRAY(char) list;
+	Pr_Array(char) list;
 };
 
 struct pr_world_t {
 	Pr_List * systems;
 	Pr_List * components;
 	Pr_EntityId index;
-	PR_ARRAY(Pr_List *) entities;
+	Pr_Array(Pr_List *) entities;
 };
 
 typedef struct pr_componentlink_t Pr_ComponentLink;
@@ -200,7 +200,7 @@ int Pr_ComponentRegistered(Pr_World * ap_world, Pr_ComponentId a_id)
 }
 
 
-char * Pr_GetComponentName(Pr_World * ap_world, Pr_ComponentId a_id)
+char const * Pr_GetComponentName(Pr_World * ap_world, Pr_ComponentId a_id)
 {
 	if (!ap_world) return NULL;
 

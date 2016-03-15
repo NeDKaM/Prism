@@ -46,7 +46,7 @@ void Pr_DeleteSignal(Pr_Signal * ap_sig)
     }
 }
 
-void Pr_Emit(Pr_Signal * ap_sig, ...)
+void Pr_Emit(Pr_SignalRef ap_sig, ...)
 {
     va_list lp_args;
 

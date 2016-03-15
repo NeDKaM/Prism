@@ -16,7 +16,7 @@
 
 struct pr_library_t {
     Pr_String * name;
-    PR_ARRAY(Pr_Class *) classList;
+    Pr_Array(Pr_Class *) classList;
     unsigned long lastId;
 };
 
@@ -26,7 +26,7 @@ struct pr_library_t {
     Pr_ClassId      id;
     Pr_Constructor  constructor;
     Pr_Deleter      deleter;
-    Pr_Class *      inherit;
+    Pr_ClassRef     inherit;
     unsigned long   sizealloc;
 };
 
@@ -94,7 +94,7 @@ void Pr_DeleteLibrary(Pr_Library * ap_lib)
     free(ap_lib);
 }
 
-int Pr_ClassRegistered(Pr_Library * ap_lib, char const * ap_name)
+int Pr_ClassRegistered(Pr_LibraryRef ap_lib, char const * ap_name)
 {
     unsigned int i;
     
@@ -137,7 +137,7 @@ int Pr_RegisterClass(Pr_Library * ap_lib, Pr_Class * ap_class)
     return 1;
 }
 
-static Pr_Class * s_Pr_CopyClass(Pr_Class * ap_class)
+static Pr_Class * s_Pr_CopyClass(Pr_ClassRef ap_class)
 {
     Pr_Class * lp_out;
     struct s_pr_class_t * lp_classDef;
@@ -168,7 +168,7 @@ static Pr_Class * s_Pr_CopyClass(Pr_Class * ap_class)
     return NULL;
 }
 
-int Pr_ImportLibrary(Pr_Library * ap_from, Pr_Library * ap_to)
+int Pr_ImportLibrary(Pr_LibraryRef ap_from, Pr_Library * ap_to)
 {
     unsigned int l_i;
 

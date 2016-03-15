@@ -28,6 +28,7 @@ Pr_Logger * Pr_NewLogger(void)
 
     lp_out->entries = Pr_NewList();
     lp_out->sigUpdated = Pr_NewSignal();
+    lp_out->capacity = 0;
 
     if (lp_out->entries && lp_out->sigUpdated) return lp_out;
 
@@ -48,7 +49,7 @@ void Pr_DeleteLogger(Pr_Logger * ap_log)
     free(ap_log);
 }
 
-Pr_Signal * Pr_LogUpdated(Pr_Logger * ap_log)
+Pr_Signal * Pr_LogUpdated(Pr_LoggerRef ap_log)
 {
     return (ap_log) ? ap_log->sigUpdated : NULL;
 }
@@ -65,9 +66,11 @@ void Pr_WriteLog(Pr_Logger * ap_log, char * ap_txt)
 
     if (!Pr_PushBackListData(ap_log->entries, lp_ent)) return;
 
-    if (Pr_ListSize(ap_log->entries) > ap_log->capacity) {
-        Pr_DeleteString(Pr_FrontList(ap_log->entries));
-        Pr_PopFrontList(ap_log->entries);
+    if (Pr_ListSize(ap_log->entries) != 0) {
+        if (Pr_ListSize(ap_log->entries) > ap_log->capacity) {
+            Pr_DeleteString(Pr_FrontList(ap_log->entries));
+            Pr_PopFrontList(ap_log->entries);
+        }   
     }
     
     Pr_Emit(Pr_LogUpdated(ap_log), ap_txt);
@@ -101,7 +104,7 @@ void Pr_ClearLog_Slot(void * ap_obj, va_list ap_args)
 
 void Pr_SetLogCapacity(Pr_Logger * ap_log, unsigned long a_size)
 {
-    if (!ap_log || !a_size) return;
+    if (!ap_log && a_size >= 0) return;
 
     Pr_ClearLog(ap_log);
 

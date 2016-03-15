@@ -33,7 +33,7 @@ static pr_node_t * Pr_NewNode(void)
     return lp_out;
 }
 
-static pr_node_t * Pr_NodeAt(Pr_List * ap_list, unsigned int a_n)
+static pr_node_t * Pr_NodeAt(Pr_ListRef ap_list, unsigned int a_n)
 {
     pr_node_t * lp_out = NULL;
 
@@ -114,7 +114,7 @@ void Pr_PopFrontList(Pr_List * ap_list)
     }
 }
 
-void * Pr_ListAt(Pr_List * ap_list, unsigned int a_n)
+void * Pr_ListAt(Pr_ListRef ap_list, unsigned int a_n)
 {
     void * lp_out = NULL;
     pr_node_t * lp_nd = Pr_NodeAt(ap_list,a_n);
@@ -126,7 +126,7 @@ void * Pr_ListAt(Pr_List * ap_list, unsigned int a_n)
     return lp_out;
 }
 
-unsigned int Pr_ListSize(Pr_List * ap_list)
+unsigned int Pr_ListSize(Pr_ListRef ap_list)
 {
     return (ap_list) ? ap_list->size : 0;
 }
@@ -169,12 +169,12 @@ void Pr_PopBackList(Pr_List * ap_list)
     }
 }
 
-void * Pr_FrontList(Pr_List * ap_list)
+void * Pr_FrontList(Pr_ListRef ap_list)
 {
     return Pr_ListAt(ap_list,0);
 }
 
-void * Pr_BackList(Pr_List * ap_list)
+void * Pr_BackList(Pr_ListRef ap_list)
 {
     void * lp_out = NULL;
     unsigned int l_size = ap_list->size;
@@ -199,7 +199,7 @@ int Pr_SetListDataAt(Pr_List * ap_list, unsigned int a_n, void * ap_data)
     return code;
 }
 
-int Pr_GetListDataPosition(Pr_List * ap_list, void * ap_data)
+int Pr_GetListDataPosition(Pr_ListRef ap_list, void * ap_data)
 {
     int l_out = -1;
 
@@ -279,7 +279,7 @@ int Pr_PushBackListData(Pr_List * ap_list, void * ap_data)
     return l_code;
 }
 
-Pr_ListIterator Pr_FrontListIterator(Pr_List * ap_list)
+Pr_ListIterator Pr_FrontListIterator(Pr_ListRef ap_list)
 {
     return ap_list ? ap_list->first : NULL;
 }
@@ -312,7 +312,7 @@ void Pr_SwapListElements(Pr_ListIterator ap_1, Pr_ListIterator ap_2)
     ap_2->data = lp_tmp;
 }
 
-Pr_List * Pr_CopyList(Pr_List * ap_list)
+Pr_List * Pr_CopyList(Pr_ListRef ap_list)
 {
     Pr_List * lp_out;
     Pr_ListIterator lp_it;

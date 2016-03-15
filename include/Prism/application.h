@@ -15,14 +15,13 @@
 #include <Prism/sigslot.h>
 #include <Prism/library.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PR_CPP_PROTECT_ON
 
     extern PRISM_API int    Pr_InitApp(void);
     extern PRISM_API int    Pr_ExecApp(void);
     extern PRISM_API int    Pr_ImportLibApp(Pr_Library *);
+    extern PRISM_API int    Pr_RegisterWindow(Pr_WindowRef);
+    extern PRISM_API void   Pr_UnregisterWindow(Pr_WindowRef);
 
     /**< signals >*/
 
@@ -38,8 +37,6 @@ extern "C"
 
     PR_SLOT_EXTERN_API(Pr_QuitApp)(void);
 
-#ifdef __cplusplus
-}
-#endif
+PR_CPP_PROTECT_OFF
 
 #endif /* H_PRISM_APPLICATION_INCLUDED */

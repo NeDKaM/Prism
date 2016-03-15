@@ -10,11 +10,9 @@
 #define H_PRISM_STRING_INCLUDED
 
 #include <Prism/config.h>
+#include <Prism/types.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PR_CPP_PROTECT_ON
 
 	typedef enum pr_strcmpvalue_t Pr_Strcmpvalue;
 	enum pr_strcmpvalue_t {
@@ -36,34 +34,32 @@ extern "C"
         PR_STRING_RESULTCOUNT
 	};
 
-	typedef struct pr_string_t Pr_String;
+	PR_STRUCT(pr_string_t, Pr_String);
 
     extern PRISM_API Pr_String *    Pr_NewString(void);
-    extern PRISM_API Pr_String *    Pr_NewStringStr(char const * ap_str);
-    extern PRISM_API void           Pr_DeleteString(Pr_String * ap_this);
-    extern PRISM_API Pr_Strresult   Pr_SetStringStr(Pr_String * ap_this, char const * ap_str);
-    extern PRISM_API Pr_Strresult   Pr_SetStringChar(Pr_String * ap_this, char a_c);
-    extern PRISM_API Pr_Strresult   Pr_SetString(Pr_String * ap_this, Pr_String * ap_str);
-    extern PRISM_API Pr_Strcmpvalue Pr_StringSizeCmp(Pr_String * ap_str1, Pr_String * ap_str2);
-    extern PRISM_API Pr_Strresult   Pr_StringStrAppend(Pr_String * ap_this, char const * ap_str);
-    extern PRISM_API Pr_Strresult   Pr_StringCharAppend(Pr_String * ap_this, char a_c);
-    extern PRISM_API Pr_String *    Pr_StringAppendResult(char const * ap_str1, char const * ap_str2);
-    extern PRISM_API Pr_Strresult   Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, char const * ap_str);
-    extern PRISM_API Pr_Strresult   Pr_StringCharInsert(Pr_String * ap_this, unsigned long a_at, char a_c);
-    extern PRISM_API Pr_Strresult   Pr_StringCut(Pr_String * ap_this, unsigned long a_at);
-    extern PRISM_API Pr_String *    Pr_StringSubStr(Pr_String * ap_str, unsigned long a_begin, unsigned long a_end);
-    extern PRISM_API Pr_String *    Pr_StringNSubStr(Pr_String * ap_str, unsigned long a_at, unsigned long a_size);
-    extern PRISM_API Pr_Strresult   Pr_StringRemove(Pr_String * ap_this, unsigned long a_begin, unsigned long a_end);
-    extern PRISM_API Pr_Strresult   Pr_StringNRemove(Pr_String * ap_this, unsigned long a_at, unsigned long a_size);
-    extern PRISM_API void           Pr_StringClear(Pr_String * ap_this);
-    extern PRISM_API unsigned long  Pr_StringSize(Pr_String * ap_this);
-    extern PRISM_API unsigned long  Pr_StringCapacity(Pr_String * ap_this);
-    extern PRISM_API char *         Pr_StringCStr(Pr_String * ap_this);
-    extern PRISM_API unsigned long  Pr_StringReplace(Pr_String * ap_this, char const * ap_str, char const * ap_by);
-    extern PRISM_API long           Pr_StringFind(Pr_String * ap_this, char const * ap_str);
+    extern PRISM_API Pr_String *    Pr_NewStringStr(Pr_CStrRef);
+    extern PRISM_API void           Pr_DeleteString(Pr_String *);
+    extern PRISM_API Pr_Strresult   Pr_SetStringStr(Pr_String *, Pr_CStrRef);
+    extern PRISM_API Pr_Strresult   Pr_SetStringChar(Pr_String *, char);
+    extern PRISM_API Pr_Strresult   Pr_SetString(Pr_String *, Pr_String *);
+    extern PRISM_API Pr_Strcmpvalue Pr_StringSizeCmp(Pr_StringRef, Pr_StringRef);
+    extern PRISM_API Pr_Strresult   Pr_StringStrAppend(Pr_String *, Pr_CStrRef);
+    extern PRISM_API Pr_Strresult   Pr_StringCharAppend(Pr_String *, char);
+    extern PRISM_API Pr_String *    Pr_StringAppendResult(Pr_CStrRef, Pr_CStrRef);
+    extern PRISM_API Pr_Strresult   Pr_StringStrInsert(Pr_String *, unsigned long, Pr_CStrRef);
+    extern PRISM_API Pr_Strresult   Pr_StringCharInsert(Pr_String *, unsigned long, char);
+    extern PRISM_API Pr_Strresult   Pr_StringCut(Pr_String *, unsigned long);
+    extern PRISM_API Pr_String *    Pr_StringSubStr(Pr_String *, unsigned long, unsigned long);
+    extern PRISM_API Pr_String *    Pr_StringNSubStr(Pr_String *, unsigned long, unsigned long);
+    extern PRISM_API Pr_Strresult   Pr_StringRemove(Pr_String *, unsigned long, unsigned long);
+    extern PRISM_API Pr_Strresult   Pr_StringNRemove(Pr_String *, unsigned long, unsigned long);
+    extern PRISM_API void           Pr_StringClear(Pr_String *);
+    extern PRISM_API unsigned long  Pr_StringSize(Pr_StringRef);
+    extern PRISM_API unsigned long  Pr_StringCapacity(Pr_StringRef);
+    extern PRISM_API Pr_CStrRef     Pr_StringCStr(Pr_StringRef);
+    extern PRISM_API unsigned long  Pr_StringReplace(Pr_String *, Pr_CStrRef, Pr_CStrRef);
+    extern PRISM_API long           Pr_StringFind(Pr_StringRef, Pr_CStrRef);
 
-#ifdef __cplusplus
-}
-#endif
+PR_CPP_PROTECT_OFF
 
 #endif /* H_PRISM_STRING_INCLUDED */

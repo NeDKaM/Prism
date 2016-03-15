@@ -11,17 +11,14 @@
 
 #include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PR_CPP_PROTECT_ON
     
     /* Utility functions ;) */
     #define Pr_ArrayAt(a_array,a_at)  (a_array).list[(a_at)]
     #define Pr_ArraySize(a_array)     (a_array).size
     #define Pr_ArrayCapacity(a_array) (a_array).capacity
 
-    #define PR_ARRAY(a_Type) \
+    #define Pr_Array(a_Type) \
         struct { \
             a_Type * list; \
             unsigned long size; \
@@ -143,8 +140,6 @@ extern "C"
             } \
         } while (0)
 
-#ifdef __cplusplus
-}
-#endif
+PR_CPP_PROTECT_OFF
 
 #endif

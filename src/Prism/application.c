@@ -14,13 +14,15 @@
 #include <Prism/string.h>
 #include <Prism/var.h>
 #include <stdio.h>
+#include <Prism/logger.h>
 
 struct {
     int initialized;
     Pr_List * wndlist;
     Pr_Library * library;
-    PR_ARRAY(Pr_Signal *) signals;
+    Pr_Array(Pr_Signal *) signals;
     SDL_Event input;
+    Pr_Logger * log;
 } static s_app = { 0, NULL, NULL, NULL };
 
 enum {
@@ -153,16 +155,15 @@ static void s_Pr_UpdateApp(void)
 
             default:
                 break;
-            }
+        }
     }
 }
-
-
-
 
 static void s_Pr_QuitApp(void)
 {
     unsigned int l_i = 0;
+
+    Pr_DeleteLogger(s_app.log);
 
     while (Pr_ListSize(s_app.wndlist)) {
         Pr_DeleteWindow(Pr_FrontList(s_app.wndlist));
@@ -189,7 +190,7 @@ int Pr_ExecApp(void)
 
     Pr_Emit(Pr_AppStarted());
 
-    while (s_app.initialized) {
+    while (s_app.initialized && Pr_ListSize(s_app.wndlist)) {
         s_Pr_UpdateApp();
     }
 
@@ -303,6 +304,8 @@ int Pr_InitApp(void)
 
 	if (s_app.initialized) return 1;
 
+    s_app.log = Pr_NewLogger();
+
 	if (SDL_Init(SDL_INIT_VIDEO)) return 0;
 
     s_app.wndlist = Pr_NewList();
@@ -314,6 +317,7 @@ int Pr_InitApp(void)
         return 1;
     }
 
+    Pr_DeleteLogger(s_app.log);
     Pr_DeleteList(s_app.wndlist);
     s_app.wndlist = NULL;
     Pr_ClearArray(s_app.signals);

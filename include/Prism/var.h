@@ -15,23 +15,17 @@
 #include <Prism/class.h>
 #include <Prism/string.h>
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+PR_CPP_PROTECT_ON
 
-	typedef struct pr_var_t Pr_Variable;
-    struct pr_var_t {
+	PR_STRUCT(pr_variable_t, Pr_Variable) {
         Pr_String * name;
-        Pr_Class *  cls;
-        void * obj;
+        Pr_ClassRef cls;
+        void *      obj;
     };
 
-    Pr_Variable *   Pr_NewVariable(char const *, Pr_Class *);
+    Pr_Variable *   Pr_NewVariable(char const *, Pr_ClassRef);
     void            Pr_DeleteVariable(Pr_Variable *);
 
-#ifdef __cplusplus
-}
-#endif
+PR_CPP_PROTECT_OFF
 
 #endif /* H_PRISM_VAR_INCLUDED */
