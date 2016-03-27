@@ -18,6 +18,11 @@
 	#define PRISM_API PRISM_API_IMPORT
 #endif
 
+#if defined(PRISM_STATIC)
+    #undef  PRISM_API
+    #define PRISM_API /* static */
+#endif
+
 #ifdef __cplusplus
     #define PR_CPP_PROTECT_ON  extern "C" {
     #define PR_CPP_PROTECT_OFF }
