@@ -2,12 +2,14 @@
 #include <math.h>
 #include <string.h>
 
-static void s_Pr_MakeTransform3x3(Pr_Transform ap_tr, 
+pr_bool_t Pr_MakeTransform(Pr_Transform ap_tr, 
     float a_00, float a_01, float a_02, 
     float a_10, float a_11, float a_12,
     float a_20, float a_21, float a_22    
 )
 {
+    if (!ap_tr) return PR_FALSE;
+
     ap_tr[0]    = a_00;
     ap_tr[1]    = a_10;
     ap_tr[2]    = 0.f;
@@ -24,6 +26,8 @@ static void s_Pr_MakeTransform3x3(Pr_Transform ap_tr,
     ap_tr[13]   = a_12;
     ap_tr[14]   = 0.f;
     ap_tr[15]   = a_22;
+
+    return PR_TRUE;
 }
 
 pr_bool_t Pr_MakeTransformIdentity(Pr_Transform ap_transform)
@@ -65,7 +69,7 @@ pr_bool_t Pr_TransformInverse(Pr_TransformRef ap_src, Pr_Transform ap_dst)
     );
 
     if (l_det != 0.f) {
-        s_Pr_MakeTransform3x3(ap_dst,
+        Pr_MakeTransform(ap_dst,
             (ap_src[15] * ap_src[5] - ap_src[7] * ap_src[13]) / l_det,
             - (ap_src[15] * ap_src[4] - ap_src[7] * ap_src[12]) / l_det,
             (ap_src[13] * ap_src[4] - ap_src[5] * ap_src[12]) / l_det,
@@ -103,7 +107,7 @@ pr_bool_t Pr_TransformCombine(Pr_TransformRef ap_src, Pr_Transform ap_dst)
     lp_a = ap_dst;
     lp_b = ap_src;
 
-    s_Pr_MakeTransform3x3(ap_dst,
+    Pr_MakeTransform(ap_dst,
         lp_a[0] * lp_b[0]  + lp_a[4] * lp_b[1]  + lp_a[12] * lp_b[3],
         lp_a[0] * lp_b[4]  + lp_a[4] * lp_b[5]  + lp_a[12] * lp_b[7],
         lp_a[0] * lp_b[12] + lp_a[4] * lp_b[13] + lp_a[12] * lp_b[15],
@@ -124,7 +128,7 @@ void Pr_TranslateTransform(Pr_Transform ap_transform, float a_x, float a_y)
 
     if (!ap_transform) return;
 
-    s_Pr_MakeTransform3x3(lp_translation,1.f,0.f,a_x,0.f,1.f,a_y,0.f,0.f,1.f);
+    Pr_MakeTransform(lp_translation,1.f,0.f,a_x,0.f,1.f,a_y,0.f,0.f,1.f);
 
     Pr_TransformCombine(lp_translation,ap_transform);
 }
@@ -143,13 +147,13 @@ void Pr_RotateTransform(Pr_Transform ap_transform, float a_angle, Pr_Vector2Ref(
     l_sin = sinf(l_rad);
 
     if (ap_center) {
-        s_Pr_MakeTransform3x3(lp_rotation,
+        Pr_MakeTransform(lp_rotation,
             l_cos, -l_sin, ap_center->x * (1.f - l_cos) + ap_center->y * l_sin,
             l_sin, l_cos, ap_center->y * (1.f - l_cos) - ap_center->x * l_sin,
             0.f, 0.f, 1.f
         );
     } else {
-        s_Pr_MakeTransform3x3(lp_rotation,
+        Pr_MakeTransform(lp_rotation,
             l_cos, -l_sin, 0.f,
             l_sin, l_cos, 0.f,
             0.f, 0.f, 1.f
@@ -165,7 +169,7 @@ void Pr_ScaleTransform(Pr_Transform ap_transform, float a_x, float a_y)
 
     if (!ap_transform) return;
 
-    s_Pr_MakeTransform3x3(lp_scaling,
+    Pr_MakeTransform(lp_scaling,
         a_x, 0.f, 0.f,
         0.f, a_y, 0.f,
         0.f, 0.f, 1.f
@@ -198,7 +202,7 @@ pr_bool_t Pr_GetTransformableTransform(Pr_Transformable * ap_trsf, Pr_Transform 
         float l_tx     = -ap_trsf->origin.x * l_sxc - ap_trsf->origin.y * l_sys + ap_trsf->position.x;
         float l_ty     =  ap_trsf->origin.x * l_sxs - ap_trsf->origin.y * l_syc + ap_trsf->position.y;
 
-        s_Pr_MakeTransform3x3(ap_trsf->transform, 
+        Pr_MakeTransform(ap_trsf->transform, 
             l_sxc,  l_sys,  l_tx, 
             -l_sxs, l_syc,  l_ty,
              0.f,   0.f,    1.f

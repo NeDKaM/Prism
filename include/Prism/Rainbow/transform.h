@@ -31,8 +31,10 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void           Pr_RotateTransform(Pr_Transform, float, Pr_Vector2Ref(float));
     extern PRISM_API void           Pr_ScaleTransform(Pr_Transform, float, float);
     extern PRISM_API pr_bool_t      Pr_CopyTransform(Pr_TransformRef, Pr_Transform);
+    extern PRISM_API pr_bool_t      Pr_MakeTransform(Pr_Transform, float, float, float, float, float, float, float, float, float);
 
     extern PRISM_API pr_bool_t      Pr_GetTransformableTransform(Pr_Transformable *, Pr_Transform);
+
 
 PR_CPP_PROTECT_OFF
 
