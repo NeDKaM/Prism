@@ -6,7 +6,8 @@
 #if defined(PRISM_SYSTEM_WINDOWS)
     #define GLEW_STATIC 
     #include <GL/glew.h>
-    /*#include <GL/GL.h>*/
 #endif
+
+#include <SDL2/SDL_opengl.h>
 
 #endif /* H_RAINBOW_OPENGL_INCLUDED */
