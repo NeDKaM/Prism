@@ -44,7 +44,7 @@ static Pr_Texture * s_Pr_NewEmptyTexture(pr_u32_t a_w, pr_u32_t a_h)
 
     if (a_w == 0 || a_h == 0) return NULL;
 
-    lp_out = malloc(sizeof(Pr_Texture));
+    lp_out = calloc(1, sizeof(Pr_Texture));
 
     if (!lp_out) return NULL;
 
@@ -195,7 +195,7 @@ void Pr_DeleteTexture(Pr_Texture * ap_tex)
 {
     if (!ap_tex) return;
 
-    glDeleteTextures(1, &((GLuint)ap_tex->textureId));
+    glDeleteTextures(1, (GLuint *)&ap_tex->textureId);
 
     free(ap_tex);
 }
