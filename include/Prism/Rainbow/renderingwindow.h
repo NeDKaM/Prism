@@ -15,6 +15,8 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void                   Pr_DeleteRndWindow(Pr_RenderingWindow *);
     extern PRISM_API Pr_WindowRef           Pr_GetRndWindowRef(Pr_RenderingWindowRef);
     extern PRISM_API Pr_RenderingTargetRef  Pr_GetRndWindowTargetRef(Pr_RenderingWindowRef);
+    
+    PR_SLOT_EXTERN_API(Pr_ClearRndWindow)(Pr_RenderingWindow *, Pr_ColorRef);
 
 PR_CPP_PROTECT_OFF
 
