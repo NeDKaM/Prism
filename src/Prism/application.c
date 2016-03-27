@@ -15,6 +15,7 @@
 #include <Prism/var.h>
 #include <stdio.h>
 #include <Prism/logger.h>
+#include <string.h>
 
 struct {
     int initialized;
@@ -121,13 +122,11 @@ void s_Pr_HandleWindowEvent(Pr_Window * ap_wnd)
 
 static void s_Pr_UpdateApp(void)
 {
-    while (SDL_PollEvent(&s_app.input)) {
-        Pr_ListIterator l_it;
+    Pr_ListIterator l_it;
 
+    while (SDL_PollEvent(&s_app.input)) {
         PR_LIST_FOREACH(s_app.wndlist, l_it) {
-            Pr_Window * lp_wnd = Pr_ListIteratorData(l_it);
-            s_Pr_HandleWindowEvent(lp_wnd);
-            Pr_Emit(Pr_WindowUpdated(lp_wnd));
+            s_Pr_HandleWindowEvent(Pr_ListIteratorData(l_it));
         }
 
         switch (s_app.input.type) {
@@ -156,6 +155,10 @@ static void s_Pr_UpdateApp(void)
             default:
                 break;
         }
+    }
+
+    PR_LIST_FOREACH(s_app.wndlist, l_it) {
+        Pr_Emit(Pr_WindowUpdated(Pr_ListIteratorData(l_it)));
     }
 }
 
@@ -204,6 +207,20 @@ static void * s_Pr_IntegerCons(void)
     return calloc(1,sizeof(long));
 }
 
+static void * s_Pr_FloatCons(void)
+{
+    float * lp_out = malloc(sizeof(float));
+    if (!lp_out) return NULL; 
+    *lp_out = 0.0f;
+    return lp_out;
+}
+
+static void s_Pr_FloatDel(void * ap_that)
+{
+    if (!ap_that) return;
+    free(ap_that);
+}
+
 static void s_Pr_IntergerDel(void * ap_that)
 {
     if (!ap_that) return;
@@ -234,19 +251,23 @@ static int s_Pr_LoadStdLibrary(void)
     Pr_Class *  lp_stringCls;
     Pr_Class *  lp_signalCls;
     Pr_Class *  lp_windowCls;
+    Pr_Class *  lp_floatCls;
     
     s_app.library = Pr_NewLibrary("PrAppLib");
 
     if (!s_app.library) return 0;
 
-    lp_integerCls = Pr_NewClass("PrInteger",s_Pr_IntegerCons,s_Pr_IntergerDel,NULL);
-    if (!Pr_RegisterClass(s_app.library,lp_integerCls)) l_err++;
+    lp_integerCls = Pr_NewClass("PrInteger", s_Pr_IntegerCons, s_Pr_IntergerDel, NULL);
+    if (!Pr_RegisterClass(s_app.library, lp_integerCls)) l_err++;
 
-    lp_stringCls = Pr_NewClass("PrString",Pr_NewString,Pr_DeleteString,NULL);
-    if (!Pr_RegisterClass(s_app.library,lp_stringCls)) l_err++;
+    lp_stringCls = Pr_NewClass("PrString", Pr_NewString, Pr_DeleteString, NULL);
+    if (!Pr_RegisterClass(s_app.library, lp_stringCls)) l_err++;
 
-    lp_signalCls = Pr_NewClass("PrSignal",Pr_NewSignal,Pr_DeleteSignal,NULL);
-    if (!Pr_RegisterClass(s_app.library,lp_signalCls)) l_err++;
+    lp_signalCls = Pr_NewClass("PrSignal", Pr_NewSignal, Pr_DeleteSignal, NULL);
+    if (!Pr_RegisterClass(s_app.library, lp_signalCls)) l_err++;
+
+    lp_floatCls  = Pr_NewClass("PrFloat", s_Pr_FloatCons, s_Pr_FloatDel, NULL);
+    if (!Pr_RegisterClass(s_app.library, lp_floatCls)) l_err++;
 
 #define PR_PARAMETER_CHECK(maincls,cls,s_var,i) if (!Pr_SetClassParameter((maincls), (cls), (s_var))) (i)++
 
@@ -274,7 +295,7 @@ static int s_Pr_LoadStdLibrary(void)
     PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "hidden", l_err);
     PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "restored", l_err);
     PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "shown", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "deleted", l_err);
+    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "onDelete", l_err);
     PR_PARAMETER_CHECK(lp_windowCls, lp_stringCls, "title", l_err);
     PR_PARAMETER_CHECK(lp_windowCls, lp_integerCls, "width", l_err);
     PR_PARAMETER_CHECK(lp_windowCls, lp_integerCls, "height", l_err);
@@ -306,7 +327,11 @@ int Pr_InitApp(void)
 
     s_app.log = Pr_NewLogger();
 
-	if (SDL_Init(SDL_INIT_VIDEO)) return 0;
+	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        Pr_DeleteLogger(s_app.log);
+        s_app.log = NULL;
+        return 0;
+    }
 
     s_app.wndlist = Pr_NewList();
     l_retSig = s_Pr_CreateSignals();
@@ -318,6 +343,7 @@ int Pr_InitApp(void)
     }
 
     Pr_DeleteLogger(s_app.log);
+    s_app.log = NULL;
     Pr_DeleteList(s_app.wndlist);
     s_app.wndlist = NULL;
     Pr_ClearArray(s_app.signals);
