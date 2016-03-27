@@ -23,6 +23,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void       Pr_RenderDrawSprite(Pr_Sprite *, Pr_RenderingTarget *, Pr_RenderingStatesRef);
     extern PRISM_API pr_bool_t  Pr_GetSpriteLocalBounds(Pr_SpriteRef, Pr_Rect(float) *);
     extern PRISM_API pr_bool_t  Pr_GetSpriteGlobalBounds(Pr_Sprite *, Pr_Rect(float) *);
+    extern PRISM_API void       Pr_SetSpritePosition(Pr_Sprite *, float, float);
 
 PR_CPP_PROTECT_OFF
 

@@ -1,4 +1,5 @@
 #include <Prism/Rainbow/sprite.h>
+#include <stdlib.h>
 
 static void s_Pr_UpdatePositions(Pr_Sprite * ap_spr) 
 {
@@ -43,7 +44,7 @@ void Pr_SetSpriteTexture(Pr_Sprite * ap_spr, Pr_TextureRef ap_tex, pr_bool_t a_u
 {
     if (!ap_spr || !ap_tex) return;
 
-    if (a_uptd || !ap_tex) {
+    if (a_uptd) {
         Pr_Rect(long)   l_rect;
         Pr_Vector2i     l_size;
 
@@ -88,17 +89,24 @@ void Pr_RenderDrawSprite(Pr_Sprite * ap_spr, Pr_RenderingTarget * ap_target, Pr_
     Pr_Transform        lp_tr;
     Pr_RenderingStates  l_states;
 
-    if (!ap_spr || !ap_target || !ap_states) return;
+    if (!ap_spr || !ap_target) return;
     if (!ap_spr->texture) return;
 
-    l_states.blenMode   = ap_states->blenMode;
-    l_states.shader     = ap_states->shader;
-    l_states.texture    = ap_states->texture;
-    Pr_CopyTransform(ap_states->transform, l_states.transform);
-    Pr_GetTransformableTransform(&ap_spr->transformable, lp_tr);
+    l_states.blenMode   = *Pr_BlendModeAlpha();
+    l_states.shader     = NULL;
+    l_states.texture    = NULL;
+    Pr_MakeTransformIdentity(l_states.transform);
 
-    Pr_TransformCombine(lp_tr, l_states.transform);
-    l_states.texture = ap_spr->texture;
+    if (ap_states) {
+        l_states.blenMode   = ap_states->blenMode;
+        l_states.shader     = ap_states->shader;
+        l_states.texture    = ap_states->texture;
+        Pr_CopyTransform(ap_states->transform, l_states.transform);
+        Pr_GetTransformableTransform(&ap_spr->transformable, lp_tr);
+        Pr_TransformCombine(lp_tr, l_states.transform);
+        l_states.texture = ap_spr->texture;
+    } 
+
     Pr_RndTargetDraw(ap_target, ap_spr->vertices, 4, PR_PRIMITIVE_TRIANGLESSTRIP, &l_states);
 }
 
@@ -126,4 +134,15 @@ pr_bool_t Pr_GetSpriteGlobalBounds(Pr_Sprite * ap_spr, Pr_Rect(float) * ap_dst)
     Pr_TransformRect(lp_tr, &l_rect, ap_dst);
 
     return PR_TRUE;
+}
+
+void Pr_SetSpritePosition(Pr_Sprite * ap_spr, float x, float y)
+{  
+    if (!ap_spr) return;
+
+    ap_spr->transformable.position.x = x;
+    ap_spr->transformable.position.y = y;
+
+    ap_spr->transformable.update        = PR_TRUE;
+    ap_spr->transformable.updateInverse = PR_TRUE;
 }
