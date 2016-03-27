@@ -6,7 +6,7 @@
 
 enum {
     PR_UPDATED = 0,
-    PR_DELETED,
+    PR_ONDELETE,
     PR_PAINTED,
 
     PR_SHOWN,
@@ -55,7 +55,7 @@ PR_SIG_IMPL(Pr_WindowFocusLost,     PR_FOCUS_LOST)
 PR_SIG_IMPL(Pr_WindowEntered,       PR_ENTER)
 PR_SIG_IMPL(Pr_WindowLeaved,        PR_LEAVE)
 PR_SIG_IMPL(Pr_WindowRestored,      PR_RESTORED)
-PR_SIG_IMPL(Pr_WindowDeleted,       PR_DELETED)
+PR_SIG_IMPL(Pr_WindowOnDelete,       PR_ONDELETE)
 PR_SIG_IMPL(Pr_WindowPainted,       PR_PAINTED)
 
 static int s_Pr_CreateWindowSignals(Pr_Window * ap_wnd)
@@ -114,9 +114,9 @@ void Pr_DeleteWindow(Pr_Window * ap_wnd)
     if (ap_wnd) {
         int l_i;
 
-        Pr_UnregisterWindow(ap_wnd);
+        Pr_Emit(Pr_WindowOnDelete(ap_wnd));
 
-        Pr_Emit(Pr_WindowDeleted(ap_wnd));
+        Pr_UnregisterWindow(ap_wnd);
 
         for (l_i = 0; l_i < PR_SIGNALS_COUNT; l_i++) {
             Pr_DeleteSignal(Pr_ArrayAt(ap_wnd->signals,l_i));
@@ -219,8 +219,6 @@ void Pr_HideWindow(Pr_Window * ap_wnd)
 PR_SLOT_IMPL(Pr_HideWindow_Slot)
 {
     Pr_HideWindow(ap_obj);
-
-    Pr_Emit(Pr_WindowHidden(ap_obj));
 }
 
 void Pr_ShowWindow(Pr_Window * ap_wnd)
@@ -235,7 +233,4 @@ void Pr_ShowWindow(Pr_Window * ap_wnd)
 PR_SLOT_IMPL(Pr_ShowWindow_Slot)
 {
     Pr_ShowWindow(ap_obj);
-
-    Pr_Emit(Pr_WindowShown(ap_obj));
 }
-

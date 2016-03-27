@@ -40,14 +40,13 @@ PR_CPP_PROTECT_ON
     extern PRISM_API PR_SIGNAL(Pr_WindowPainted)(Pr_WindowRef);         /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowLeaved)(Pr_WindowRef);          /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowEntered)(Pr_WindowRef);         /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_WindowDeleted)(Pr_WindowRef);         /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowOnDelete)(Pr_WindowRef);        /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowFocusGained)(Pr_WindowRef);     /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowFocusLost)(Pr_WindowRef);       /**< (void) >*/
 
     /**< slots >*/
      
     PR_SLOT_EXTERN_API(Pr_SetWindowTitle)(Pr_Window *, char const *); 
-    PR_SLOT_EXTERN_API(Pr_CloseWindow)(Pr_Window *);
     PR_SLOT_EXTERN_API(Pr_SetWindowPosition)(Pr_Window *, int, int);
     PR_SLOT_EXTERN_API(Pr_SetWindowSize)(Pr_Window *, unsigned int, unsigned int);
     PR_SLOT_EXTERN_API(Pr_SetWindowMinimized)(Pr_Window *);
