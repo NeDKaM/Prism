@@ -47,8 +47,6 @@ static void s_Pr_ApplyCurrentView(Pr_RenderingTarget * ap_target)
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(ap_target->view.transform);
     glMatrixMode(GL_MODELVIEW);
-
-    ap_target->cache.viewChanged = PR_FALSE;
 }
 
 static void s_Pr_ApplyTexture(Pr_RenderingTarget * ap_target, Pr_TextureRef ap_tex)
@@ -103,7 +101,7 @@ void Pr_ClearRndTarget(Pr_RenderingTarget * ap_target, Pr_ColorRef ap_color)
 {
     if (!ap_target) return;
 
-    s_Pr_ApplyTexture(ap_target,NULL);
+    //s_Pr_ApplyTexture(ap_target,NULL);
 
     if (ap_color) {
         glClearColor(ap_color->r / 255.f, 
@@ -112,7 +110,7 @@ void Pr_ClearRndTarget(Pr_RenderingTarget * ap_target, Pr_ColorRef ap_color)
             ap_color->a / 255.f
         );
     } else {
-        glClearColor(0.f,0.f,0.f,1.f);
+        glClearColor(1.f,1.f,1.f,1.f);
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -147,7 +145,8 @@ void Pr_SetRndTargetView(Pr_RenderingTarget * ap_target, Pr_ViewRef ap_view)
     if (!ap_target || !ap_view) return;
 
     memcpy(&ap_target->view,ap_view,sizeof(Pr_View));
-    ap_target->cache.viewChanged = PR_TRUE;
+    
+    s_Pr_ApplyCurrentView(ap_target);
 }
 
 void Pr_ResetGLStates(Pr_RenderingTarget * ap_target)
@@ -269,10 +268,6 @@ void Pr_RndTargetDraw(
         }
     } else {
         s_Pr_ApplyTransform(l_states.transform);
-    }
-
-    if (ap_target->cache.viewChanged) {
-        s_Pr_ApplyCurrentView(ap_target);
     }
 
     if (!Pr_BlendModeEquals(&l_states.blenMode,&ap_target->cache.oldBlendMode)) {

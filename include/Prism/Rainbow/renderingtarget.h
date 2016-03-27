@@ -30,7 +30,6 @@ PR_CPP_PROTECT_ON
             pr_u32_t        oldTextureId;
             Pr_BlendMode    oldBlendMode;
             pr_bool_t       statesSet;
-            pr_bool_t       viewChanged;
             pr_bool_t       useVertexCache;
         }           cache;
         Pr_View     defaultView;
