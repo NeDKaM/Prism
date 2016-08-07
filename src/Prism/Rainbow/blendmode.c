@@ -1,5 +1,10 @@
 #include <Prism/Rainbow/blendmode.h>
 
+Pr_BlendModeRef Pr_BlendModeDefault(void)
+{
+    return Pr_BlendModeAlpha();
+}
+
 Pr_BlendModeRef Pr_BlendModeAlpha(void)
 {
     Pr_BlendModeRef lp_out;

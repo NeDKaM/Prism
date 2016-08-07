@@ -37,6 +37,8 @@ PR_CPP_PROTECT_ON
         Pr_BlendModeEquation    alphaEquation;
     };
 
+    extern PRISM_API Pr_BlendModeRef    Pr_BlendModeDefault(void);
+
     extern PRISM_API Pr_BlendModeRef    Pr_BlendModeAlpha(void);
     extern PRISM_API Pr_BlendModeRef    Pr_BlendModeAdd(void);
     extern PRISM_API Pr_BlendModeRef    Pr_BlendModeMultiply(void);
