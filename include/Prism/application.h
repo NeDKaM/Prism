@@ -12,16 +12,15 @@
 #define H_PRISM_APPLICATION_INCLUDED
 
 #include <Prism/config.h>
+#include <Prism/types.h>
 #include <Prism/sigslot.h>
-#include <Prism/library.h>
 
 PR_CPP_PROTECT_ON
 
-    extern PRISM_API int    Pr_InitApp(void);
-    extern PRISM_API int    Pr_ExecApp(void);
-    extern PRISM_API int    Pr_ImportLibApp(Pr_Library *);
-    extern PRISM_API int    Pr_RegisterWindow(Pr_WindowRef);
-    extern PRISM_API void   Pr_UnregisterWindow(Pr_WindowRef);
+    extern PRISM_API pr_bool_t  Pr_InitApp(void);
+    extern PRISM_API int        Pr_ExecApp(void);
+    extern PRISM_API pr_bool_t  Pr_RegisterWindow(Pr_WindowRef);
+    extern PRISM_API void       Pr_UnregisterWindow(Pr_WindowRef);
 
     /**< signals >*/
 
@@ -29,7 +28,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API PR_SIGNAL(Pr_KeyUp)(void);           /**< (int) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseButtonDown)(void); /**< (int) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseButtonUp)(void);   /**< (int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_MouseMoved)(void);      /**< (int,int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseMoved)(void);      /**< (int, int) >*/
     extern PRISM_API PR_SIGNAL(Pr_AppStarted)(void);      /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_AppQuitted(void));      /**< (void) >*/
 
