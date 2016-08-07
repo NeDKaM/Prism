@@ -41,6 +41,15 @@ Pr_Signal * Pr_NewSignal(void)
 void Pr_DeleteSignal(Pr_Signal * ap_sig)
 {
     if (ap_sig) {
+        Pr_ListIterator lp_it;
+
+        PR_LIST_FOREACH(ap_sig->slots, lp_it) {
+            Pr_Connection * lp_tmp = Pr_ListIteratorData(lp_it);
+            if (lp_tmp) {
+                free(lp_tmp);
+            }
+        }
+
         Pr_DeleteList(ap_sig->slots);
         free(ap_sig);
     }
@@ -53,11 +62,11 @@ void Pr_Emit(Pr_SignalRef ap_sig, ...)
     if (ap_sig) {
         Pr_ListIterator lp_it;
 
-        va_start(lp_args,ap_sig);
+        va_start(lp_args, ap_sig);
 
-        PR_LIST_FOREACH(ap_sig->slots,lp_it) {
+        PR_LIST_FOREACH(ap_sig->slots, lp_it) {
             Pr_Connection * lp_c = Pr_ListIteratorData(lp_it);
-            lp_c->slot(lp_c->obj,lp_args);
+            lp_c->slot(lp_c->obj, lp_args);
         }
 
         va_end(lp_args);
@@ -70,7 +79,7 @@ int Pr_Connect(Pr_Signal * ap_sig, void * ap_to, Pr_Slot ap_slot)
 
     if (!ap_sig || !ap_slot) return 0; 
 
-    lp_con = malloc(sizeof(lp_con));
+    lp_con = malloc(sizeof(Pr_Connection));
     if (!lp_con) return 0;
 
     lp_con->obj = ap_to;

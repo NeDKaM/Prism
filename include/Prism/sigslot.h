@@ -25,7 +25,7 @@ PR_CPP_PROTECT_ON
 	extern PRISM_API void           Pr_Emit(Pr_SignalRef, ...);
 
 #define PR_SIGNAL(name)             Pr_Signal * name
-#define PR_SLOT(name)               void name(void *, va_list); \
+#define PR_SLOT(name)               void name##_Slot(void *, va_list); \
                                     void name
 #define PR_SLOT_EXTERN_API(name)    extern PRISM_API void name##_Slot(void *, va_list); \
                                     extern PRISM_API void name
