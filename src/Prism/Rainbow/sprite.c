@@ -3,7 +3,7 @@
 
 static void s_Pr_UpdatePositions(Pr_Sprite * ap_spr) 
 {
-    Pr_Rect(float) l_rect;
+    Pr_FloatRect l_rect;
 
     Pr_GetSpriteLocalBounds(ap_spr, &l_rect);
 
@@ -40,28 +40,34 @@ static void s_Pr_UpdateTexCoords(Pr_Sprite * ap_spr)
     ap_spr->vertices[3].texCoords.y = l_bottom;
 }
 
-void Pr_SetSpriteTexture(Pr_Sprite * ap_spr, Pr_TextureRef ap_tex, pr_bool_t a_uptd)
+static void s_Pr_InitVertices(Pr_Sprite * ap_spr)
 {
-    if (!ap_spr || !ap_tex) return;
+    int l_i;
+    Pr_Vector2f pos = {0.f, 0.f};
+    Pr_Color color = {255, 255, 255, 255};
 
-    if (a_uptd) {
-        Pr_Rect(long)   l_rect;
-        Pr_Vector2i     l_size;
-
-        Pr_GetTextureSize(ap_tex, &l_size);
-
-        l_rect.x        = 0;
-        l_rect.y        = 0;
-        l_rect.width    = l_size.x;
-        l_rect.height   = l_size.y; 
-
-        Pr_SetSpriteSrcRect(ap_spr, &l_rect);
+    for (l_i=0 ; l_i<4 ; l_i++) {
+        ap_spr->vertices[l_i].color     = color;
+        ap_spr->vertices[l_i].position  = pos;
+        ap_spr->vertices[l_i].texCoords = pos;
     }
-
-    ap_spr->texture = ap_tex;
 }
 
-void Pr_SetSpriteSrcRect(Pr_Sprite * ap_spr, Pr_RectRef(long) ap_rect)
+void Pr_SetSpriteTexture(Pr_Sprite * ap_spr, Pr_TextureRef ap_tex, pr_bool_t a_uptd)
+{
+    if (!ap_spr) return;
+
+    Pr_InitTransformable(&ap_spr->transformable);
+    s_Pr_InitVertices(ap_spr);
+
+    ap_spr->texture = ap_tex;
+
+    if (a_uptd) {
+        Pr_SetSpriteSrcRect(ap_spr, NULL);
+    }
+}
+
+void Pr_SetSpriteSrcRect(Pr_Sprite * ap_spr, Pr_IntRectRef ap_rect)
 {
     if (!ap_spr) return;
 
@@ -94,23 +100,21 @@ void Pr_RenderDrawSprite(Pr_Sprite * ap_spr, Pr_RenderingTarget * ap_target, Pr_
 
     l_states.blenMode   = *Pr_BlendModeAlpha();
     l_states.shader     = NULL;
-    l_states.texture    = NULL;
+    l_states.texture    = ap_spr->texture;
     Pr_MakeTransformIdentity(l_states.transform);
 
     if (ap_states) {
         l_states.blenMode   = ap_states->blenMode;
         l_states.shader     = ap_states->shader;
-        l_states.texture    = ap_states->texture;
-        Pr_CopyTransform(ap_states->transform, l_states.transform);
-        Pr_GetTransformableTransform(&ap_spr->transformable, lp_tr);
-        Pr_TransformCombine(lp_tr, l_states.transform);
-        l_states.texture = ap_spr->texture;
     } 
 
-    Pr_RndTargetDraw(ap_target, ap_spr->vertices, 4, PR_PRIMITIVE_TRIANGLESSTRIP, &l_states);
+    Pr_GetTransformableTransform(&ap_spr->transformable, lp_tr);
+    Pr_TransformCombine(l_states.transform, lp_tr);
+
+    Pr_RndTargetDraw(ap_target, ap_spr->vertices, 4, PR_PRIMITIVE_TRIANGLESTRIP, &l_states);
 }
 
-pr_bool_t Pr_GetSpriteLocalBounds(Pr_SpriteRef ap_spr, Pr_Rect(float) * ap_dst)
+pr_bool_t Pr_GetSpriteLocalBounds(Pr_SpriteRef ap_spr, Pr_FloatRect * ap_dst)
 {
     if (!ap_spr || !ap_dst) return PR_FALSE;
 
@@ -122,10 +126,10 @@ pr_bool_t Pr_GetSpriteLocalBounds(Pr_SpriteRef ap_spr, Pr_Rect(float) * ap_dst)
     return PR_TRUE;
 }
 
-pr_bool_t Pr_GetSpriteGlobalBounds(Pr_Sprite * ap_spr, Pr_Rect(float) * ap_dst)
+pr_bool_t Pr_GetSpriteGlobalBounds(Pr_Sprite * ap_spr, Pr_FloatRect * ap_dst)
 {
     Pr_Transform    lp_tr;
-    Pr_Rect(float)  l_rect;
+    Pr_FloatRect    l_rect;
 
     if (!ap_spr || !ap_dst) return PR_FALSE;
 
@@ -136,13 +140,9 @@ pr_bool_t Pr_GetSpriteGlobalBounds(Pr_Sprite * ap_spr, Pr_Rect(float) * ap_dst)
     return PR_TRUE;
 }
 
-void Pr_SetSpritePosition(Pr_Sprite * ap_spr, float x, float y)
+void Pr_SetSpritePosition(Pr_Sprite * ap_spr, float a_x, float a_y)
 {  
     if (!ap_spr) return;
 
-    ap_spr->transformable.position.x = x;
-    ap_spr->transformable.position.y = y;
-
-    ap_spr->transformable.update        = PR_TRUE;
-    ap_spr->transformable.updateInverse = PR_TRUE;
+    Pr_SetTransformablePosition(&ap_spr->transformable, a_x, a_y);
 }
