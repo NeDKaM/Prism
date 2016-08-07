@@ -16,10 +16,10 @@ PR_CPP_PROTECT_ON
     enum pr_primitypetype_t {
         PR_PRIMITIVE_POINTS = 0,
         PR_PRIMITIVE_LINES,
-        PR_PRIMITIVE_LINESSTRIP,
+        PR_PRIMITIVE_LINESTRIP,
         PR_PRIMITIVE_TRIANGLES,
-        PR_PRIMITIVE_TRIANGLESSTRIP,
-        PR_PRIMITIVE_TRIANGLESFAN,
+        PR_PRIMITIVE_TRIANGLESTRIP,
+        PR_PRIMITIVE_TRIANGLEFAN,
         PR_PRIMITIVE_QUADS
     };
 
@@ -31,13 +31,14 @@ PR_CPP_PROTECT_ON
             Pr_BlendMode    oldBlendMode;
             pr_bool_t       statesSet;
             pr_bool_t       useVertexCache;
+            pr_bool_t       viewChanged;
         }           cache;
         Pr_View     defaultView;
         Pr_View     view;
         Pr_Vector2i size;
     };
 
-    extern PRISM_API pr_bool_t  Pr_GetRndTargetViewport(Pr_RenderingTargetRef, Pr_ViewRef, Pr_Recti *);
+    extern PRISM_API pr_bool_t  Pr_GetRndTargetViewport(Pr_RenderingTargetRef, Pr_ViewRef, Pr_IntRect *);
     extern PRISM_API void       Pr_ClearRndTarget(Pr_RenderingTarget *, Pr_ColorRef);
     extern PRISM_API pr_bool_t  Pr_MapPixelToCoord(Pr_RenderingTargetRef, Pr_Vector2Ref(long), Pr_Vector2f *);
     extern PRISM_API pr_bool_t  Pr_MapCoordToPixel(Pr_RenderingTargetRef, Pr_Vector2Ref(float), Pr_Vector2i *);
