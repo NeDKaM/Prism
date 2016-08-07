@@ -38,33 +38,31 @@ void Pr_SetViewRotation(Pr_View * ap_view, float a_degrees)
     ap_view->isInvTransformUpdated  = PR_FALSE;
 }
 
-void Pr_ResetView(Pr_View * ap_view, Pr_RectRef(float) ap_rect)
+void Pr_ResetView(Pr_View * ap_view, Pr_FloatRectRef ap_rect)
 {
     if (!ap_view) return;
+
+    ap_view->rotation = 0.f;
 
     ap_view->isTransformUpdated     = PR_FALSE;
     ap_view->isInvTransformUpdated  = PR_FALSE;
 
-    Pr_MakeTransformIdentity(ap_view->transform);
-
-    ap_view->viewport.x         = 0.f;
-    ap_view->viewport.y         = 0.f;
-    ap_view->viewport.width     = 1.f;
-    ap_view->viewport.height    = 1.f;
-
-    ap_view->rotation = 0.f;
-
     if (!ap_rect) { /* sets default view */
         ap_view->center.x           = 0.f;
         ap_view->center.y           = 0.f;
-        ap_view->size.x             = 0.f;
-        ap_view->size.y             = 0.f;
-        ap_view->rotation           = 0.f;
+        ap_view->size.x             = 1000.f;
+        ap_view->size.y             = 1000.f;
+        ap_view->viewport.x         = 0.f;
+        ap_view->viewport.y         = 0.f;
+        ap_view->viewport.width     = 1.f;
+        ap_view->viewport.height    = 1.f;
+        Pr_MakeTransformIdentity(ap_view->transform);
+        Pr_MakeTransformIdentity(ap_view->inverseTransform);
         return;
     }
 
     ap_view->center.x   = ap_rect->x + ap_rect->width * .5f;
-    ap_view->center.y   = ap_rect->y + ap_rect->height *.5f;
+    ap_view->center.y   = ap_rect->y + ap_rect->height * .5f;
     ap_view->size.x     = ap_rect->width;
     ap_view->size.y     = ap_rect->height;
 }
@@ -86,15 +84,30 @@ pr_bool_t Pr_GetViewTransform(Pr_View * ap_view, Pr_Transform ap_dst)
         float d = -b * ap_view->center.y;
 
         Pr_MakeTransform(ap_view->transform, 
-            a * l_cosine, a * l_sine, a * tx + c,
-            -b * l_sine, b * l_cosine, b * ty + d,
-            0.f, 0.f, 1.f
+            a * l_cosine,   a * l_sine,     a * tx + c,
+            -b * l_sine,    b * l_cosine,   b * ty + d,
+            0.f,            0.f,            1.f
         );
 
         ap_view->isTransformUpdated = PR_TRUE;
     }
 
-    memcpy(ap_dst, ap_view->transform, 16 * sizeof(float));
+    Pr_CopyTransform(ap_view->transform, ap_dst);
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_GetViewInverseTransform(Pr_View * ap_view, Pr_Transform ap_dst)
+{
+    if (!ap_view || !ap_dst) return PR_FALSE;
+
+    if (!ap_view->isInvTransformUpdated) {
+        Pr_GetViewTransform(ap_view, ap_view->transform);
+        Pr_TransformInverse(ap_view->transform, ap_view->inverseTransform);
+        ap_view->isInvTransformUpdated = PR_TRUE;
+    }
+
+    Pr_CopyTransform(ap_view->inverseTransform, ap_dst);
 
     return PR_TRUE;
 }
@@ -103,7 +116,16 @@ pr_bool_t Pr_GetViewCopy(Pr_ViewRef ap_view, Pr_View * ap_dst)
 {
     if (!ap_view || !ap_dst) return PR_FALSE;
 
-    memcpy(ap_dst, ap_view, sizeof(Pr_View));
+    Pr_CopyTransform(ap_view->transform, ap_dst->transform);
+    Pr_CopyTransform(ap_view->inverseTransform, ap_dst->inverseTransform);
+
+    ap_dst->viewport    = ap_view->viewport;
+    ap_dst->center      = ap_view->center;
+    ap_dst->size        = ap_view->size;
+    ap_dst->rotation    = ap_view->rotation;
+
+    ap_dst->isInvTransformUpdated   = ap_view->isInvTransformUpdated;
+    ap_dst->isTransformUpdated      = ap_view->isTransformUpdated;
 
     return PR_TRUE;
 }
