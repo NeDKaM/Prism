@@ -40,7 +40,7 @@ Pr_String * Pr_NewString(void)
     return lp_out;
 }
 
-Pr_String * Pr_NewStringStr(Pr_CStrRef ap_str)
+Pr_String * Pr_NewStringStr(Pr_CStringRef ap_str)
 {
     Pr_String * lp_out = Pr_NewString();
 
@@ -61,7 +61,7 @@ void Pr_DeleteString(Pr_String * ap_this)
     }
 }
 
-Pr_Strresult Pr_SetStringStr(Pr_String * ap_this, Pr_CStrRef ap_str)
+Pr_Strresult Pr_SetStringStr(Pr_String * ap_this, Pr_CStringRef ap_str)
 {
     Pr_Strresult l_code = 0;
 
@@ -133,7 +133,7 @@ Pr_Strcmpvalue Pr_StringSizeCmp(Pr_StringRef ap_str1, Pr_StringRef ap_str2)
     return l_code;
 }
 
-Pr_Strresult Pr_StringStrAppend(Pr_String * ap_this, Pr_CStrRef ap_str)
+Pr_Strresult Pr_StringStrAppend(Pr_String * ap_this, Pr_CStringRef ap_str)
 {
     Pr_Strresult l_code = PR_STRING_NOSTRING;
 
@@ -173,7 +173,7 @@ Pr_Strresult Pr_StringCharAppend(Pr_String * ap_this, char a_c)
 
 }
 
-Pr_String * Pr_StringAppendResult(Pr_CStrRef ap_str1, Pr_CStrRef ap_str2)
+Pr_String * Pr_StringAppendResult(Pr_CStringRef ap_str1, Pr_CStringRef ap_str2)
 {
     Pr_String * lp_out = Pr_NewStringStr(ap_str1);
 
@@ -183,7 +183,7 @@ Pr_String * Pr_StringAppendResult(Pr_CStrRef ap_str1, Pr_CStrRef ap_str2)
     return lp_out;
 }
 
-Pr_Strresult Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, Pr_CStrRef ap_str)
+Pr_Strresult Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, Pr_CStringRef ap_str)
 {
     Pr_Strresult l_code = PR_STRING_NOSTRING;
 
@@ -339,7 +339,7 @@ char const * Pr_StringCStr(Pr_StringRef ap_this)
     return (ap_this) ? ap_this->str : NULL;
 }
 
-long Pr_StringFind(Pr_StringRef ap_this, Pr_CStrRef ap_str)
+long Pr_StringFind(Pr_StringRef ap_this, Pr_CStringRef ap_str)
 {
     char const * lp_tmp;
 
@@ -352,7 +352,7 @@ long Pr_StringFind(Pr_StringRef ap_this, Pr_CStrRef ap_str)
     return (lp_tmp) ? (lp_tmp - ap_this->str) : -1;
 }
 
-unsigned long Pr_StringReplace(Pr_String * ap_this, Pr_CStrRef ap_str, Pr_CStrRef ap_by)
+unsigned long Pr_StringReplace(Pr_String * ap_this, Pr_CStringRef ap_str, Pr_CStringRef ap_by)
 {
     size_t l_count = 0;
     size_t l_i, l_strlen, l_bylen;

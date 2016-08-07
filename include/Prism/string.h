@@ -37,16 +37,16 @@ PR_CPP_PROTECT_ON
 	PR_STRUCT(pr_string_t, Pr_String);
 
     extern PRISM_API Pr_String *    Pr_NewString(void);
-    extern PRISM_API Pr_String *    Pr_NewStringStr(Pr_CStrRef);
+    extern PRISM_API Pr_String *    Pr_NewStringStr(Pr_CStringRef);
     extern PRISM_API void           Pr_DeleteString(Pr_String *);
-    extern PRISM_API Pr_Strresult   Pr_SetStringStr(Pr_String *, Pr_CStrRef);
+    extern PRISM_API Pr_Strresult   Pr_SetStringStr(Pr_String *, Pr_CStringRef);
     extern PRISM_API Pr_Strresult   Pr_SetStringChar(Pr_String *, char);
     extern PRISM_API Pr_Strresult   Pr_SetString(Pr_String *, Pr_String *);
     extern PRISM_API Pr_Strcmpvalue Pr_StringSizeCmp(Pr_StringRef, Pr_StringRef);
-    extern PRISM_API Pr_Strresult   Pr_StringStrAppend(Pr_String *, Pr_CStrRef);
+    extern PRISM_API Pr_Strresult   Pr_StringStrAppend(Pr_String *, Pr_CStringRef);
     extern PRISM_API Pr_Strresult   Pr_StringCharAppend(Pr_String *, char);
-    extern PRISM_API Pr_String *    Pr_StringAppendResult(Pr_CStrRef, Pr_CStrRef);
-    extern PRISM_API Pr_Strresult   Pr_StringStrInsert(Pr_String *, unsigned long, Pr_CStrRef);
+    extern PRISM_API Pr_String *    Pr_StringAppendResult(Pr_CStrRef, Pr_CStringRef);
+    extern PRISM_API Pr_Strresult   Pr_StringStrInsert(Pr_String *, unsigned long, Pr_CStringRef);
     extern PRISM_API Pr_Strresult   Pr_StringCharInsert(Pr_String *, unsigned long, char);
     extern PRISM_API Pr_Strresult   Pr_StringCut(Pr_String *, unsigned long);
     extern PRISM_API Pr_String *    Pr_StringSubStr(Pr_String *, unsigned long, unsigned long);
@@ -56,9 +56,9 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void           Pr_StringClear(Pr_String *);
     extern PRISM_API unsigned long  Pr_StringSize(Pr_StringRef);
     extern PRISM_API unsigned long  Pr_StringCapacity(Pr_StringRef);
-    extern PRISM_API Pr_CStrRef     Pr_StringCStr(Pr_StringRef);
-    extern PRISM_API unsigned long  Pr_StringReplace(Pr_String *, Pr_CStrRef, Pr_CStrRef);
-    extern PRISM_API long           Pr_StringFind(Pr_StringRef, Pr_CStrRef);
+    extern PRISM_API Pr_CStringRef  Pr_StringCStr(Pr_StringRef);
+    extern PRISM_API unsigned long  Pr_StringReplace(Pr_String *, Pr_CStringRef, Pr_CStringRef);
+    extern PRISM_API long           Pr_StringFind(Pr_StringRef, Pr_CStringRef);
 
 PR_CPP_PROTECT_OFF
 
