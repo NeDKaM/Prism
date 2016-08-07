@@ -14,14 +14,17 @@ pr_bool_t Pr_MakeTransform(Pr_Transform ap_tr,
     ap_tr[1]    = a_10;
     ap_tr[2]    = 0.f;
     ap_tr[3]    = a_20;
+
     ap_tr[4]    = a_01;
     ap_tr[5]    = a_11;
     ap_tr[6]    = 0.f;
     ap_tr[7]    = a_21;
+
     ap_tr[8]    = 0.f;
     ap_tr[9]    = 0.f;
     ap_tr[10]   = 1.f;
     ap_tr[11]   = 0.f;
+
     ap_tr[12]   = a_02;
     ap_tr[13]   = a_12;
     ap_tr[14]   = 0.f;
@@ -51,8 +54,8 @@ pr_bool_t Pr_MakeTransformIdentity(Pr_Transform ap_transform)
 
     ap_transform[12] =  0.f;
     ap_transform[13] =  0.f;
-    ap_transform[14] =  1.f;
-    ap_transform[15] =  0.f;
+    ap_transform[14] =  0.f;
+    ap_transform[15] =  1.f;
 
     return PR_TRUE;
 }
@@ -97,7 +100,7 @@ pr_bool_t Pr_TransformPoint(Pr_TransformRef ap_src, float a_x, float a_y, Pr_Vec
     return PR_TRUE;
 }
 
-pr_bool_t Pr_TransformCombine(Pr_TransformRef ap_src, Pr_Transform ap_dst)
+pr_bool_t Pr_TransformCombine(Pr_Transform ap_dst, Pr_TransformRef ap_src)
 {
     Pr_TransformRef lp_a;
     Pr_TransformRef lp_b;
@@ -130,7 +133,7 @@ void Pr_TranslateTransform(Pr_Transform ap_transform, float a_x, float a_y)
 
     Pr_MakeTransform(lp_translation,1.f,0.f,a_x,0.f,1.f,a_y,0.f,0.f,1.f);
 
-    Pr_TransformCombine(lp_translation,ap_transform);
+    Pr_TransformCombine(ap_transform, lp_translation);
 }
 
 void Pr_RotateTransform(Pr_Transform ap_transform, float a_angle, Pr_Vector2Ref(float) ap_center)
@@ -160,7 +163,7 @@ void Pr_RotateTransform(Pr_Transform ap_transform, float a_angle, Pr_Vector2Ref(
         );
     }
 
-    Pr_TransformCombine(lp_rotation, ap_transform);
+    Pr_TransformCombine(ap_transform, lp_rotation);
 }
 
 void Pr_ScaleTransform(Pr_Transform ap_transform, float a_x, float a_y)
@@ -175,7 +178,7 @@ void Pr_ScaleTransform(Pr_Transform ap_transform, float a_x, float a_y)
         0.f, 0.f, 1.f
     );
 
-   Pr_TransformCombine(lp_scaling, ap_transform);
+   Pr_TransformCombine(ap_transform, lp_scaling);
 }
 
 pr_bool_t Pr_CopyTransform(Pr_TransformRef ap_src, Pr_Transform ap_dst)
@@ -216,7 +219,22 @@ pr_bool_t Pr_GetTransformableTransform(Pr_Transformable * ap_trsf, Pr_Transform 
     return PR_TRUE;
 }
 
-pr_bool_t Pr_TransformRect(Pr_TransformRef ap_transform, Pr_RectRef(float) ap_rect, Pr_Rect(float) * ap_dst)
+pr_bool_t Pr_GetTransformableInvTransform(Pr_Transformable * ap_trsf, Pr_Transform ap_dst)
+{
+    if (!ap_trsf || !ap_dst) return PR_FALSE;
+
+    if (!ap_trsf->updateInverse) {
+        Pr_GetTransformableTransform(ap_trsf->transform, ap_trsf->transformInverse);
+        Pr_TransformInverse(ap_trsf->transformInverse, ap_trsf->transformInverse);
+        ap_trsf->updateInverse = PR_FALSE;
+    }
+
+    memcpy(ap_dst, ap_trsf->transformInverse, 16 * sizeof(float));
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_TransformRect(Pr_TransformRef ap_transform, Pr_FloatRectRef ap_rect, Pr_FloatRect * ap_dst)
 {
     Pr_Vector2f lp_points[4];
     float l_left;
@@ -255,6 +273,85 @@ pr_bool_t Pr_TransformRect(Pr_TransformRef ap_transform, Pr_RectRef(float) ap_re
     ap_dst->y       = l_top;
     ap_dst->width   = l_right - l_left;
     ap_dst->height  = l_bottom - l_top;
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_InitTransformable(Pr_Transformable * ap_trsf)
+{
+    if (!ap_trsf) return PR_FALSE;
+
+    ap_trsf->origin.x = 0.f;
+    ap_trsf->origin.y = 0.f;
+
+    ap_trsf->position.x = 0.f;
+    ap_trsf->position.y = 0.f;
+
+    ap_trsf->rotation = 0.f;
+
+    ap_trsf->scale.x = 1.f;
+    ap_trsf->scale.y = 1.f;
+
+    Pr_MakeTransformIdentity(ap_trsf->transform);
+    Pr_MakeTransformIdentity(ap_trsf->transformInverse);
+
+    ap_trsf->update        = PR_TRUE;
+    ap_trsf->updateInverse = PR_TRUE;
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_SetTransformablePosition(Pr_Transformable * ap_src, float a_x, float a_y)
+{
+    if (!ap_src) return PR_FALSE;
+
+    ap_src->position.x = a_x;
+    ap_src->position.y = a_y;
+
+    ap_src->update          = PR_TRUE;
+    ap_src->updateInverse   = PR_TRUE;
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_SetTransformableScale(Pr_Transformable * ap_src, float a_x, float a_y)
+{
+    if (!ap_src) return PR_FALSE;
+
+    ap_src->scale.x = a_x;
+    ap_src->scale.y = a_y;
+
+    ap_src->update          = PR_TRUE;
+    ap_src->updateInverse   = PR_TRUE;
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_SetTransformableOrigin(Pr_Transformable * ap_src, float a_x, float a_y)
+{
+    if (!ap_src) return PR_FALSE;
+
+    ap_src->origin.x = a_x;
+    ap_src->origin.y = a_y;
+
+    ap_src->update          = PR_TRUE;
+    ap_src->updateInverse   = PR_TRUE;
+
+    return PR_TRUE;
+}
+
+pr_bool_t Pr_SetTransformableRotation(Pr_Transformable * ap_src, float a_angle)
+{
+    if (!ap_src) return PR_FALSE;
+
+    ap_src->rotation = fmodf(a_angle, 360.f);
+
+    if (ap_src->rotation < 0) {
+        ap_src->rotation += 360.f;
+    }
+
+    ap_src->update          = PR_TRUE;
+    ap_src->updateInverse   = PR_TRUE;
 
     return PR_TRUE;
 }

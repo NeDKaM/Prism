@@ -25,15 +25,20 @@ PR_CPP_PROTECT_ON
     extern PRISM_API pr_bool_t      Pr_MakeTransformIdentity(Pr_Transform);
     extern PRISM_API pr_bool_t      Pr_TransformInverse(Pr_TransformRef, Pr_Transform);
     extern PRISM_API pr_bool_t      Pr_TransformPoint(Pr_TransformRef, float, float, Pr_Vector2f *);
-    extern PRISM_API pr_bool_t      Pr_TransformRect(Pr_TransformRef, Pr_RectRef(float), Pr_Rect(float) *);
-    extern PRISM_API pr_bool_t      Pr_TransformCombine(Pr_TransformRef, Pr_Transform);
+    extern PRISM_API pr_bool_t      Pr_TransformRect(Pr_TransformRef, Pr_FloatRectRef, Pr_FloatRect *);
+    extern PRISM_API pr_bool_t      Pr_TransformCombine(Pr_Transform, Pr_TransformRef);
     extern PRISM_API void           Pr_TranslateTransform(Pr_Transform, float, float);
     extern PRISM_API void           Pr_RotateTransform(Pr_Transform, float, Pr_Vector2Ref(float));
     extern PRISM_API void           Pr_ScaleTransform(Pr_Transform, float, float);
     extern PRISM_API pr_bool_t      Pr_CopyTransform(Pr_TransformRef, Pr_Transform);
     extern PRISM_API pr_bool_t      Pr_MakeTransform(Pr_Transform, float, float, float, float, float, float, float, float, float);
 
+    extern PRISM_API pr_bool_t      Pr_InitTransformable(Pr_Transformable *);
     extern PRISM_API pr_bool_t      Pr_GetTransformableTransform(Pr_Transformable *, Pr_Transform);
+    extern PRISM_API pr_bool_t      Pr_SetTransformablePosition(Pr_Transformable *, float, float);
+    extern PRISM_API pr_bool_t      Pr_SetTransformableScale(Pr_Transformable *, float, float);
+    extern PRISM_API pr_bool_t      Pr_SetTransformableOrigin(Pr_Transformable *, float, float);
+    extern PRISM_API pr_bool_t      Pr_SetTransformableRotation(Pr_Transformable *, float);
 
 
 PR_CPP_PROTECT_OFF
