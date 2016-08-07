@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <Prism/application.h>
 #include <Prism/window.h>
-#include <Prism/array.h>
+#include <Prism/list.h>
 #include <string.h>
 
 enum {
@@ -29,16 +29,16 @@ enum {
 };
 
 struct pr_window_t {
-    SDL_Window * wnd;
-    unsigned long id;
-    Pr_Array(Pr_Signal *) signals;
+    SDL_Window *    wnd;
+    pr_u32_t        id;
+    Pr_List *       signals;
 };
 
-#define PR_SIG_IMPL(name,signalVal) \
+#define PR_SIG_IMPL(name, signalId) \
     Pr_Signal * name(Pr_WindowRef ap_wnd) \
     { \
         if (!ap_wnd) return NULL; \
-        return ap_wnd->signals.list[signalVal]; \
+        return Pr_ListAt(ap_wnd->signals, signalId); \
     } 
 
 PR_SIG_IMPL(Pr_WindowClosed,        PR_CLOSED)
@@ -55,30 +55,52 @@ PR_SIG_IMPL(Pr_WindowFocusLost,     PR_FOCUS_LOST)
 PR_SIG_IMPL(Pr_WindowEntered,       PR_ENTER)
 PR_SIG_IMPL(Pr_WindowLeaved,        PR_LEAVE)
 PR_SIG_IMPL(Pr_WindowRestored,      PR_RESTORED)
-PR_SIG_IMPL(Pr_WindowOnDelete,       PR_ONDELETE)
+PR_SIG_IMPL(Pr_WindowOnDelete,      PR_ONDELETE)
 PR_SIG_IMPL(Pr_WindowPainted,       PR_PAINTED)
 
-static int s_Pr_CreateWindowSignals(Pr_Window * ap_wnd)
+static void s_Pr_DeleteWindowSignalList(Pr_Window * ap_wnd)
 {
-    int l_i;
+    Pr_ListIterator lp_it;
 
-    Pr_MakeSizedArray(ap_wnd->signals,PR_SIGNALS_COUNT);
-    if (!ap_wnd->signals.size) return 0;
-
-    for (l_i = 0; l_i<PR_SIGNALS_COUNT; l_i++) {
-        Pr_Signal ** lp_tmp = &ap_wnd->signals.list[l_i];
-        *lp_tmp = Pr_NewSignal();
-        if (!*lp_tmp) {
-            for (l_i = l_i - 1; l_i >= 0; l_i--) {
-                Pr_DeleteSignal(*lp_tmp);
-                *lp_tmp = NULL;
-            }
-
-            return 0;
-        }
+    PR_LIST_FOREACH(ap_wnd->signals, lp_it) {
+        Pr_Signal * lp_tmp = Pr_ListIteratorData(lp_it);
+        Pr_DeleteSignal(lp_tmp);
     }
 
-    return 1;
+    Pr_DeleteList(ap_wnd->signals);
+    ap_wnd->signals = NULL;
+}
+
+static pr_bool_t s_Pr_CreateWindowSignals(Pr_Window * ap_wnd)
+{
+    int l_i = 0;
+    pr_bool_t l_fail = PR_FALSE;
+
+    ap_wnd->signals = Pr_NewList();
+    if (!ap_wnd->signals) return PR_FALSE;
+
+    while (l_i < PR_SIGNALS_COUNT) {
+        Pr_Signal * lp_tmp = Pr_NewSignal();
+        if (lp_tmp) {
+            if (!Pr_PushBackListData(ap_wnd->signals, lp_tmp)) {
+                l_fail = PR_TRUE;
+                Pr_DeleteSignal(lp_tmp);
+                break;
+            }
+        } else {
+            l_fail = PR_TRUE;
+            break;
+        }
+
+        l_i++;
+    }
+
+    if (l_fail) {
+        s_Pr_DeleteWindowSignalList(ap_wnd);
+        return PR_FALSE;
+    }
+
+    return PR_TRUE;
 }
 
 Pr_Window * Pr_NewWindow(void)
@@ -89,7 +111,7 @@ Pr_Window * Pr_NewWindow(void)
     if (!lp_out) return NULL;
 
     lp_out->wnd = SDL_CreateWindow("Prism Application" ,
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_SHOWN
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, SDL_WINDOW_HIDDEN
     );
 
     if (lp_out->wnd) {
@@ -98,10 +120,11 @@ Pr_Window * Pr_NewWindow(void)
                 lp_out->id = SDL_GetWindowID(lp_out->wnd);
                 return lp_out;
             }
+
+            s_Pr_DeleteWindowSignalList(lp_out);
         }
 
         SDL_DestroyWindow(lp_out->wnd);
-        Pr_ClearArray(lp_out->signals);
     } 
 
     free(lp_out);
@@ -111,24 +134,19 @@ Pr_Window * Pr_NewWindow(void)
 
 void Pr_DeleteWindow(Pr_Window * ap_wnd)
 {
-    if (ap_wnd) {
-        int l_i;
+    if (!ap_wnd) return;
 
-        Pr_Emit(Pr_WindowOnDelete(ap_wnd));
+    Pr_Emit(Pr_WindowOnDelete(ap_wnd));
 
-        Pr_UnregisterWindow(ap_wnd);
+    Pr_UnregisterWindow(ap_wnd);
 
-        for (l_i = 0; l_i < PR_SIGNALS_COUNT; l_i++) {
-            Pr_DeleteSignal(Pr_ArrayAt(ap_wnd->signals,l_i));
-        }
+    s_Pr_DeleteWindowSignalList(ap_wnd);
 
-        Pr_ClearArray(ap_wnd->signals);
-        SDL_DestroyWindow(ap_wnd->wnd);
-        free(ap_wnd);
-    }
+    SDL_DestroyWindow(ap_wnd->wnd);
+    free(ap_wnd);
 }
 
-unsigned long Pr_GetWindowId(Pr_WindowRef ap_wnd)
+pr_u32_t Pr_GetWindowId(Pr_WindowRef ap_wnd)
 {
     return ap_wnd ? ap_wnd->id : 0;
 }

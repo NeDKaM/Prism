@@ -22,7 +22,7 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Window *    Pr_NewWindow(void);
     extern PRISM_API void           Pr_DeleteWindow(Pr_Window *);
-    extern PRISM_API unsigned long  Pr_GetWindowId(Pr_WindowRef);
+    extern PRISM_API pr_u32_t       Pr_GetWindowId(Pr_WindowRef);
     extern PRISM_API pr_bool_t      Pr_GetWindowSize(Pr_WindowRef, pr_u32_t *, pr_u32_t *);
 
     /**< signals >*/               
