@@ -19,6 +19,7 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Logger *    Pr_NewLogger(void);
     extern PRISM_API void           Pr_DeleteLogger(Pr_Logger *);
+    extern PRISM_API Pr_ListRef     Pr_GetLoggerEntries(Pr_LoggerRef);
 
     extern PRISM_API PR_SIGNAL(Pr_LogUpdated)(Pr_LoggerRef);     /**< (char *) >*/
 

@@ -92,7 +92,7 @@ void Pr_ClearLog(Pr_Logger * ap_log)
         Pr_PopFrontList(ap_log->entries);
     }
 
-    Pr_Emit(Pr_LogUpdated(ap_log),NULL);
+    Pr_Emit(Pr_LogUpdated(ap_log), NULL);
 }
 
 void Pr_ClearLog_Slot(void * ap_obj, va_list ap_args)
@@ -104,11 +104,25 @@ void Pr_ClearLog_Slot(void * ap_obj, va_list ap_args)
 
 void Pr_SetLogCapacity(Pr_Logger * ap_log, unsigned long a_size)
 {
-    if (!ap_log && a_size >= 0) return;
+    int l_diff;
 
-    Pr_ClearLog(ap_log);
+    if (!ap_log) return;
+
+    if (a_size == 0 || a_size >= ap_log->capacity) {
+        ap_log->capacity = a_size;
+        return;
+    }
+
+    l_diff = ap_log->capacity - a_size;
+
+    while (l_diff--) {
+        Pr_DeleteString(Pr_FrontList(ap_log->entries));
+        Pr_PopFrontList(ap_log->entries);
+    }
 
     ap_log->capacity = a_size;
+
+    Pr_Emit(ap_log->sigUpdated, NULL);
 }
 
 void Pr_SetLogCapacity_Slot(void * ap_obj, va_list ap_args)
@@ -116,4 +130,11 @@ void Pr_SetLogCapacity_Slot(void * ap_obj, va_list ap_args)
     if (!ap_args) return;
 
     Pr_SetLogCapacity(ap_obj, va_arg(ap_args, unsigned long));
+}
+
+Pr_ListRef Pr_GetLoggerEntries(Pr_LoggerRef ap_log)
+{
+    if (!ap_log) return NULL;
+
+    return ap_log->entries;
 }
