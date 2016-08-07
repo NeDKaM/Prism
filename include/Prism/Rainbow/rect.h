@@ -2,24 +2,23 @@
 #define H_RAINBOW_RECT_INCLUDED
 
 #include <Prism/config.h>
+#include <Prism/types.h>
 
 PR_CPP_PROTECT_ON
 
-    #define Pr_Rect(type)       Pr_##type##Rect
-    #define Pr_RectRef(type)    Pr_##type##RectRef
+    PR_STRUCT(pr_floatrect_t, Pr_FloatRect) {
+        float x;
+        float y;
+        float width;
+        float height;
+    };
 
-    #define PR_RECT(type) \
-        typedef struct pr_##type##rect_t    Pr_##type##Rect; \
-        typedef const Pr_##type##Rect *     Pr_##type##RectRef; \
-        struct pr_##type##rect_t { \
-            type x; \
-            type y; \
-            type width; \
-            type height; \
-        }
-
-    PR_RECT(long);  typedef Pr_Rect(long)   Pr_Recti;
-    PR_RECT(float); typedef Pr_Rect(float)  Pr_Rectf;
+    PR_STRUCT(pr_intrect_t, Pr_IntRect) {
+        long        x;
+        long        y;
+        pr_u32_t    width;
+        pr_u32_t    height;
+    };
 
 PR_CPP_PROTECT_OFF
 
