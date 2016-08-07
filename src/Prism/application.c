@@ -12,18 +12,16 @@
 #include <Prism/list.h>
 #include <Prism/array.h>
 #include <Prism/string.h>
-#include <Prism/var.h>
 #include <stdio.h>
 #include <Prism/logger.h>
 #include <string.h>
 
 struct {
-    int initialized;
-    Pr_List * wndlist;
-    Pr_Library * library;
-    Pr_Array(Pr_Signal *) signals;
-    SDL_Event input;
+    pr_bool_t   initialized;
+    Pr_List *   wndlist;
     Pr_Logger * log;
+    Pr_List *   signals;
+    SDL_Event   input;
 } static s_app = { 0, NULL, NULL, NULL };
 
 enum {
@@ -40,31 +38,54 @@ enum {
     PR_SIGNALS_COUNT
 };
 
-static int s_Pr_CreateSignals(void)
+static void s_Pr_DeleteSignalList(void)
 {
-    int l_i;
+    Pr_ListIterator lp_it;
 
-    Pr_MakeSizedArray(s_app.signals, PR_SIGNALS_COUNT);
-
-    if (!s_app.signals.size) return 0;
-
-    for (l_i = 0; l_i<PR_SIGNALS_COUNT; l_i++) {
-        Pr_Signal ** lp_tmp = & Pr_ArrayAt(s_app.signals, l_i);
-        *lp_tmp = Pr_NewSignal();
-        if (!*lp_tmp) {
-            for (l_i = l_i - 1; l_i >= 0; l_i--) {
-                Pr_DeleteSignal(*lp_tmp);
-                *lp_tmp = NULL;
-            }
-
-            return 0;
+    PR_LIST_FOREACH(s_app.signals, lp_it) {
+        Pr_Signal * lp_tmp = Pr_ListIteratorData(lp_it);
+        if (lp_tmp) {
+            Pr_DeleteSignal(lp_tmp);
         }
     }
 
-    return 1;
+    Pr_DeleteList(s_app.signals);
+    s_app.signals = NULL;
 }
 
-void s_Pr_HandleWindowEvent(Pr_Window * ap_wnd)
+static pr_bool_t s_Pr_CreateSignals(void)
+{
+    int l_i = 0;
+    pr_bool_t l_fail = PR_FALSE;
+
+    s_app.signals = Pr_NewList();
+    if (!s_app.signals) return PR_FALSE;
+    
+    while (l_i < PR_SIGNALS_COUNT) {
+        Pr_Signal * lp_tmp = Pr_NewSignal();
+        if (lp_tmp) {
+            if (!Pr_PushBackListData(s_app.signals, lp_tmp)) {
+                l_fail = PR_TRUE;
+                Pr_DeleteSignal(lp_tmp);
+                break;
+            }
+        } else {
+            l_fail = PR_TRUE;
+            break;
+        }
+
+        l_i++;
+    }
+
+    if (l_fail) {
+        s_Pr_DeleteSignalList();
+        return PR_FALSE;
+    }
+
+    return PR_TRUE;
+}
+
+static void s_Pr_HandleWindowEvent(Pr_Window * ap_wnd)
 {
     if (!ap_wnd) return;
 
@@ -158,7 +179,7 @@ static void s_Pr_UpdateApp(void)
     }
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
-        Pr_Emit(Pr_WindowUpdated(Pr_ListIteratorData(l_it)));
+        Pr_Emit(Pr_WindowUpdated(Pr_ListIteratorData(l_it)), NULL);
     }
 }
 
@@ -175,15 +196,11 @@ static void s_Pr_QuitApp(void)
 
     Pr_DeleteList(s_app.wndlist);
 
-    for (l_i = 0 ; l_i < Pr_ArraySize(s_app.signals) ; l_i++) {
-        Pr_DeleteSignal(Pr_ArrayAt(s_app.signals, l_i));
-    }
-
-    Pr_ClearArray(s_app.signals);
+    s_Pr_DeleteSignalList();
 
     SDL_Quit();
 
-    s_app.initialized = 0;
+    s_app.initialized = PR_FALSE;
     s_app.wndlist = NULL;
 }
 
@@ -202,47 +219,7 @@ int Pr_ExecApp(void)
     return 0;
 }
 
-static void * s_Pr_IntegerCons(void)
-{
-    return calloc(1,sizeof(long));
-}
-
-static void * s_Pr_FloatCons(void)
-{
-    float * lp_out = malloc(sizeof(float));
-    if (!lp_out) return NULL; 
-    *lp_out = 0.0f;
-    return lp_out;
-}
-
-static void s_Pr_FloatDel(void * ap_that)
-{
-    if (!ap_that) return;
-    free(ap_that);
-}
-
-static void s_Pr_IntergerDel(void * ap_that)
-{
-    if (!ap_that) return;
-    free(ap_that);
-}
-
 /*
-
-static void s_Pr_StringDel(void * ap_that)
-{
-    if (!ap_that) return;
-    Pr_DeleteString(ap_that);
-}
-
-static void s_Pr_SignalDel(void * ap_that)
-{
-    if (!ap_that) return;
-    Pr_DeleteSignal(ap_that);
-}
-
-*/
-
 static int s_Pr_LoadStdLibrary(void)
 {
     int         l_err = 0;
@@ -317,74 +294,71 @@ static int s_Pr_LoadStdLibrary(void)
     
     return 0;
 }
+*/
 
-int Pr_InitApp(void)
+pr_bool_t Pr_InitApp(void)
 {
-    int l_retSig;
-    int l_retLib;
+    pr_bool_t l_retSig;
 
-	if (s_app.initialized) return 1;
+	if (s_app.initialized) return PR_TRUE;
 
     s_app.log = Pr_NewLogger();
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         Pr_DeleteLogger(s_app.log);
         s_app.log = NULL;
-        return 0;
+        return PR_FALSE;
     }
 
     s_app.wndlist = Pr_NewList();
     l_retSig = s_Pr_CreateSignals();
-    l_retLib = s_Pr_LoadStdLibrary();
 
-    if (s_app.wndlist && l_retSig && l_retLib) {
-	    s_app.initialized = 1;
-        return 1;
+    if (s_app.wndlist && l_retSig) {
+	    s_app.initialized = PR_TRUE;
+        return PR_TRUE;
     }
-
+    
     Pr_DeleteLogger(s_app.log);
     s_app.log = NULL;
     Pr_DeleteList(s_app.wndlist);
     s_app.wndlist = NULL;
-    Pr_ClearArray(s_app.signals);
-    Pr_DeleteLibrary(s_app.library);
-    s_app.library = NULL;
-
+    s_Pr_DeleteSignalList();
+    
     SDL_Quit();
-
-	return 0;
+    
+	return PR_FALSE;
 }
 
-#define PR_SIG_IMPL(name,value) \
+#define PR_SIG_IMPL(name, signalId) \
     Pr_Signal * name(void) \
     { \
         if (!s_app.initialized) return NULL; \
-        return Pr_ArrayAt(s_app.signals,value); \
+        return Pr_ListAt(s_app.signals, signalId); \
     }
 
-PR_SIG_IMPL(Pr_KeyUp, PR_KEY_UP)
-PR_SIG_IMPL(Pr_KeyDown, PR_KEY_DOWN)
-PR_SIG_IMPL(Pr_MouseButtonUp, PR_MOUSEBUTTON_UP)
+PR_SIG_IMPL(Pr_KeyUp,           PR_KEY_UP)
+PR_SIG_IMPL(Pr_KeyDown,         PR_KEY_DOWN)
+PR_SIG_IMPL(Pr_MouseButtonUp,   PR_MOUSEBUTTON_UP)
 PR_SIG_IMPL(Pr_MouseButtonDown, PR_MOUSEBUTTON_DOWN)
-PR_SIG_IMPL(Pr_MouseMoved, PR_MOUSE_MOVED)
-PR_SIG_IMPL(Pr_AppStarted, PR_START)
-PR_SIG_IMPL(Pr_AppQuitted, PR_QUIT)
+PR_SIG_IMPL(Pr_MouseMoved,      PR_MOUSE_MOVED)
+PR_SIG_IMPL(Pr_AppStarted,      PR_START)
+PR_SIG_IMPL(Pr_AppQuitted,      PR_QUIT)
 
-int Pr_RegisterWindow(Pr_Window * ap_wnd)
+pr_bool_t Pr_RegisterWindow(Pr_Window * ap_wnd)
 {
     Pr_ListIterator l_it;
 
-    if (!ap_wnd) return 0;
-    if (!s_app.wndlist) return 0;
+    if (!ap_wnd) return PR_FALSE;
+    if (!s_app.wndlist) return PR_FALSE;
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
         Pr_Window * lp_tmp = Pr_ListIteratorData(l_it);
         if (lp_tmp == ap_wnd) {
-            return 0;
+            return PR_FALSE;
         }
     }
 
-    return Pr_PushBackListData(s_app.wndlist,ap_wnd);
+    return Pr_PushBackListData(s_app.wndlist,ap_wnd) ? PR_TRUE : PR_FALSE;
 }
 
 void Pr_UnregisterWindow(Pr_Window * ap_wnd)
@@ -409,21 +383,14 @@ void Pr_UnregisterWindow(Pr_Window * ap_wnd)
 void Pr_QuitApp(void)
 {
     if (s_app.initialized) {
-        Pr_QuitApp_Slot(NULL,NULL);
+        s_app.initialized = PR_FALSE;
+        Pr_Emit(Pr_AppQuitted());
     }
 }
 
 PR_SLOT_IMPL(Pr_QuitApp_Slot)
 {
-    s_app.initialized = 0;
-
-    Pr_Emit(Pr_AppQuitted());
+    Pr_QuitApp();
 }
 
-int Pr_ImportLibApp(Pr_Library * ap_lib)
-{
-    if (!ap_lib) return 0;
-
-    return Pr_ImportLibrary(ap_lib,s_app.library);
-}
 
