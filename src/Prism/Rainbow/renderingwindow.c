@@ -2,15 +2,19 @@
 #include <Prism/Rainbow/renderingtarget.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include <Prism/array.h>
+#include <Prism/list.h>
 #include <string.h>
 #include <stdio.h>
 #include <Prism/Rainbow/opengl.h>
 
+#ifdef PRISM_SYSTEM_WINDOWS
+static pr_bool_t s_glewOn = PR_FALSE;
+#endif
+
 /* friend Pr_Window */ struct s_pr_window_t {
-    SDL_Window *            wnd;
-    unsigned long           id;
-    Pr_Array(Pr_Signal *)   signals;
+    SDL_Window *    wnd;
+    unsigned long   id;
+    Pr_List *       signals;
 };
 
 struct pr_renderingwindow_t {
@@ -32,18 +36,34 @@ static void s_Pr_ActivateContext_Slot(void * ap_obj, va_list ap_args)
     SDL_GL_MakeCurrent(lp_wnd->wnd, lp_rndwnd->context); 
 }
 
-static void s_Pr_InitTransformable(Pr_RenderingWindow * ap_wnd)
+static void s_Pr_InitRenderingTraget(Pr_RenderingWindow * ap_wnd)
 {
-    Pr_Rect(float) l_rect;
+    Pr_FloatRect l_rect;
+    pr_u32_t l_w = 0;
+    pr_u32_t l_h = 0;
 
-    l_rect.x = 0.f;
-    l_rect.y = 0.f;
-    Pr_GetWindowSize(ap_wnd->window, (pr_u32_t *)&l_rect.width, (pr_u32_t *)&l_rect.height);
+    Pr_GetWindowSize(ap_wnd->window, &l_w, &l_h);
+    l_rect.x        = 0.f;
+    l_rect.y        = 0.f;
+    l_rect.width    = (float)l_w;
+    l_rect.height   = (float)l_h;
 
+    Pr_ResetView(&ap_wnd->renderTarget.defaultView, NULL);
     Pr_ResetView(&ap_wnd->renderTarget.defaultView, &l_rect);
     Pr_GetViewCopy(&ap_wnd->renderTarget.defaultView, &ap_wnd->renderTarget.view);
 
-    ap_wnd->renderTarget.cache.statesSet = PR_FALSE;
+    ap_wnd->renderTarget.size.x = l_w;
+    ap_wnd->renderTarget.size.y = l_h;
+
+    ap_wnd->renderTarget.cache.statesSet        = PR_FALSE;
+    ap_wnd->renderTarget.cache.useVertexCache   = PR_FALSE;
+    ap_wnd->renderTarget.cache.oldBlendMode     = *Pr_BlendModeDefault();
+    ap_wnd->renderTarget.cache.viewChanged      = PR_TRUE;
+    ap_wnd->renderTarget.cache.oldTextureId     = 0;
+    ap_wnd->renderTarget.cache.oldBlendMode     = *Pr_BlendModeDefault();
+    memset(ap_wnd->renderTarget.cache.vertexCache, 0, PR_VERTEXCACHE_SIZE * sizeof(Pr_Vertex));
+
+    Pr_ClearRndTarget(&ap_wnd->renderTarget, NULL);
 }
 
 static void s_Pr_PrepareContext(Pr_ContextSettingsRef ap_settings)
@@ -85,18 +105,19 @@ static void s_Pr_RenderPresent_Slot(void * ap_obj, va_list ap_args)
 static void s_Pr_Resize_Slot(void * ap_obj, va_list ap_args)
 {
     Pr_RenderingWindow *    lp_wnd;  
+    Pr_Vector2i             l_size;
     
     if (!ap_obj)    return;
     if (!ap_args)   return;
 
     lp_wnd = ap_obj;
-    
-    lp_wnd->renderTarget.size.x = va_arg(ap_args, unsigned int);
-    lp_wnd->renderTarget.size.y = va_arg(ap_args, unsigned int);
+
+    l_size.x = (long)va_arg(ap_args, pr_u32_t);
+    l_size.y = (long)va_arg(ap_args, pr_u32_t);
+
+    lp_wnd->renderTarget.size = l_size;
 
     Pr_SetRndTargetView(&lp_wnd->renderTarget, &lp_wnd->renderTarget.view);
-
-    Pr_Emit(Pr_WindowPainted(lp_wnd->window));
 }
 
 static void s_Pr_Delete_Slot(void * ap_obj, va_list ap_args)
@@ -131,30 +152,38 @@ Pr_RenderingWindow * Pr_NewRndWindow(Pr_ContextSettingsRef ap_settings)
             SDL_WINDOWPOS_CENTERED, 
             0, 0,
             SDL_WINDOW_OPENGL
+            | SDL_WINDOW_HIDDEN
         );
 
         if (lp_wnd->wnd) {
+#ifdef PRISM_SYSTEM_WINDOWS
+            pr_bool_t l_glew = PR_FALSE;
+#endif
             lp_wnd->id = SDL_GetWindowID(lp_wnd->wnd);
             lp_out->context = SDL_GL_CreateContext(lp_wnd->wnd);
+
+             SDL_GL_MakeCurrent(lp_wnd->wnd, lp_out->context);
+
 #ifdef PRISM_SYSTEM_WINDOWS
             glewExperimental = GL_TRUE; 
+            if (!s_glewOn) {
+                l_glew = (glewInit() == GLEW_OK);
+            } else {
+                l_glew = PR_TRUE;
+            }
 #endif
-            SDL_GL_MakeCurrent(lp_wnd->wnd, lp_out->context);
-            
+
             if (lp_out->context
 #ifdef PRISM_SYSTEM_WINDOWS
-                && glewInit() == GLEW_OK
+                && l_glew
 #endif          
                 && Pr_Connect(Pr_WindowPainted((Pr_WindowRef)lp_wnd), lp_out, s_Pr_RenderPresent_Slot)  
                 && Pr_Connect(Pr_WindowUpdated((Pr_WindowRef)lp_wnd), lp_out, s_Pr_ActivateContext_Slot) 
                 && Pr_Connect(Pr_WindowSizeChanged((Pr_WindowRef)lp_wnd), lp_out, s_Pr_Resize_Slot)
                 && Pr_Connect(Pr_WindowOnDelete((Pr_WindowRef)lp_wnd), lp_out, s_Pr_Delete_Slot)
             ) {
-                glClearColor(1.f, 1.f, 1.f, 1.f);
-                glClear(GL_COLOR_BUFFER_BIT);
-                SDL_GL_SwapWindow(lp_wnd->wnd);
                 lp_out->window = (Pr_Window *)lp_wnd;
-                s_Pr_InitTransformable(lp_out);
+                s_Pr_InitRenderingTraget(lp_out);
                 return lp_out;
             }
 
