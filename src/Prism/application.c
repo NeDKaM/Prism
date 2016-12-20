@@ -85,53 +85,53 @@ static pr_bool_t s_Pr_CreateSignals(void)
     return PR_TRUE;
 }
 
-static void s_Pr_HandleWindowEvent(Pr_Window * ap_wnd)
+static void s_Pr_HandleWindowEvent(Pr_SystemWindow * ap_wnd)
 {
     if (!ap_wnd) return;
 
-    if (s_app.input.type == SDL_WINDOWEVENT && s_app.input.window.windowID == Pr_GetWindowId(ap_wnd)) {
+    if (s_app.input.type == SDL_WINDOWEVENT && s_app.input.window.windowID == ap_wnd->id) {
         switch (s_app.input.window.event) {
         case SDL_WINDOWEVENT_SHOWN:
-            Pr_Emit(Pr_WindowShown(ap_wnd));
+            Pr_Emit(Pr_SystemWindowShown(ap_wnd));
             break;
         case SDL_WINDOWEVENT_HIDDEN:
-            Pr_Emit(Pr_WindowHidden(ap_wnd));
+            Pr_Emit(Pr_SystemWindowHidden(ap_wnd));
             break;
         case SDL_WINDOWEVENT_EXPOSED:
             break;
         case SDL_WINDOWEVENT_SIZE_CHANGED:
-            Pr_Emit(Pr_WindowSizeChanged(ap_wnd),
+            Pr_Emit(Pr_SystemWindowSizeChanged(ap_wnd),
                 s_app.input.window.data1, s_app.input.window.data2
             );
             break;
         case SDL_WINDOWEVENT_RESIZED:
             break;
         case SDL_WINDOWEVENT_ENTER:
-            Pr_Emit(Pr_WindowEntered(ap_wnd));
+            Pr_Emit(Pr_SystemWindowEntered(ap_wnd));
             break;
         case SDL_WINDOWEVENT_LEAVE:
-            Pr_Emit(Pr_WindowLeaved(ap_wnd));
+            Pr_Emit(Pr_SystemWindowLeaved(ap_wnd));
             break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-            Pr_Emit(Pr_WindowFocusGained(ap_wnd));
+            Pr_Emit(Pr_SystemWindowFocusGained(ap_wnd));
             break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-            Pr_Emit(Pr_WindowFocusLost(ap_wnd));
+            Pr_Emit(Pr_SystemWindowFocusLost(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MINIMIZED:
-            Pr_Emit(Pr_WindowMinimized(ap_wnd));
+            Pr_Emit(Pr_SystemWindowMinimized(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MAXIMIZED:
-            Pr_Emit(Pr_WindowMaximized(ap_wnd));
+            Pr_Emit(Pr_SystemWindowMaximized(ap_wnd));
             break;
         case SDL_WINDOWEVENT_RESTORED:
-            Pr_Emit(Pr_WindowRestored(ap_wnd));
+            Pr_Emit(Pr_SystemWindowRestored(ap_wnd));
             break;
         case SDL_WINDOWEVENT_CLOSE:
-            Pr_Emit(Pr_WindowClosed(ap_wnd));
+            Pr_Emit(Pr_SystemWindowClosed(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MOVED:
-            Pr_Emit(Pr_WindowMoved(ap_wnd),
+            Pr_Emit(Pr_SystemWindowMoved(ap_wnd),
                 s_app.input.window.data1, s_app.input.window.data2
             );
             break;
@@ -179,7 +179,7 @@ static void s_Pr_UpdateApp(void)
     }
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
-        Pr_Emit(Pr_WindowUpdated(Pr_ListIteratorData(l_it)), NULL);
+        Pr_Emit(Pr_SystemWindowUpdated(Pr_ListIteratorData(l_it)), NULL);
     }
 }
 
@@ -190,7 +190,7 @@ static void s_Pr_QuitApp(void)
     Pr_DeleteLogger(s_app.log);
 
     while (Pr_ListSize(s_app.wndlist)) {
-        Pr_DeleteWindow(Pr_FrontList(s_app.wndlist));
+        Pr_Delete(Pr_FrontList(s_app.wndlist));
         Pr_PopFrontList(s_app.wndlist);
     }
 
@@ -218,83 +218,6 @@ int Pr_ExecApp(void)
 
     return 0;
 }
-
-/*
-static int s_Pr_LoadStdLibrary(void)
-{
-    int         l_err = 0;
-    Pr_Class *  lp_integerCls;
-    Pr_Class *  lp_appCls;
-    Pr_Class *  lp_stringCls;
-    Pr_Class *  lp_signalCls;
-    Pr_Class *  lp_windowCls;
-    Pr_Class *  lp_floatCls;
-    
-    s_app.library = Pr_NewLibrary("PrAppLib");
-
-    if (!s_app.library) return 0;
-
-    lp_integerCls = Pr_NewClass("PrInteger", s_Pr_IntegerCons, s_Pr_IntergerDel, NULL);
-    if (!Pr_RegisterClass(s_app.library, lp_integerCls)) l_err++;
-
-    lp_stringCls = Pr_NewClass("PrString", Pr_NewString, Pr_DeleteString, NULL);
-    if (!Pr_RegisterClass(s_app.library, lp_stringCls)) l_err++;
-
-    lp_signalCls = Pr_NewClass("PrSignal", Pr_NewSignal, Pr_DeleteSignal, NULL);
-    if (!Pr_RegisterClass(s_app.library, lp_signalCls)) l_err++;
-
-    lp_floatCls  = Pr_NewClass("PrFloat", s_Pr_FloatCons, s_Pr_FloatDel, NULL);
-    if (!Pr_RegisterClass(s_app.library, lp_floatCls)) l_err++;
-
-#define PR_PARAMETER_CHECK(maincls,cls,s_var,i) if (!Pr_SetClassParameter((maincls), (cls), (s_var))) (i)++
-
-    lp_appCls = Pr_NewClass("PrApplication",NULL,NULL,NULL);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "started", l_err);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "quitted", l_err);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "keyDown", l_err);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "keyUp", l_err);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "mouseButtonDown", l_err);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "mouseButtonUp", l_err);
-    PR_PARAMETER_CHECK(lp_appCls, lp_signalCls, "mouseMoved", l_err);
-    if (!Pr_RegisterClass(s_app.library,lp_appCls)) l_err++;
-
-    lp_windowCls = Pr_NewClass("PrWindow",Pr_NewWindow,Pr_DeleteWindow,NULL);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "closed", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "moved", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "updated", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "painted", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "entered", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "leaved", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "sizeChanged", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "framed", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "minimized", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "maximized", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "hidden", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "restored", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "shown", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_signalCls, "onDelete", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_stringCls, "title", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_integerCls, "width", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_integerCls, "height", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_integerCls, "x", l_err);
-    PR_PARAMETER_CHECK(lp_windowCls, lp_integerCls, "y", l_err);
-    if (!Pr_RegisterClass(s_app.library,lp_windowCls)) l_err++;
-
-#undef PR_PARAMETER_CHECK
-
-    if (!l_err) return 1;
-
-#define PR_REGISTER_CHECK(cls) if (!Pr_GetClassId(cls)) Pr_DeleteClass(cls)
-    PR_REGISTER_CHECK(lp_integerCls);
-    PR_REGISTER_CHECK(lp_stringCls);
-    PR_REGISTER_CHECK(lp_signalCls);
-    PR_REGISTER_CHECK(lp_appCls);
-    PR_REGISTER_CHECK(lp_windowCls);
-#undef PR_REGISTER_CHECK
-    
-    return 0;
-}
-*/
 
 pr_bool_t Pr_InitApp(void)
 {
@@ -344,7 +267,7 @@ PR_SIG_IMPL(Pr_MouseMoved,      PR_MOUSE_MOVED)
 PR_SIG_IMPL(Pr_AppStarted,      PR_START)
 PR_SIG_IMPL(Pr_AppQuitted,      PR_QUIT)
 
-pr_bool_t Pr_RegisterWindow(Pr_Window * ap_wnd)
+pr_bool_t Pr_RegisterWindow(Pr_SystemWindowRef ap_wnd)
 {
     Pr_ListIterator l_it;
 
@@ -352,16 +275,16 @@ pr_bool_t Pr_RegisterWindow(Pr_Window * ap_wnd)
     if (!s_app.wndlist) return PR_FALSE;
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
-        Pr_Window * lp_tmp = Pr_ListIteratorData(l_it);
+        Pr_SystemWindowRef lp_tmp = Pr_ListIteratorData(l_it);
         if (lp_tmp == ap_wnd) {
             return PR_FALSE;
         }
     }
 
-    return Pr_PushBackListData(s_app.wndlist,ap_wnd) ? PR_TRUE : PR_FALSE;
+    return Pr_PushBackListData(s_app.wndlist, ap_wnd) ? PR_TRUE : PR_FALSE;
 }
 
-void Pr_UnregisterWindow(Pr_Window * ap_wnd)
+void Pr_UnregisterWindow(Pr_SystemWindowRef ap_wnd)
 {
     Pr_ListIterator l_it;
     int l_i=0;

@@ -14,13 +14,14 @@
 #include <Prism/config.h>
 #include <Prism/types.h>
 #include <Prism/sigslot.h>
+#include <Prism/window.h>
 
 PR_CPP_PROTECT_ON
 
     extern PRISM_API pr_bool_t  Pr_InitApp(void);
     extern PRISM_API int        Pr_ExecApp(void);
-    extern PRISM_API pr_bool_t  Pr_RegisterWindow(Pr_WindowRef);
-    extern PRISM_API void       Pr_UnregisterWindow(Pr_WindowRef);
+    extern PRISM_API pr_bool_t  Pr_RegisterWindow(Pr_SystemWindowRef);
+    extern PRISM_API void       Pr_UnregisterWindow(Pr_SystemWindowRef);
 
     /**< signals >*/
 
