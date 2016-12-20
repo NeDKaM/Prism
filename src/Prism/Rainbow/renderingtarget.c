@@ -206,11 +206,11 @@ pr_bool_t Pr_MapCoordToPixel(Pr_RenderingTarget * ap_target, Pr_Vector2i * ap_po
 
     if (!ap_target || !ap_point || !ap_dst) return PR_FALSE;
 
-    Pr_TransformPoint(ap_target->view.transform, ap_point->x, ap_point->y, &l_normalized);
+    Pr_TransformPoint(ap_target->view.transform, (float)ap_point->x, (float)ap_point->y, &l_normalized);
     Pr_GetRndTargetViewport(ap_target, &ap_target->view, &l_vp);
 
-    ap_dst->x = (int)(( l_normalized.x + 1.f) * .5f * l_vp.width  + l_vp.x);
-    ap_dst->y = (int)((-l_normalized.y + 1.f) * .5f * l_vp.height + l_vp.y);
+    ap_dst->x = (long)(( l_normalized.x + 1.f) * .5f * l_vp.width  + l_vp.x);
+    ap_dst->y = (long)((-l_normalized.y + 1.f) * .5f * l_vp.height + l_vp.y);
 
     return PR_TRUE;
 }
