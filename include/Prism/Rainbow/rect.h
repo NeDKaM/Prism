@@ -1,7 +1,6 @@
 #ifndef H_RAINBOW_RECT_INCLUDED
 #define H_RAINBOW_RECT_INCLUDED
 
-#include <Prism/config.h>
 #include <Prism/types.h>
 
 PR_CPP_PROTECT_ON
