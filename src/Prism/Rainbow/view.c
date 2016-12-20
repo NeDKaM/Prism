@@ -40,32 +40,39 @@ void Pr_SetViewRotation(Pr_View * ap_view, float a_degrees)
 
 void Pr_SetViewRect(Pr_View * ap_view, Pr_FloatRect * ap_rect)
 {
+    if (!ap_view || !ap_rect) return;
+
+    ap_view->viewport = *ap_rect;
+}
+
+void Pr_ResetView(Pr_View * ap_view, Pr_FloatRect * ap_rect)
+{
     if (!ap_view) return;
+
+    if (!ap_rect) { /* sets default view */
+        ap_view->center.x   = 0.f;
+        ap_view->center.y   = 0.f;
+        ap_view->size.x     = 0.f;
+        ap_view->size.y     = 0.f;
+    } else {
+        ap_view->center.x   = ap_rect->x + ap_rect->width * .5f;
+        ap_view->center.y   = ap_rect->y + ap_rect->height * .5f;
+        ap_view->size.x     = ap_rect->width;
+        ap_view->size.y     = ap_rect->height;
+    }
+
+    ap_view->viewport.x         = 0.f;
+    ap_view->viewport.y         = 0.f;
+    ap_view->viewport.width     = 1.f;
+    ap_view->viewport.height    = 1.f;
 
     ap_view->rotation = 0.f;
 
-    ap_view->isTransformUpdated     = PR_FALSE;
-    ap_view->isInvTransformUpdated  = PR_FALSE;
-void Pr_ResetView(Pr_View * ap_view, Pr_FloatRect * ap_rect)
+    Pr_MakeTransformIdentity(ap_view->transform);
+    ap_view->isTransformUpdated = PR_FALSE;
 
-    if (!ap_rect) { /* sets default view */
-        ap_view->center.x           = 0.f;
-        ap_view->center.y           = 0.f;
-        ap_view->size.x             = 1000.f;
-        ap_view->size.y             = 1000.f;
-        ap_view->viewport.x         = 0.f;
-        ap_view->viewport.y         = 0.f;
-        ap_view->viewport.width     = 1.f;
-        ap_view->viewport.height    = 1.f;
-        Pr_MakeTransformIdentity(ap_view->transform);
-        Pr_MakeTransformIdentity(ap_view->inverseTransform);
-        return;
-    }
-
-    ap_view->center.x   = ap_rect->x + ap_rect->width * .5f;
-    ap_view->center.y   = ap_rect->y + ap_rect->height * .5f;
-    ap_view->size.x     = ap_rect->width;
-    ap_view->size.y     = ap_rect->height;
+    Pr_MakeTransformIdentity(ap_view->inverseTransform);
+    ap_view->isInvTransformUpdated = PR_FALSE;
 }
 
 pr_bool_t Pr_GetViewTransform(Pr_View * ap_view, Pr_Transform ap_dst)
