@@ -53,7 +53,7 @@ static void s_Pr_InitVertices(Pr_Sprite * ap_spr)
     }
 }
 
-void Pr_SetSpriteTexture(Pr_Sprite * ap_spr, Pr_TextureRef ap_tex, pr_bool_t a_uptd)
+void Pr_SetSpriteTexture(Pr_Sprite * ap_spr, Pr_Texture * ap_tex, pr_bool_t a_uptd)
 {
     if (!ap_spr) return;
 
@@ -67,7 +67,7 @@ void Pr_SetSpriteTexture(Pr_Sprite * ap_spr, Pr_TextureRef ap_tex, pr_bool_t a_u
     }
 }
 
-void Pr_SetSpriteSrcRect(Pr_Sprite * ap_spr, Pr_IntRectRef ap_rect)
+void Pr_SetSpriteSrcRect(Pr_Sprite * ap_spr, Pr_IntRect * ap_rect)
 {
     if (!ap_spr) return;
 
@@ -90,7 +90,7 @@ void Pr_SetSpriteSrcRect(Pr_Sprite * ap_spr, Pr_IntRectRef ap_rect)
     s_Pr_UpdateTexCoords(ap_spr);
 }
 
-void Pr_RenderDrawSprite(Pr_Sprite * ap_spr, Pr_RenderingTarget * ap_target, Pr_RenderingStatesRef ap_states)
+void Pr_RenderDrawSprite(Pr_Sprite * ap_spr, Pr_RenderingTarget * ap_target, Pr_RenderingStates * ap_states)
 {
     Pr_Transform        lp_tr;
     Pr_RenderingStates  l_states;
@@ -114,7 +114,7 @@ void Pr_RenderDrawSprite(Pr_Sprite * ap_spr, Pr_RenderingTarget * ap_target, Pr_
     Pr_RndTargetDraw(ap_target, ap_spr->vertices, 4, PR_PRIMITIVE_TRIANGLESTRIP, &l_states);
 }
 
-pr_bool_t Pr_GetSpriteLocalBounds(Pr_SpriteRef ap_spr, Pr_FloatRect * ap_dst)
+pr_bool_t Pr_GetSpriteLocalBounds(Pr_Sprite * ap_spr, Pr_FloatRect * ap_dst)
 {
     if (!ap_spr || !ap_dst) return PR_FALSE;
 

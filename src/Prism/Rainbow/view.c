@@ -38,7 +38,7 @@ void Pr_SetViewRotation(Pr_View * ap_view, float a_degrees)
     ap_view->isInvTransformUpdated  = PR_FALSE;
 }
 
-void Pr_ResetView(Pr_View * ap_view, Pr_FloatRectRef ap_rect)
+void Pr_SetViewRect(Pr_View * ap_view, Pr_FloatRect * ap_rect)
 {
     if (!ap_view) return;
 
@@ -46,6 +46,7 @@ void Pr_ResetView(Pr_View * ap_view, Pr_FloatRectRef ap_rect)
 
     ap_view->isTransformUpdated     = PR_FALSE;
     ap_view->isInvTransformUpdated  = PR_FALSE;
+void Pr_ResetView(Pr_View * ap_view, Pr_FloatRect * ap_rect)
 
     if (!ap_rect) { /* sets default view */
         ap_view->center.x           = 0.f;
@@ -112,7 +113,7 @@ pr_bool_t Pr_GetViewInverseTransform(Pr_View * ap_view, Pr_Transform ap_dst)
     return PR_TRUE;
 }
 
-pr_bool_t Pr_GetViewCopy(Pr_ViewRef ap_view, Pr_View * ap_dst)
+pr_bool_t Pr_GetViewCopy(Pr_View * ap_view, Pr_View * ap_dst)
 {
     if (!ap_view || !ap_dst) return PR_FALSE;
 

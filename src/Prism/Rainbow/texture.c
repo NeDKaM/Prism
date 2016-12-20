@@ -80,7 +80,7 @@ static Pr_Texture * s_Pr_NewEmptyTexture(pr_u32_t a_w, pr_u32_t a_h)
     return lp_out;
 }
 
-static void s_Pr_SetTextureImage(Pr_Texture * ap_tex, Pr_ImageRef ap_img)
+static void s_Pr_SetTextureImage(Pr_Texture * ap_tex, Pr_Image * ap_img)
 {
     pr_u8_t * pixels = Pr_GetImagePixels(ap_img);
 
@@ -104,7 +104,7 @@ static void s_Pr_SetTextureImage(Pr_Texture * ap_tex, Pr_ImageRef ap_img)
     ap_tex->cacheId = s_Pr_GetUniqueTextureId();
 }
 
-void Pr_BindTexture(Pr_TextureRef ap_tex, Pr_TextureCoordinate a_type)
+void Pr_BindTexture(Pr_Texture * ap_tex, Pr_TextureCoordinate a_type)
 {
     if (!ap_tex) {
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -141,7 +141,7 @@ void Pr_BindTexture(Pr_TextureRef ap_tex, Pr_TextureCoordinate a_type)
     }
 }
 
-Pr_Texture * Pr_NewTexture(Pr_ImageRef ap_img, Pr_IntRectRef ap_rect)
+Pr_Texture * Pr_NewTexture(Pr_Image * ap_img, Pr_IntRect * ap_rect)
 {
     Pr_Texture *    lp_out = NULL;
     Pr_Vector2i     l_size;
@@ -188,7 +188,7 @@ Pr_Texture * Pr_NewTexture(Pr_ImageRef ap_img, Pr_IntRectRef ap_rect)
     return lp_out;
 }
 
-pr_bool_t Pr_GetTextureSize(Pr_TextureRef ap_tex, Pr_Vector2i * ap_dst)
+pr_bool_t Pr_GetTextureSize(Pr_Texture * ap_tex, Pr_Vector2i * ap_dst)
 {
     if (!ap_tex || !ap_dst) return PR_FALSE;
 

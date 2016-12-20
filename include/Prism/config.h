@@ -33,7 +33,6 @@
 
 #define PR_STRUCT(name_t,name) \
     typedef struct name_t name; \
-    typedef const name * name##Ref; \
     struct name_t
 
 #endif /* H_PRISM_CONFIG_INCLUDED */

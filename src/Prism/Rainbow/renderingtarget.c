@@ -53,7 +53,7 @@ static void s_Pr_ApplyCurrentView(Pr_RenderingTarget * ap_target)
     ap_target->cache.viewChanged = PR_FALSE;
 }
 
-static void s_Pr_ApplyTexture(Pr_RenderingTarget * ap_target, Pr_TextureRef ap_tex)
+static void s_Pr_ApplyTexture(Pr_RenderingTarget * ap_target, Pr_Texture * ap_tex)
 {
     struct s_pr_texture_t const * lp_tmp = (struct s_pr_texture_t const *)ap_tex;
 
@@ -62,7 +62,7 @@ static void s_Pr_ApplyTexture(Pr_RenderingTarget * ap_target, Pr_TextureRef ap_t
     ap_target->cache.oldTextureId = (ap_tex) ? lp_tmp->cacheId : 0;
 }
 
-static void s_Pr_ApplyBlendMode(Pr_RenderingTarget * ap_target, Pr_BlendModeRef ap_mode)
+static void s_Pr_ApplyBlendMode(Pr_RenderingTarget * ap_target, Pr_BlendMode * ap_mode)
 {
     glBlendFunc(s_Pr_GetGLFactor(ap_mode->colorSrcFactor), s_Pr_GetGLFactor(ap_mode->colorDstFactor));
 
@@ -70,16 +70,16 @@ static void s_Pr_ApplyBlendMode(Pr_RenderingTarget * ap_target, Pr_BlendModeRef 
 
 }
 
-static void s_Pr_ApplyTransform(Pr_TransformRef ap_transform)
+static void s_Pr_ApplyTransform(Pr_Transform ap_transform)
 {
     glLoadMatrixf(ap_transform);
 }
 
-static void s_Pr_ApplyShader(Pr_RenderingTargetRef ap_target, void * ap_shader)
+static void s_Pr_ApplyShader(Pr_RenderingTarget * ap_target, void * ap_shader)
 {
 }
 
-pr_bool_t Pr_GetRndTargetViewport(Pr_RenderingTargetRef ap_target, Pr_ViewRef ap_view, Pr_IntRect * ap_dst)
+pr_bool_t Pr_GetRndTargetViewport(Pr_RenderingTarget * ap_target, Pr_View * ap_view, Pr_IntRect * ap_dst)
 {
     float l_w;
     float l_h;
@@ -99,7 +99,7 @@ pr_bool_t Pr_GetRndTargetViewport(Pr_RenderingTargetRef ap_target, Pr_ViewRef ap
     return PR_TRUE;
 }
 
-void Pr_ClearRndTarget(Pr_RenderingTarget * ap_target, Pr_ColorRef ap_color)
+void Pr_ClearRndTarget(Pr_RenderingTarget * ap_target, Pr_Color * ap_color)
 {
     if (!ap_target) return;
 
@@ -142,7 +142,7 @@ void Pr_PopGLStates(Pr_RenderingTarget * ap_target)
     glPopMatrix();
 }
 
-void Pr_SetRndTargetView(Pr_RenderingTarget * ap_target, Pr_ViewRef ap_view)
+void Pr_SetRndTargetView(Pr_RenderingTarget * ap_target, Pr_View * ap_view)
 {
     if (!ap_target || !ap_view) return;
 
@@ -182,7 +182,7 @@ void Pr_ResetGLStates(Pr_RenderingTarget * ap_target)
     Pr_SetRndTargetView(ap_target, &ap_target->view);
 }
 
-pr_bool_t Pr_MapPixelToCoord(Pr_RenderingTargetRef ap_target, Pr_Vector2Ref(long) ap_point, Pr_Vector2f * ap_dst)
+pr_bool_t Pr_MapPixelToCoord(Pr_RenderingTarget * ap_target, Pr_Vector2i * ap_point, Pr_Vector2f * ap_dst)
 {
     Pr_Vector2f l_normalized;
     Pr_IntRect l_vp; 
@@ -199,7 +199,7 @@ pr_bool_t Pr_MapPixelToCoord(Pr_RenderingTargetRef ap_target, Pr_Vector2Ref(long
     return PR_TRUE;
 }
 
-pr_bool_t Pr_MapCoordToPixel(Pr_RenderingTargetRef ap_target, Pr_Vector2Ref(float) ap_point, Pr_Vector2i * ap_dst)
+pr_bool_t Pr_MapCoordToPixel(Pr_RenderingTarget * ap_target, Pr_Vector2i * ap_point, Pr_Vector2i * ap_dst)
 {
     Pr_Vector2f l_normalized;
     Pr_IntRect l_vp;
@@ -220,7 +220,7 @@ void Pr_RndTargetDraw(
     Pr_Vertex const *       ap_vertices, 
     pr_u32_t                a_count, 
     Pr_PrimitiveType        a_type, 
-    Pr_RenderingStatesRef   ap_states
+    Pr_RenderingStates *   ap_states
     )
 {
     pr_bool_t l_useVertexCache;

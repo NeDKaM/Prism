@@ -67,17 +67,17 @@ void Pr_DeleteArray(Pr_Array * ap_array)
     free(ap_array);
 }
 
-pr_u32_t Pr_ArraySize(Pr_ArrayRef ap_array)
+pr_u32_t Pr_ArraySize(Pr_Array * ap_array)
 {
     return (ap_array) ? ap_array->size : 0;
 }
 
-pr_u32_t Pr_ArrayCapacity(Pr_ArrayRef ap_array)
+pr_u32_t Pr_ArrayCapacity(Pr_Array * ap_array)
 {
     return (ap_array) ? ap_array->capacity : 0;
 }
 
-void * const Pr_GetArrayPointer(Pr_ArrayRef ap_array)
+void * const Pr_GetArrayPointer(Pr_Array * ap_array)
 {
     return (ap_array) ? ap_array->ptr : NULL;
 }

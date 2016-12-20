@@ -21,7 +21,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API Pr_List *          Pr_NewList(void);
     extern PRISM_API void               Pr_DeleteList(Pr_List *);
     extern PRISM_API void               Pr_ClearList(Pr_List *);
-    extern PRISM_API Pr_List *          Pr_CopyList(Pr_ListRef);
+    extern PRISM_API Pr_List *          Pr_CopyList(Pr_List *);
 
     extern PRISM_API Pr_ListIterator    Pr_PushFrontList(Pr_List *);
     extern PRISM_API Pr_ListIterator    Pr_PushBackList(Pr_List *);
@@ -32,13 +32,13 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void               Pr_PopBackList(Pr_List *);
     extern PRISM_API void               Pr_PopListAt(Pr_List *, pr_u32_t);
 
-    extern PRISM_API pr_u32_t           Pr_ListSize(Pr_ListRef);
+    extern PRISM_API pr_u32_t           Pr_ListSize(Pr_List *);
     
-    extern PRISM_API void *             Pr_ListAt(Pr_ListRef, pr_u32_t);
-    extern PRISM_API void *             Pr_FrontList(Pr_ListRef);
-    extern PRISM_API void *             Pr_BackList(Pr_ListRef);
+    extern PRISM_API void *             Pr_ListAt(Pr_List *, pr_u32_t);
+    extern PRISM_API void *             Pr_FrontList(Pr_List *);
+    extern PRISM_API void *             Pr_BackList(Pr_List *);
     
-    extern PRISM_API Pr_ListIterator    Pr_FrontListIterator(Pr_ListRef);
+    extern PRISM_API Pr_ListIterator    Pr_FrontListIterator(Pr_List *);
     extern PRISM_API Pr_ListIterator    Pr_NextListIterator(Pr_ListIterator);
     extern PRISM_API void *             Pr_ListIteratorData(Pr_ListIterator);
     extern PRISM_API void               Pr_SetListIteratorData(Pr_ListIterator, void *);

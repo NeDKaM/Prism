@@ -17,7 +17,7 @@
 struct pr_logger_t {
     Pr_List * entries;
     Pr_Signal * sigUpdated;
-    unsigned long capacity;
+    pr_u32_t capacity;
 };
 
 Pr_Logger * Pr_NewLogger(void)
@@ -49,7 +49,7 @@ void Pr_DeleteLogger(Pr_Logger * ap_log)
     free(ap_log);
 }
 
-Pr_Signal * Pr_LogUpdated(Pr_LoggerRef ap_log)
+Pr_Signal * Pr_LogUpdated(Pr_Logger * ap_log)
 {
     return (ap_log) ? ap_log->sigUpdated : NULL;
 }
@@ -102,7 +102,7 @@ void Pr_ClearLog_Slot(void * ap_obj, va_list ap_args)
     (void)ap_args;
 }
 
-void Pr_SetLogCapacity(Pr_Logger * ap_log, unsigned long a_size)
+void Pr_SetLogCapacity(Pr_Logger * ap_log, pr_u32_t a_size)
 {
     int l_diff;
 
@@ -129,12 +129,6 @@ void Pr_SetLogCapacity_Slot(void * ap_obj, va_list ap_args)
 {
     if (!ap_args) return;
 
-    Pr_SetLogCapacity(ap_obj, va_arg(ap_args, unsigned long));
+    Pr_SetLogCapacity(ap_obj, va_arg(ap_args, pr_u32_t));
 }
 
-Pr_ListRef Pr_GetLoggerEntries(Pr_LoggerRef ap_log)
-{
-    if (!ap_log) return NULL;
-
-    return ap_log->entries;
-}

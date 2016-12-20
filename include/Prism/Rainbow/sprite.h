@@ -12,16 +12,16 @@
 PR_CPP_PROTECT_ON
 
     PR_STRUCT(pr_sprite_t, Pr_Sprite) {
-        Pr_TextureRef       texture;
+        Pr_Texture *       texture;
         Pr_IntRect          sourceRect;
         Pr_Vertex           vertices[4];
         Pr_Transformable    transformable;
     };
 
-    extern PRISM_API void       Pr_SetSpriteTexture(Pr_Sprite *, Pr_TextureRef, pr_bool_t);
-    extern PRISM_API void       Pr_SetSpriteSrcRect(Pr_Sprite *, Pr_IntRectRef);
-    extern PRISM_API void       Pr_RenderDrawSprite(Pr_Sprite *, Pr_RenderingTarget *, Pr_RenderingStatesRef);
-    extern PRISM_API pr_bool_t  Pr_GetSpriteLocalBounds(Pr_SpriteRef, Pr_FloatRect *);
+    extern PRISM_API void       Pr_SetSpriteTexture(Pr_Sprite *, Pr_Texture *, pr_bool_t);
+    extern PRISM_API void       Pr_SetSpriteSrcRect(Pr_Sprite *, Pr_IntRect *);
+    extern PRISM_API void       Pr_RenderDrawSprite(Pr_Sprite *, Pr_RenderingTarget *, Pr_RenderingStates *);
+    extern PRISM_API pr_bool_t  Pr_GetSpriteLocalBounds(Pr_Sprite *, Pr_FloatRect *);
     extern PRISM_API pr_bool_t  Pr_GetSpriteGlobalBounds(Pr_Sprite *, Pr_FloatRect *);
     extern PRISM_API void       Pr_SetSpritePosition(Pr_Sprite *, float, float);
 

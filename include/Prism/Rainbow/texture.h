@@ -18,10 +18,10 @@ PR_CPP_PROTECT_ON
         PR_TEXCOORD_PIXELS,
     };
 
-    extern PRISM_API Pr_Texture *   Pr_NewTexture(Pr_ImageRef, Pr_IntRectRef);
-    extern PRISM_API pr_bool_t      Pr_GetTextureSize(Pr_TextureRef, Pr_Vector2i *);
+    extern PRISM_API Pr_Texture *   Pr_NewTexture(Pr_Image *, Pr_IntRect *);
+    extern PRISM_API pr_bool_t      Pr_GetTextureSize(Pr_Texture *, Pr_Vector2i *);
     extern PRISM_API void           Pr_DeleteTexture(Pr_Texture *);
-    extern PRISM_API void           Pr_BindTexture(Pr_TextureRef, Pr_TextureCoordinate);
+    extern PRISM_API void           Pr_BindTexture(Pr_Texture *, Pr_TextureCoordinate);
     extern PRISM_API void           Pr_SetTextureSmooth(Pr_Texture *, pr_bool_t);
     extern PRISM_API void           Pr_SetTextureRepeated(Pr_Texture *, pr_bool_t);
 

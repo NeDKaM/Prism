@@ -17,8 +17,8 @@
 #define STRING_UNIT 32
 
 struct pr_string_t {
-    unsigned long size;
-    unsigned long capacity;
+    pr_u32_t size;
+    pr_u32_t capacity;
     char * str;
 };
 
@@ -40,7 +40,7 @@ Pr_String * Pr_NewString(void)
     return lp_out;
 }
 
-Pr_String * Pr_NewStringStr(Pr_CStringRef ap_str)
+Pr_String * Pr_NewStringStr(const pr_cstring_t ap_str)
 {
     Pr_String * lp_out = Pr_NewString();
 
@@ -61,16 +61,16 @@ void Pr_DeleteString(Pr_String * ap_this)
     }
 }
 
-Pr_Strresult Pr_SetStringStr(Pr_String * ap_this, Pr_CStringRef ap_str)
+Pr_Strresult Pr_SetStringStr(Pr_String * ap_this, const pr_cstring_t ap_str)
 {
     Pr_Strresult l_code = 0;
 
     if (ap_this) {
         if (ap_str && ap_str[0] != '\0') {
-            unsigned long l_size = strlen(ap_str);
+            pr_u32_t l_size = strlen(ap_str);
 
             if (l_size + 1 > ap_this->capacity) {
-                unsigned long l_cap = ap_this->capacity + STRING_UNIT;
+                pr_u32_t l_cap = ap_this->capacity + STRING_UNIT;
                 char * lp_tmp;
 
                 while (l_size + 1 > l_cap) {
@@ -118,7 +118,7 @@ Pr_Strresult Pr_SetString(Pr_String * ap_this, Pr_String * ap_str)
     return Pr_SetStringStr(ap_this,(ap_str) ? ap_str->str : NULL);
 }
 
-Pr_Strcmpvalue Pr_StringSizeCmp(Pr_StringRef ap_str1, Pr_StringRef ap_str2)
+Pr_Strcmpvalue Pr_StringSizeCmp(Pr_String * ap_str1, Pr_String * ap_str2)
 {
     Pr_Strcmpvalue l_code;
 
@@ -133,14 +133,14 @@ Pr_Strcmpvalue Pr_StringSizeCmp(Pr_StringRef ap_str1, Pr_StringRef ap_str2)
     return l_code;
 }
 
-Pr_Strresult Pr_StringStrAppend(Pr_String * ap_this, Pr_CStringRef ap_str)
+Pr_Strresult Pr_StringStrAppend(Pr_String * ap_this, const pr_cstring_t ap_str)
 {
     Pr_Strresult l_code = PR_STRING_NOSTRING;
 
     if (ap_this) {
         if (ap_str && ap_str[0] != '\0') {
             if (ap_this->size) {
-                unsigned long l_size = strlen(ap_str) + ap_this->size + 1;
+                pr_u32_t l_size = strlen(ap_str) + ap_this->size + 1;
                 char * lp_tmp = calloc(l_size,sizeof(char));
 
                 if (lp_tmp) {
@@ -173,7 +173,7 @@ Pr_Strresult Pr_StringCharAppend(Pr_String * ap_this, char a_c)
 
 }
 
-Pr_String * Pr_StringAppendResult(Pr_CStringRef ap_str1, Pr_CStringRef ap_str2)
+Pr_String * Pr_StringAppendResult(const pr_cstring_t ap_str1, const pr_cstring_t ap_str2)
 {
     Pr_String * lp_out = Pr_NewStringStr(ap_str1);
 
@@ -183,7 +183,7 @@ Pr_String * Pr_StringAppendResult(Pr_CStringRef ap_str1, Pr_CStringRef ap_str2)
     return lp_out;
 }
 
-Pr_Strresult Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, Pr_CStringRef ap_str)
+Pr_Strresult Pr_StringStrInsert(Pr_String * ap_this, pr_u32_t a_at, const pr_cstring_t ap_str)
 {
     Pr_Strresult l_code = PR_STRING_NOSTRING;
 
@@ -214,7 +214,7 @@ Pr_Strresult Pr_StringStrInsert(Pr_String * ap_this, unsigned long a_at, Pr_CStr
     return l_code;
 }
 
-Pr_Strresult Pr_StringCharInsert(Pr_String * ap_this, unsigned long a_at, char a_c)
+Pr_Strresult Pr_StringCharInsert(Pr_String * ap_this, pr_u32_t a_at, char a_c)
 {
     char lp_tmp[2];
 
@@ -224,7 +224,7 @@ Pr_Strresult Pr_StringCharInsert(Pr_String * ap_this, unsigned long a_at, char a
     return Pr_StringStrInsert(ap_this,a_at,lp_tmp);
 }
 
-Pr_Strresult Pr_StringCut(Pr_String * ap_this, unsigned long a_at)
+Pr_Strresult Pr_StringCut(Pr_String * ap_this, pr_u32_t a_at)
 {
     Pr_Strresult l_code = PR_STRING_NOSTRING;
 
@@ -234,7 +234,7 @@ Pr_Strresult Pr_StringCut(Pr_String * ap_this, unsigned long a_at)
         } else if (a_at >= ap_this->size) {
             l_code = PR_STRING_UNMODIFIED;
         } else {
-            unsigned long l_i;
+            pr_u32_t l_i;
 
             if (a_at > ap_this->size) {
                 a_at = ap_this->size;
@@ -249,7 +249,7 @@ Pr_Strresult Pr_StringCut(Pr_String * ap_this, unsigned long a_at)
     return l_code;
 }
 
-Pr_String * Pr_StringSubStr(Pr_String * ap_str, unsigned long a_begin, unsigned long a_end)
+Pr_String * Pr_StringSubStr(Pr_String * ap_str, pr_u32_t a_begin, pr_u32_t a_end)
 {
     Pr_String * lp_out = Pr_NewString();
 
@@ -257,7 +257,7 @@ Pr_String * Pr_StringSubStr(Pr_String * ap_str, unsigned long a_begin, unsigned 
         if (ap_str) {
             if (a_begin < ap_str->size && a_begin < a_end) {
                 char * lp_tmp = NULL;
-                unsigned long l_size = 0;
+                pr_u32_t l_size = 0;
 
                 if (a_end > ap_str->size) {
                     a_end = ap_str->size;
@@ -277,12 +277,12 @@ Pr_String * Pr_StringSubStr(Pr_String * ap_str, unsigned long a_begin, unsigned 
     return lp_out;
 }
 
-Pr_String * Pr_StringNSubStr(Pr_String * ap_str, unsigned long a_at, unsigned long a_size)
+Pr_String * Pr_StringNSubStr(Pr_String * ap_str, pr_u32_t a_at, pr_u32_t a_size)
 {
     return Pr_StringSubStr(ap_str,a_at,a_at+a_size);
 }
 
-Pr_Strresult Pr_StringRemove(Pr_String * ap_this, unsigned long a_begin, unsigned long a_end)
+Pr_Strresult Pr_StringRemove(Pr_String * ap_this, pr_u32_t a_begin, pr_u32_t a_end)
 {
     Pr_Strresult l_code = PR_STRING_NOSTRING;
 
@@ -319,27 +319,27 @@ void Pr_StringClear(Pr_String * ap_this)
     }
 }
 
-Pr_Strresult Pr_StringNRemove(Pr_String * ap_this, unsigned long a_at, unsigned long a_size)
+Pr_Strresult Pr_StringNRemove(Pr_String * ap_this, pr_u32_t a_at, pr_u32_t a_size)
 {
     return Pr_StringRemove(ap_this,a_at,a_at+a_size-1);
 }
 
-unsigned long Pr_StringSize(Pr_StringRef ap_this)
+pr_u32_t Pr_StringSize(Pr_String * ap_this)
 {
     return (ap_this) ? ap_this->size : 0;
 }
 
-unsigned long Pr_StringCapacity(Pr_StringRef ap_this)
+pr_u32_t Pr_StringCapacity(Pr_String * ap_this)
 {
     return (ap_this) ? ap_this->capacity : 0;
 }
 
-char const * Pr_StringCStr(Pr_StringRef ap_this)
+const pr_cstring_t Pr_StringCStr(Pr_String * ap_this)
 {
     return (ap_this) ? ap_this->str : NULL;
 }
 
-long Pr_StringFind(Pr_StringRef ap_this, Pr_CStringRef ap_str)
+long Pr_StringFind(Pr_String * ap_this, const pr_cstring_t ap_str)
 {
     char const * lp_tmp;
 
@@ -352,7 +352,7 @@ long Pr_StringFind(Pr_StringRef ap_this, Pr_CStringRef ap_str)
     return (lp_tmp) ? (lp_tmp - ap_this->str) : -1;
 }
 
-unsigned long Pr_StringReplace(Pr_String * ap_this, Pr_CStringRef ap_str, Pr_CStringRef ap_by)
+pr_u32_t Pr_StringReplace(Pr_String * ap_this, const pr_cstring_t ap_str, const pr_cstring_t ap_by)
 {
     size_t l_count = 0;
     size_t l_i, l_strlen, l_bylen;

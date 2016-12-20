@@ -38,15 +38,15 @@ PR_CPP_PROTECT_ON
         Pr_Vector2i size;
     };
 
-    extern PRISM_API pr_bool_t  Pr_GetRndTargetViewport(Pr_RenderingTargetRef, Pr_ViewRef, Pr_IntRect *);
-    extern PRISM_API void       Pr_ClearRndTarget(Pr_RenderingTarget *, Pr_ColorRef);
-    extern PRISM_API pr_bool_t  Pr_MapPixelToCoord(Pr_RenderingTargetRef, Pr_Vector2Ref(long), Pr_Vector2f *);
-    extern PRISM_API pr_bool_t  Pr_MapCoordToPixel(Pr_RenderingTargetRef, Pr_Vector2Ref(float), Pr_Vector2i *);
+    extern PRISM_API pr_bool_t  Pr_GetRndTargetViewport(Pr_RenderingTarget *, Pr_View *, Pr_IntRect *);
+    extern PRISM_API void       Pr_ClearRndTarget(Pr_RenderingTarget *, Pr_Color *);
+    extern PRISM_API pr_bool_t  Pr_MapPixelToCoord(Pr_RenderingTarget *, Pr_Vector2i *, Pr_Vector2f *);
+    extern PRISM_API pr_bool_t  Pr_MapCoordToPixel(Pr_RenderingTarget *, Pr_Vector2i *, Pr_Vector2i *);
     extern PRISM_API void       Pr_PushGLStates(Pr_RenderingTarget *);
     extern PRISM_API void       Pr_PopGLStates(Pr_RenderingTarget *);
     extern PRISM_API void       Pr_ResetGLStates(Pr_RenderingTarget *);
-    extern PRISM_API void       Pr_SetRndTargetView(Pr_RenderingTarget *, Pr_ViewRef);
-    extern PRISM_API void       Pr_RndTargetDraw(Pr_RenderingTarget *, Pr_Vertex const *, pr_u32_t, Pr_PrimitiveType, Pr_RenderingStatesRef);
+    extern PRISM_API void       Pr_SetRndTargetView(Pr_RenderingTarget *, Pr_View *);
+    extern PRISM_API void       Pr_RndTargetDraw(Pr_RenderingTarget *, Pr_Vertex const *, pr_u32_t, Pr_PrimitiveType, Pr_RenderingStates *);
 
 PR_CPP_PROTECT_OFF
 

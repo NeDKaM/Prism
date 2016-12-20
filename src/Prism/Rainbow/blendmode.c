@@ -1,13 +1,13 @@
 #include <Prism/Rainbow/blendmode.h>
 
-Pr_BlendModeRef Pr_BlendModeDefault(void)
+Pr_BlendMode * Pr_BlendModeDefault(void)
 {
     return Pr_BlendModeAlpha();
 }
 
-Pr_BlendModeRef Pr_BlendModeAlpha(void)
+Pr_BlendMode * Pr_BlendModeAlpha(void)
 {
-    Pr_BlendModeRef lp_out;
+    Pr_BlendMode * lp_out;
     static Pr_BlendMode l_out = {
         PR_BLENDF_SRC_ALPHA,
         PR_BLENDF_1MINSRC_ALPHA,
@@ -22,9 +22,9 @@ Pr_BlendModeRef Pr_BlendModeAlpha(void)
     return lp_out;
 }
 
-Pr_BlendModeRef Pr_BlendModeAdd(void)
+Pr_BlendMode * Pr_BlendModeAdd(void)
 {
-    Pr_BlendModeRef lp_out;
+    Pr_BlendMode * lp_out;
     static Pr_BlendMode l_out = {
         PR_BLENDF_SRC_ALPHA,
         PR_BLENDF_1,
@@ -39,9 +39,9 @@ Pr_BlendModeRef Pr_BlendModeAdd(void)
     return lp_out;
 }
 
-Pr_BlendModeRef Pr_BlendModeMultiply(void)
+Pr_BlendMode * Pr_BlendModeMultiply(void)
 {
-    Pr_BlendModeRef lp_out;
+    Pr_BlendMode * lp_out;
     static Pr_BlendMode l_out = {
         PR_BLENDF_DST,
         PR_BLENDF_ZERO,
@@ -56,9 +56,9 @@ Pr_BlendModeRef Pr_BlendModeMultiply(void)
     return lp_out;
 }
 
-Pr_BlendModeRef Pr_BlendModeNone(void)
+Pr_BlendMode * Pr_BlendModeNone(void)
 {
-    Pr_BlendModeRef lp_out;
+    Pr_BlendMode * lp_out;
     static Pr_BlendMode l_out = {
         PR_BLENDF_1,
         PR_BLENDF_ZERO,
@@ -73,7 +73,7 @@ Pr_BlendModeRef Pr_BlendModeNone(void)
     return lp_out;
 }
 
-pr_bool_t Pr_BlendModeEquals(Pr_BlendModeRef ap_1, Pr_BlendModeRef ap_2)
+pr_bool_t Pr_BlendModeEquals(Pr_BlendMode * ap_1, Pr_BlendMode * ap_2)
 {
     if (!ap_1 || !ap_2) return PR_FALSE;
 

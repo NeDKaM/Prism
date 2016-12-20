@@ -22,10 +22,14 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void       Pr_SetViewCenter(Pr_View *, float, float);
     extern PRISM_API void       Pr_SetViewSize(Pr_View *, float, float);
     extern PRISM_API void       Pr_SetViewRotation(Pr_View *, float);
-    extern PRISM_API void       Pr_ResetView(Pr_View *, Pr_FloatRectRef);
+    extern PRISM_API void       Pr_SetViewRect(Pr_View *, Pr_FloatRect *);
+
+    extern PRISM_API void       Pr_ResetView(Pr_View *, Pr_FloatRect *);
+
     extern PRISM_API pr_bool_t  Pr_GetViewTransform(Pr_View *, Pr_Transform);
     extern PRISM_API pr_bool_t  Pr_GetViewInverseTransform(Pr_View *, Pr_Transform);
-    extern PRISM_API pr_bool_t  Pr_GetViewCopy(Pr_ViewRef, Pr_View *);
+
+    extern PRISM_API pr_bool_t  Pr_GetViewCopy(Pr_View *, Pr_View *);
 
 PR_CPP_PROTECT_OFF
 

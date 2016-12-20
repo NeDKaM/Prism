@@ -37,13 +37,13 @@ PR_CPP_PROTECT_ON
         Pr_BlendModeEquation    alphaEquation;
     };
 
-    extern PRISM_API Pr_BlendModeRef    Pr_BlendModeDefault(void);
+    extern PRISM_API Pr_BlendMode *    Pr_BlendModeDefault(void);
 
-    extern PRISM_API Pr_BlendModeRef    Pr_BlendModeAlpha(void);
-    extern PRISM_API Pr_BlendModeRef    Pr_BlendModeAdd(void);
-    extern PRISM_API Pr_BlendModeRef    Pr_BlendModeMultiply(void);
-    extern PRISM_API Pr_BlendModeRef    Pr_BlendModeNone(void);
-    extern PRISM_API pr_bool_t          Pr_BlendModeEquals(Pr_BlendModeRef, Pr_BlendModeRef);
+    extern PRISM_API Pr_BlendMode *    Pr_BlendModeAlpha(void);
+    extern PRISM_API Pr_BlendMode *    Pr_BlendModeAdd(void);
+    extern PRISM_API Pr_BlendMode *    Pr_BlendModeMultiply(void);
+    extern PRISM_API Pr_BlendMode *    Pr_BlendModeNone(void);
+    extern PRISM_API pr_bool_t          Pr_BlendModeEquals(Pr_BlendMode *, Pr_BlendMode *);
 
 PR_CPP_PROTECT_OFF
 

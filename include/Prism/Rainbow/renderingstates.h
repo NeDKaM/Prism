@@ -10,8 +10,8 @@ PR_CPP_PROTECT_ON
 
     PR_STRUCT(pr_renderingstates_t, Pr_RenderingStates) {
         Pr_BlendMode    blenMode;
-        /* Pr_ShaderRef */ void * shader; 
-        Pr_TextureRef   texture;
+        /* Pr_Shader * */ void * shader; 
+        Pr_Texture *   texture;
         Pr_Transform    transform;
     };
 

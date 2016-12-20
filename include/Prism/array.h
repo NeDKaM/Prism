@@ -18,9 +18,9 @@ PR_CPP_PROTECT_ON
     
     Pr_Array *      Pr_NewArray(pr_u32_t, pr_u32_t);
     void            Pr_DeleteArray(Pr_Array *);
-    pr_u32_t        Pr_ArraySize(Pr_ArrayRef);
-    pr_u32_t        Pr_ArrayCapacity(Pr_ArrayRef);
-    void * const    Pr_GetArrayPointer(Pr_ArrayRef);
+    pr_u32_t        Pr_ArraySize(Pr_Array *);
+    pr_u32_t        Pr_ArrayCapacity(Pr_Array *);
+    void * const    Pr_GetArrayPointer(Pr_Array *);
     pr_bool_t       Pr_ResizeArray(Pr_Array *, pr_u32_t);
     void            Pr_ClearArray(Pr_Array *);
 

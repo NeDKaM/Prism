@@ -48,7 +48,7 @@ void Pr_DeleteImage(Pr_Image * ap_img)
     free(ap_img);
 }
 
-pr_bool_t Pr_GetImageSize(Pr_ImageRef ap_img, Pr_Vector2i * ap_size)
+pr_bool_t Pr_GetImageSize(Pr_Image * ap_img, Pr_Vector2i * ap_size)
 {
     if (!ap_img || !ap_size) return PR_FALSE;
 
@@ -57,14 +57,14 @@ pr_bool_t Pr_GetImageSize(Pr_ImageRef ap_img, Pr_Vector2i * ap_size)
     return PR_TRUE;
 }
 
-pr_u8_t * Pr_GetImagePixels(Pr_ImageRef ap_img)
+pr_u8_t * Pr_GetImagePixels(Pr_Image * ap_img)
 {
     if (!ap_img) return NULL;
 
     return (pr_u8_t *)Pr_GetArrayPointer(ap_img->pixels);
 }
 
-void Pr_SetImagePixel(Pr_Image * ap_img, Pr_ColorRef ap_color, pr_u32_t a_x, pr_u32_t a_y)
+void Pr_SetImagePixel(Pr_Image * ap_img, Pr_Color * ap_color, pr_u32_t a_x, pr_u32_t a_y)
 {
     pr_u8_t * lp_pixels;
 
@@ -80,7 +80,7 @@ void Pr_SetImagePixel(Pr_Image * ap_img, Pr_ColorRef ap_color, pr_u32_t a_x, pr_
     lp_pixels[3] = ap_color->a;
 }
 
-pr_bool_t Pr_GetImagePixel(Pr_ImageRef ap_img, Pr_Color * ap_color, pr_u32_t a_x, pr_u32_t a_y)
+pr_bool_t Pr_GetImagePixel(Pr_Image * ap_img, Pr_Color * ap_color, pr_u32_t a_x, pr_u32_t a_y)
 {
     pr_u8_t * lp_pixels;
 
@@ -98,7 +98,7 @@ pr_bool_t Pr_GetImagePixel(Pr_ImageRef ap_img, Pr_Color * ap_color, pr_u32_t a_x
     return PR_TRUE;
 }
 
-pr_bool_t Pr_FillImageRect(Pr_Image * ap_img, Pr_IntRectRef ap_rect, Pr_ColorRef ap_color)
+pr_bool_t Pr_FillImageRect(Pr_Image * ap_img, Pr_IntRect * ap_rect, Pr_Color * ap_color)
 {
     Pr_IntRect    l_rect;
     pr_u32_t    l_x;
