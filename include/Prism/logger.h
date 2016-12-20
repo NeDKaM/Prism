@@ -19,13 +19,12 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Logger *    Pr_NewLogger(void);
     extern PRISM_API void           Pr_DeleteLogger(Pr_Logger *);
-    extern PRISM_API Pr_ListRef     Pr_GetLoggerEntries(Pr_LoggerRef);
 
     extern PRISM_API PR_SIGNAL(Pr_LogUpdated)(Pr_Logger *);     /**< (pr_cstring_t) >*/
 
     PR_SLOT_EXTERN_API(Pr_WriteLog)(Pr_Logger *, char *);
     PR_SLOT_EXTERN_API(Pr_ClearLog)(Pr_Logger *);
-    PR_SLOT_EXTERN_API(Pr_SetLogCapacity)(Pr_Logger *, unsigned long);
+    PR_SLOT_EXTERN_API(Pr_SetLogCapacity)(Pr_Logger *, pr_u32_t);
 
 PR_CPP_PROTECT_OFF
 
