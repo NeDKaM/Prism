@@ -39,6 +39,7 @@ PR_CPP_PROTECT_ON
         Pr_SlotFunction(hide)(Pr_SystemWindowRef);
         Pr_SlotFunction(show)(Pr_SystemWindowRef);
         Pr_SlotFunction(raise)(Pr_SystemWindowRef);
+        Pr_SlotFunction(display)(Pr_SystemWindowRef);
     };
 
     extern PRISM_API Pr_Class Pr_SystemWindowClass;
@@ -57,6 +58,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowOnDelete)(Pr_SystemWindowRef);        /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowFocusGained)(Pr_SystemWindowRef);     /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowFocusLost)(Pr_SystemWindowRef);       /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowOnDisplay)(Pr_SystemWindowRef);       /**< (void) >*/
 
 PR_CPP_PROTECT_OFF
 

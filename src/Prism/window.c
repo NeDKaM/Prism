@@ -6,6 +6,7 @@
 
 enum {
     PR_ONDELETE,
+    PR_ONDISPLAY,
     PR_SHOWN,
     PR_HIDDEN,
     PR_EXPOSED,
@@ -284,3 +285,4 @@ PR_SIG_IMPL(Pr_SystemWindowEntered,       PR_ENTER)
 PR_SIG_IMPL(Pr_SystemWindowLeaved,        PR_LEAVE)
 PR_SIG_IMPL(Pr_SystemWindowRestored,      PR_RESTORED)
 PR_SIG_IMPL(Pr_SystemWindowOnDelete,      PR_ONDELETE)
+PR_SIG_IMPL(Pr_WindowOnDisplay,     PR_ONDISPLAY)
