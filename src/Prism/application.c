@@ -191,7 +191,6 @@ static void s_Pr_QuitApp(void)
 
     while (Pr_ListSize(s_app.wndlist)) {
         Pr_Delete(Pr_FrontList(s_app.wndlist));
-        Pr_PopFrontList(s_app.wndlist);
     }
 
     Pr_DeleteList(s_app.wndlist);
