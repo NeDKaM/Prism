@@ -5,10 +5,7 @@
 #include <string.h>
 
 enum {
-    PR_UPDATED = 0,
     PR_ONDELETE,
-    PR_PAINTED,
-
     PR_SHOWN,
     PR_HIDDEN,
     PR_EXPOSED,
@@ -277,7 +274,6 @@ PR_SIG_IMPL(Pr_SystemWindowClosed,        PR_CLOSED)
 PR_SIG_IMPL(Pr_SystemWindowMoved,         PR_MOVED)
 PR_SIG_IMPL(Pr_SystemWindowSizeChanged,   PR_SIZE_CHANGED)
 PR_SIG_IMPL(Pr_SystemWindowFramed,        PR_FRAMED)
-PR_SIG_IMPL(Pr_SystemWindowUpdated,       PR_UPDATED)
 PR_SIG_IMPL(Pr_SystemWindowHidden,        PR_HIDDEN)
 PR_SIG_IMPL(Pr_SystemWindowShown,         PR_SHOWN)
 PR_SIG_IMPL(Pr_SystemWindowMinimized,     PR_MINIMIZED)
@@ -288,4 +284,3 @@ PR_SIG_IMPL(Pr_SystemWindowEntered,       PR_ENTER)
 PR_SIG_IMPL(Pr_SystemWindowLeaved,        PR_LEAVE)
 PR_SIG_IMPL(Pr_SystemWindowRestored,      PR_RESTORED)
 PR_SIG_IMPL(Pr_SystemWindowOnDelete,      PR_ONDELETE)
-PR_SIG_IMPL(Pr_SystemWindowPainted,       PR_PAINTED)

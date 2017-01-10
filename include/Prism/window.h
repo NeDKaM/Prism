@@ -52,8 +52,6 @@ PR_CPP_PROTECT_ON
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowRestored)(Pr_SystemWindowRef);        /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowHidden)(Pr_SystemWindowRef);          /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowFramed)(Pr_SystemWindowRef);          /**< (int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowUpdated)(Pr_SystemWindowRef);         /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowPainted)(Pr_SystemWindowRef);         /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowLeaved)(Pr_SystemWindowRef);          /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowEntered)(Pr_SystemWindowRef);         /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_SystemWindowOnDelete)(Pr_SystemWindowRef);        /**< (void) >*/

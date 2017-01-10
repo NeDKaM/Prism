@@ -179,7 +179,6 @@ static void s_Pr_UpdateApp(void)
     }
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
-        Pr_Emit(Pr_SystemWindowUpdated(Pr_ListIteratorData(l_it)), NULL);
     }
 }
 
