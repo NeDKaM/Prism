@@ -19,12 +19,14 @@ void Pr_ClearRenderWindow(Pr_RenderWindowRef ap_wnd)
 
 #define PR_RENDERWINDOW_SLOT(name) static void name(void * ap_obj, va_list ap_args)
 
+/*
 PR_RENDERWINDOW_SLOT(s_Pr_ActivateContext_Slot)
 {
     Pr_RenderWindowRef lp_this = ap_obj;
 
     SDL_GL_MakeCurrent(lp_this->self.sdlWindow, lp_this->sdlglContext); 
 }
+*/
 
 PR_RENDERWINDOW_SLOT(s_Pr_RenderPresent_Slot)
 {
@@ -133,9 +135,8 @@ static pr_bool_t s_Pr_ConstructWindow(Pr_ObjectRef ap_obj)
 #endif
         if (lp_this->sdlglContext
             && l_glew
-            && Pr_Connect(Pr_SystemWindowPainted(lp_tmp), lp_tmp, s_Pr_RenderPresent_Slot)  
-            && Pr_Connect(Pr_SystemWindowUpdated(lp_tmp), lp_tmp, s_Pr_ActivateContext_Slot) 
-            && Pr_Connect(Pr_SystemWindowSizeChanged(lp_tmp), lp_tmp, s_Pr_Resize_Slot)
+            && Pr_Connect(Pr_WindowSizeChanged(lp_tmp), lp_tmp, s_Pr_Resize_Slot)
+            && Pr_Connect(Pr_WindowOnDisplay(lp_tmp), lp_tmp, s_Pr_RenderPresent_Slot)
         ) {
             Pr_Color l_black = {0,0,0,255};
 
