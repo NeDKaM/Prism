@@ -181,6 +181,8 @@ static void s_Pr_GetWindowSize(Pr_SystemWindowRef ap_wnd, pr_u32_t * ap_w, pr_u3
     pr_u32_t l_w;
     pr_u32_t l_h;
 
+    if (!ap_wnd) return;
+
     SDL_GetWindowSize(ap_wnd->sdlWindow, &l_w, &l_h);
 
     if (ap_w) *ap_w = l_w;
@@ -258,6 +260,7 @@ Pr_Class Pr_SystemWindowClass = {
     &Pr_ObjectClass,
     NULL,
     16,
+    8,
     PR_FALSE,
 
     s_Pr_ConstructWindow,
