@@ -18,6 +18,8 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Class Pr_RenderWindowClass;
 
+    extern PRISM_API void   Pr_ClearRenderWindow(Pr_RenderWindowRef);
+
 PR_CPP_PROTECT_OFF
 
 #endif /* H_RAINBOW_RENDERINGWINDOW_INCLUDED */

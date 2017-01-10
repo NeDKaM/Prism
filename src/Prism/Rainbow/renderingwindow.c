@@ -6,23 +6,18 @@
 #include <stdio.h>
 #include <Prism/Rainbow/opengl.h>
 
+void Pr_ClearRenderWindow(Pr_RenderWindowRef ap_wnd)
+{
+    if (!ap_wnd) return;
+
+    Pr_ClearRndTarget(&ap_wnd->renderTarget, &ap_wnd->clearColor);
+}
+
 #ifdef PRISM_SYSTEM_WINDOWS
     static pr_bool_t s_glewOn = PR_FALSE;
 #endif
 
 #define PR_RENDERWINDOW_SLOT(name) static void name(void * ap_obj, va_list ap_args)
-
-PR_RENDERWINDOW_SLOT(s_Pr_ClearRenderWindow_Slot)
-{
-    Pr_RenderWindowRef  ap_this = ap_obj;
-    Pr_Color *          l_color;
-
-    if (!ap_args) return;
-
-    l_color = va_arg(ap_args, Pr_Color *);
-
-    Pr_ClearRndTarget(&ap_this->renderTarget, l_color);
-}
 
 PR_RENDERWINDOW_SLOT(s_Pr_ActivateContext_Slot)
 {
@@ -142,10 +137,13 @@ static pr_bool_t s_Pr_ConstructWindow(Pr_ObjectRef ap_obj)
             && Pr_Connect(Pr_SystemWindowUpdated(lp_tmp), lp_tmp, s_Pr_ActivateContext_Slot) 
             && Pr_Connect(Pr_SystemWindowSizeChanged(lp_tmp), lp_tmp, s_Pr_Resize_Slot)
         ) {
+            Pr_Color l_black = {0,0,0,255};
+
             SDL_DestroyWindow(lp_tmp->sdlWindow);
             lp_tmp->sdlWindow   = lp_wnd;
             lp_tmp->id          = SDL_GetWindowID(lp_tmp->sdlWindow);
             s_Pr_InitRenderingTraget(lp_this);
+            lp_this->clearColor = l_black;
 
             return PR_TRUE;
         }
@@ -171,7 +169,7 @@ Pr_Class Pr_RenderWindowClass = {
     0,
     &Pr_SystemWindowClass,
     NULL,
-    16,
+    8,
     PR_FALSE,
 
     s_Pr_ConstructWindow,
