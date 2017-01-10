@@ -97,14 +97,6 @@ void * Pr_New(Pr_Class * ap_cls)
         );
 
         if (!ap_cls->memoryPool) return NULL;
-
-#ifdef PRISM_DEBUG
-        printf("Allocating new memory pool for %d %s objects of %d bytes each\n",
-            ap_cls->poolSize,
-            ap_cls->name,
-            ap_cls->objectSize
-        );
-#endif
     }
 
     lp_out = Pr_AllocateBlock(ap_cls->memoryPool);
@@ -144,13 +136,6 @@ void Pr_Delete(Pr_ObjectRef ap_obj)
     s_Pr_UpdateClassRefCounters(lp_cls, -1);
 
     if (lp_cls->refCount == 0) {
-#ifdef PRISM_DEBUG
-        printf("Removing memory pool of %d %s objects of %d bytes each\n",
-            lp_cls->poolSize,
-            lp_cls->name,
-            lp_cls->objectSize
-        );
-#endif
         Pr_DeleteMemoryPool(lp_cls->memoryPool);
         lp_cls->memoryPool = NULL;
     }
