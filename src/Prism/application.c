@@ -187,8 +187,6 @@ static void s_Pr_QuitApp(void)
 {
     unsigned int l_i = 0;
 
-    Pr_DeleteLogger(s_app.log);
-
     while (Pr_ListSize(s_app.wndlist)) {
         Pr_Delete(Pr_FrontList(s_app.wndlist));
     }
@@ -198,6 +196,8 @@ static void s_Pr_QuitApp(void)
     s_Pr_DeleteSignalList();
 
     SDL_Quit();
+
+    Pr_DeleteLogger(s_app.log);
 
     s_app.initialized = PR_FALSE;
     s_app.wndlist = NULL;
