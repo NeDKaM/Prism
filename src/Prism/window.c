@@ -46,7 +46,7 @@ static void s_Pr_SetWindowPosition(Pr_SystemWindowRef ap_wnd, long a_x, long a_y
 {
     SDL_SetWindowPosition(ap_wnd->sdlWindow, a_x, a_y);
 
-    Pr_Emit(Pr_SystemWindowMoved(ap_wnd), a_x, a_y);
+    Pr_Emit(Pr_WindowMoved(ap_wnd), a_x, a_y);
 }
 
 PR_WINDOW_SLOT(s_Pr_SetWindowPosition_Slot)
@@ -67,7 +67,7 @@ static void s_Pr_SetWindowSize(Pr_SystemWindowRef ap_wnd, pr_u32_t a_w, pr_u32_t
 {
     SDL_SetWindowSize(ap_wnd->sdlWindow, a_w, a_h);
 
-    Pr_Emit(Pr_SystemWindowSizeChanged(ap_wnd), a_w, a_h);
+    Pr_Emit(Pr_WindowSizeChanged(ap_wnd), a_w, a_h);
 }
 
 PR_WINDOW_SLOT(s_Pr_SetWindowSize_Slot)
@@ -88,7 +88,7 @@ static void s_Pr_SetWindowFramed(Pr_SystemWindowRef ap_wnd, pr_bool_t a_bool)
 {
     SDL_SetWindowBordered(ap_wnd->sdlWindow, a_bool);
 
-    Pr_Emit(Pr_SystemWindowFramed(ap_wnd), a_bool);
+    Pr_Emit(Pr_WindowFramed(ap_wnd), a_bool);
 }
 
 PR_WINDOW_SLOT(s_Pr_SetWindowFramed_Slot)
@@ -107,7 +107,7 @@ static void s_Pr_HideWindow(Pr_SystemWindowRef ap_wnd)
 {
     SDL_HideWindow(ap_wnd->sdlWindow);
 
-    Pr_Emit(Pr_SystemWindowHidden(ap_wnd));
+    Pr_Emit(Pr_WindowHidden(ap_wnd));
 }
 
 PR_WINDOW_SLOT(s_Pr_HideWindow_Slot)
@@ -121,7 +121,7 @@ static void s_Pr_ShowWindow(Pr_SystemWindowRef ap_wnd)
 {
     SDL_ShowWindow(ap_wnd->sdlWindow);
 
-    Pr_Emit(Pr_SystemWindowShown(ap_wnd));
+    Pr_Emit(Pr_WindowShown(ap_wnd));
 }
 
 PR_WINDOW_SLOT(s_Pr_ShowWindow_Slot)
@@ -244,7 +244,7 @@ static void s_Pr_DestructWindow(Pr_ObjectRef ap_obj)
 {
     Pr_SystemWindowRef lp_this = (Pr_SystemWindowRef)ap_obj;
 
-    Pr_Emit(Pr_SystemWindowOnDelete(lp_this));
+    Pr_Emit(Pr_WindowOnDelete(lp_this));
 
     Pr_UnregisterWindow(lp_this);
 
@@ -259,7 +259,6 @@ Pr_Class Pr_SystemWindowClass = {
     0,
     &Pr_ObjectClass,
     NULL,
-    16,
     8,
     PR_FALSE,
 
@@ -274,18 +273,18 @@ Pr_Class Pr_SystemWindowClass = {
         return Pr_ListAt(ap_wnd->signals, signalId); \
     } 
 
-PR_SIG_IMPL(Pr_SystemWindowClosed,        PR_CLOSED)
-PR_SIG_IMPL(Pr_SystemWindowMoved,         PR_MOVED)
-PR_SIG_IMPL(Pr_SystemWindowSizeChanged,   PR_SIZE_CHANGED)
-PR_SIG_IMPL(Pr_SystemWindowFramed,        PR_FRAMED)
-PR_SIG_IMPL(Pr_SystemWindowHidden,        PR_HIDDEN)
-PR_SIG_IMPL(Pr_SystemWindowShown,         PR_SHOWN)
-PR_SIG_IMPL(Pr_SystemWindowMinimized,     PR_MINIMIZED)
-PR_SIG_IMPL(Pr_SystemWindowMaximized,     PR_MAXIMIZED)
-PR_SIG_IMPL(Pr_SystemWindowFocusGained,   PR_FOCUS_GAINED)
-PR_SIG_IMPL(Pr_SystemWindowFocusLost,     PR_FOCUS_LOST)
-PR_SIG_IMPL(Pr_SystemWindowEntered,       PR_ENTER)
-PR_SIG_IMPL(Pr_SystemWindowLeaved,        PR_LEAVE)
-PR_SIG_IMPL(Pr_SystemWindowRestored,      PR_RESTORED)
-PR_SIG_IMPL(Pr_SystemWindowOnDelete,      PR_ONDELETE)
+PR_SIG_IMPL(Pr_WindowClosed,        PR_CLOSED)
+PR_SIG_IMPL(Pr_WindowMoved,         PR_MOVED)
+PR_SIG_IMPL(Pr_WindowSizeChanged,   PR_SIZE_CHANGED)
+PR_SIG_IMPL(Pr_WindowFramed,        PR_FRAMED)
+PR_SIG_IMPL(Pr_WindowHidden,        PR_HIDDEN)
+PR_SIG_IMPL(Pr_WindowShown,         PR_SHOWN)
+PR_SIG_IMPL(Pr_WindowMinimized,     PR_MINIMIZED)
+PR_SIG_IMPL(Pr_WindowMaximized,     PR_MAXIMIZED)
+PR_SIG_IMPL(Pr_WindowFocusGained,   PR_FOCUS_GAINED)
+PR_SIG_IMPL(Pr_WindowFocusLost,     PR_FOCUS_LOST)
+PR_SIG_IMPL(Pr_WindowEntered,       PR_ENTER)
+PR_SIG_IMPL(Pr_WindowLeaved,        PR_LEAVE)
+PR_SIG_IMPL(Pr_WindowRestored,      PR_RESTORED)
+PR_SIG_IMPL(Pr_WindowOnDelete,      PR_ONDELETE)
 PR_SIG_IMPL(Pr_WindowOnDisplay,     PR_ONDISPLAY)

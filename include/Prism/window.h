@@ -44,20 +44,20 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Class Pr_SystemWindowClass;
            
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowClosed)(Pr_SystemWindowRef);          /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowMoved)(Pr_SystemWindowRef);           /**< (int, int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowSizeChanged)(Pr_SystemWindowRef);     /**< (unsigned int, unsigned int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowMinimized)(Pr_SystemWindowRef);       /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowMaximized)(Pr_SystemWindowRef);       /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowShown)(Pr_SystemWindowRef);           /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowRestored)(Pr_SystemWindowRef);        /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowHidden)(Pr_SystemWindowRef);          /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowFramed)(Pr_SystemWindowRef);          /**< (int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowLeaved)(Pr_SystemWindowRef);          /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowEntered)(Pr_SystemWindowRef);         /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowOnDelete)(Pr_SystemWindowRef);        /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowFocusGained)(Pr_SystemWindowRef);     /**< (void) >*/
-    extern PRISM_API PR_SIGNAL(Pr_SystemWindowFocusLost)(Pr_SystemWindowRef);       /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowClosed)(Pr_SystemWindowRef);          /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowMoved)(Pr_SystemWindowRef);           /**< (int, int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowSizeChanged)(Pr_SystemWindowRef);     /**< (unsigned int, unsigned int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowMinimized)(Pr_SystemWindowRef);       /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowMaximized)(Pr_SystemWindowRef);       /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowShown)(Pr_SystemWindowRef);           /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowRestored)(Pr_SystemWindowRef);        /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowHidden)(Pr_SystemWindowRef);          /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowFramed)(Pr_SystemWindowRef);          /**< (int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowLeaved)(Pr_SystemWindowRef);          /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowEntered)(Pr_SystemWindowRef);         /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowOnDelete)(Pr_SystemWindowRef);        /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowFocusGained)(Pr_SystemWindowRef);     /**< (void) >*/
+    extern PRISM_API PR_SIGNAL(Pr_WindowFocusLost)(Pr_SystemWindowRef);       /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_WindowOnDisplay)(Pr_SystemWindowRef);       /**< (void) >*/
 
 PR_CPP_PROTECT_OFF

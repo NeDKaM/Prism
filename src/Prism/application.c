@@ -92,43 +92,43 @@ static void s_Pr_HandleWindowEvent(Pr_SystemWindow * ap_wnd)
     if (s_app.input.type == SDL_WINDOWEVENT && s_app.input.window.windowID == ap_wnd->id) {
         switch (s_app.input.window.event) {
         case SDL_WINDOWEVENT_SHOWN:
-            Pr_Emit(Pr_SystemWindowShown(ap_wnd));
+            Pr_Emit(Pr_WindowShown(ap_wnd));
             break;
         case SDL_WINDOWEVENT_HIDDEN:
-            Pr_Emit(Pr_SystemWindowHidden(ap_wnd));
+            Pr_Emit(Pr_WindowHidden(ap_wnd));
             break;
         case SDL_WINDOWEVENT_EXPOSED:
             break;
         case SDL_WINDOWEVENT_SIZE_CHANGED:
-            Pr_Emit(Pr_SystemWindowSizeChanged(ap_wnd),
+            Pr_Emit(Pr_WindowSizeChanged(ap_wnd),
                 s_app.input.window.data1, s_app.input.window.data2
             );
             break;
         case SDL_WINDOWEVENT_RESIZED:
             break;
         case SDL_WINDOWEVENT_ENTER:
-            Pr_Emit(Pr_SystemWindowEntered(ap_wnd));
+            Pr_Emit(Pr_WindowEntered(ap_wnd));
             break;
         case SDL_WINDOWEVENT_LEAVE:
-            Pr_Emit(Pr_SystemWindowLeaved(ap_wnd));
+            Pr_Emit(Pr_WindowLeaved(ap_wnd));
             break;
         case SDL_WINDOWEVENT_FOCUS_GAINED:
-            Pr_Emit(Pr_SystemWindowFocusGained(ap_wnd));
+            Pr_Emit(Pr_WindowFocusGained(ap_wnd));
             break;
         case SDL_WINDOWEVENT_FOCUS_LOST:
-            Pr_Emit(Pr_SystemWindowFocusLost(ap_wnd));
+            Pr_Emit(Pr_WindowFocusLost(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MINIMIZED:
-            Pr_Emit(Pr_SystemWindowMinimized(ap_wnd));
+            Pr_Emit(Pr_WindowMinimized(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MAXIMIZED:
-            Pr_Emit(Pr_SystemWindowMaximized(ap_wnd));
+            Pr_Emit(Pr_WindowMaximized(ap_wnd));
             break;
         case SDL_WINDOWEVENT_RESTORED:
-            Pr_Emit(Pr_SystemWindowRestored(ap_wnd));
+            Pr_Emit(Pr_WindowRestored(ap_wnd));
             break;
         case SDL_WINDOWEVENT_CLOSE:
-            Pr_Emit(Pr_SystemWindowClosed(ap_wnd));
+            Pr_Emit(Pr_WindowClosed(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MOVED:
             Pr_Emit(Pr_SystemWindowMoved(ap_wnd),
