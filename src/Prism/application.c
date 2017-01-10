@@ -131,7 +131,7 @@ static void s_Pr_HandleWindowEvent(Pr_SystemWindow * ap_wnd)
             Pr_Emit(Pr_WindowClosed(ap_wnd));
             break;
         case SDL_WINDOWEVENT_MOVED:
-            Pr_Emit(Pr_SystemWindowMoved(ap_wnd),
+            Pr_Emit(Pr_WindowMoved(ap_wnd),
                 s_app.input.window.data1, s_app.input.window.data2
             );
             break;
