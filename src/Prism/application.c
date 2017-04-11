@@ -155,10 +155,18 @@ static void s_Pr_UpdateApp(void)
                 Pr_Emit(Pr_MouseMoved(), s_app.input.motion.x, s_app.input.motion.y);
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                Pr_Emit(Pr_MouseButtonDown(), s_app.input.button.button);
+                Pr_Emit(Pr_MouseButtonDown(), 
+                    s_app.input.button.button, 
+                    s_app.input.button.x,
+                    s_app.input.button.y
+                );
                 break;
             case SDL_MOUSEBUTTONUP:
-                Pr_Emit(Pr_MouseButtonUp(), s_app.input.button.button);
+                Pr_Emit(Pr_MouseButtonUp(), 
+                    s_app.input.button.button,
+                    s_app.input.button.x,
+                    s_app.input.button.y
+                );
                 break;
             case SDL_MOUSEWHEEL:
                 break;
@@ -171,6 +179,7 @@ static void s_Pr_UpdateApp(void)
             case SDL_TEXTEDITING:
                 break;
             case SDL_TEXTINPUT:
+                /* Pr_Emit(Pr_TextInput(), s_app.input.text.text); */
                 break;
 
             default:

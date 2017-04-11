@@ -30,6 +30,9 @@ PR_CPP_PROTECT_ON
     extern PRISM_API PR_SIGNAL(Pr_MouseButtonDown)(void); /**< (int) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseButtonUp)(void);   /**< (int) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseMoved)(void);      /**< (int, int) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseButtonDown)(void); /**< (int, int x, int y) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseButtonUp)(void);   /**< (int, int x, int y) >*/
+    extern PRISM_API PR_SIGNAL(Pr_MouseMoved)(void);      /**< (int x, int y) >*/
     extern PRISM_API PR_SIGNAL(Pr_AppStarted)(void);      /**< (void) >*/
     extern PRISM_API PR_SIGNAL(Pr_AppQuitted(void));      /**< (void) >*/
 
