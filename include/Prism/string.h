@@ -25,7 +25,7 @@ PR_CPP_PROTECT_ON
 
 	typedef enum pr_strresult_t Pr_Strresult;
 	enum pr_strresult_t {
-		PR_STRING_BADALLOC = -1,
+		PR_STRING_BADALLOC,
 		PR_STRING_NOSTRING,
 		PR_STRING_NOALLOC,
 		PR_STRING_ALLOCOK,
