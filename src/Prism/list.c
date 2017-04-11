@@ -10,10 +10,12 @@
 #include <stdlib.h>
 #include <Prism/list.h>
 
+#ifdef PRISM_DEBUG
+
 typedef struct pr_node_t pr_node_t;
 struct pr_node_t {
-    pr_node_t *  next;
-    void *              data;
+    pr_node_t * next;
+    void *      data;
 };
 
 struct pr_list_t {
@@ -301,3 +303,108 @@ Pr_List * Pr_CopyList(Pr_List * ap_list)
 
     return lp_out;
 }
+
+#else
+
+Pr_List *          Pr_NewList(void)
+{
+
+}
+
+void               Pr_DeleteList(Pr_List * ap_list)
+{
+
+}
+
+void               Pr_ClearList(Pr_List * ap_list)
+{
+
+}
+
+Pr_List *          Pr_CopyList(Pr_List * ap_list)
+{
+
+}
+
+
+Pr_ListIterator    Pr_PushFrontList(Pr_List * ap_list)
+{
+
+}
+
+Pr_ListIterator    Pr_PushBackList(Pr_List * ap_list)
+{
+
+}
+
+Pr_ListIterator    Pr_InsertList(Pr_List * ap_list, pr_u32_t a_at, void * ap_data)
+{
+
+}
+
+Pr_ListIterator    Pr_PushBackListData(Pr_List * ap_list, void * ap_data)
+{
+
+}
+
+void               Pr_PopFrontList(Pr_List * ap_list)
+{
+
+}
+
+void               Pr_PopBackList(Pr_List * ap_list)
+{
+
+}
+
+void               Pr_PopListAt(Pr_List * ap_list, pr_u32_t a_at)
+{
+
+}
+
+
+pr_u32_t           Pr_ListSize(Pr_List * ap_list)
+{
+
+}
+   
+void *             Pr_ListAt(Pr_List * ap_list, pr_u32_t a_at)
+{
+
+}
+
+void *             Pr_FrontList(Pr_List * ap_list)
+{
+
+}
+
+void *             Pr_BackList(Pr_List * ap_list)
+{
+
+}
+    
+Pr_ListIterator    Pr_FrontListIterator(Pr_List * ap_list)
+{
+
+}
+
+Pr_ListIterator    Pr_NextListIterator(Pr_ListIterator ap_it)
+{
+
+}
+
+void *             Pr_ListIteratorData(Pr_ListIterator ap_it)
+{
+
+}
+
+void               Pr_SetListIteratorData(Pr_ListIterator ap_it, void * ap_data)
+{
+
+}
+
+void               Pr_SwapListElements(Pr_ListIterator ap_first, Pr_ListIterator ap_second)
+
+#endif /* PRISM_DEBUG */
+
+
