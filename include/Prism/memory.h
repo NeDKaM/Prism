@@ -11,6 +11,7 @@ PR_CPP_PROTECT_ON
     void            Pr_DeleteMemoryPool(Pr_MemoryPool *);
     void *          Pr_AllocateBlock(Pr_MemoryPool *);
     void            Pr_FreeBlock(Pr_MemoryPool *, void *);
+    
 
 PR_CPP_PROTECT_OFF
 

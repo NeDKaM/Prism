@@ -35,4 +35,9 @@
     typedef struct name_t name; \
     struct name_t
 
+#define PR_SLOT_EXTERN_API(name)    extern PRISM_API void name##_Slot(void *, va_list); \
+                                    extern PRISM_API void name
+
 #endif /* H_PRISM_CONFIG_INCLUDED */
+
+
