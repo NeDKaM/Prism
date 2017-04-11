@@ -35,6 +35,8 @@ enum {
     PR_KEY_UP,
     PR_KEY_DOWN,
 
+    PR_TEXT_INPUT,
+
     PR_SIGNALS_COUNT
 };
 
@@ -282,6 +284,7 @@ PR_SIG_IMPL(Pr_MouseButtonDown, PR_MOUSEBUTTON_DOWN)
 PR_SIG_IMPL(Pr_MouseMoved,      PR_MOUSE_MOVED)
 PR_SIG_IMPL(Pr_AppStarted,      PR_START)
 PR_SIG_IMPL(Pr_AppQuitted,      PR_QUIT)
+PR_SIG_IMPL(Pr_TextInput,       PR_TEXT_INPUT)
 
 pr_bool_t Pr_RegisterWindow(Pr_SystemWindowRef ap_wnd)
 {
