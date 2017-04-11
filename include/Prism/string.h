@@ -11,6 +11,7 @@
 
 #include <Prism/config.h>
 #include <Prism/types.h>
+#include <stdarg.h>
 
 PR_CPP_PROTECT_ON
 
@@ -59,6 +60,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API const pr_cstring_t Pr_StringCStr(Pr_String *);
     extern PRISM_API pr_u32_t           Pr_StringReplace(Pr_String *, const pr_cstring_t, const pr_cstring_t);
     extern PRISM_API long               Pr_StringFind(Pr_String *, const pr_cstring_t);
+    extern PRISM_API Pr_Strresult       Pr_WriteString(Pr_String *, const pr_cstring_t, ...);
 
 PR_CPP_PROTECT_OFF
 

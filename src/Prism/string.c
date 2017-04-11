@@ -378,5 +378,25 @@ pr_u32_t Pr_StringReplace(Pr_String * ap_this, const pr_cstring_t ap_str, const 
     return l_count;
 }  
 
+Pr_Strresult Pr_WriteString(Pr_String * ap_this, const pr_cstring_t ap_text, ...)
+{
+    char lp_buf[BUFSIZ];
+    va_list lp_args;
+
+    if (!ap_this) return PR_STRING_NOSTRING;
+
+    if (!ap_text || !ap_text[0]) {
+        return PR_STRING_UNMODIFIED;
+    }
+
+    va_start(lp_args, ap_text);
+
+    vsprintf(lp_buf, ap_text, lp_args);
+
+    va_end(lp_args);
+
+    return Pr_StringStrAppend(ap_this, lp_buf);
+}
+
 #undef STRING_UNIT
 
