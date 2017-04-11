@@ -70,11 +70,11 @@ Pr_Strresult Pr_SetStringStr(Pr_String * ap_this, const pr_cstring_t ap_str)
             pr_u32_t l_size = strlen(ap_str);
 
             if (l_size + 1 > ap_this->capacity) {
-                pr_u32_t l_cap = ap_this->capacity + STRING_UNIT;
+                pr_u32_t l_cap = ap_this->capacity * 2;
                 char * lp_tmp;
 
                 while (l_size + 1 > l_cap) {
-                    l_cap += STRING_UNIT;
+                    l_cap *= 2;
                 }
 
                 lp_tmp = calloc(l_cap,sizeof(char));
