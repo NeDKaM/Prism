@@ -238,7 +238,7 @@ pr_bool_t Pr_InitApp(void)
     s_app.log = Pr_NewLogger();
     if (!s_app.log) return PR_FALSE;
 
-	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         Pr_DeleteLogger(s_app.log);
         s_app.log = NULL;
         return PR_FALSE;
