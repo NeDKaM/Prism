@@ -234,6 +234,7 @@ pr_bool_t Pr_InitApp(void)
 	if (s_app.initialized) return PR_TRUE;
 
     s_app.log = Pr_NewLogger();
+    if (!s_app.log) return PR_FALSE;
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         Pr_DeleteLogger(s_app.log);
@@ -258,6 +259,13 @@ pr_bool_t Pr_InitApp(void)
     SDL_Quit();
     
 	return PR_FALSE;
+}
+
+Pr_Logger * Pr_GetAppLog(void)
+{
+    if (!s_app.initialized) return NULL;
+
+    return s_app.log;
 }
 
 #define PR_SIG_IMPL(name, signalId) \

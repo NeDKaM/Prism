@@ -15,6 +15,7 @@
 #include <Prism/types.h>
 #include <Prism/sigslot.h>
 #include <Prism/window.h>
+#include <Prism/logger.h>
 
 PR_CPP_PROTECT_ON
 
@@ -23,13 +24,12 @@ PR_CPP_PROTECT_ON
     extern PRISM_API pr_bool_t  Pr_RegisterWindow(Pr_SystemWindowRef);
     extern PRISM_API void       Pr_UnregisterWindow(Pr_SystemWindowRef);
 
+    extern PRISM_API Pr_Logger * Pr_GetAppLog(void);
+
     /**< signals >*/
 
     extern PRISM_API PR_SIGNAL(Pr_KeyDown)(void);         /**< (int) >*/
     extern PRISM_API PR_SIGNAL(Pr_KeyUp)(void);           /**< (int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_MouseButtonDown)(void); /**< (int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_MouseButtonUp)(void);   /**< (int) >*/
-    extern PRISM_API PR_SIGNAL(Pr_MouseMoved)(void);      /**< (int, int) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseButtonDown)(void); /**< (int, int x, int y) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseButtonUp)(void);   /**< (int, int x, int y) >*/
     extern PRISM_API PR_SIGNAL(Pr_MouseMoved)(void);      /**< (int x, int y) >*/
