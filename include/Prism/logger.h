@@ -24,7 +24,6 @@ PR_CPP_PROTECT_ON
 
     PR_SLOT_EXTERN_API(Pr_WriteLog)(Pr_Logger *, char *);
     PR_SLOT_EXTERN_API(Pr_ClearLog)(Pr_Logger *);
-    PR_SLOT_EXTERN_API(Pr_SetLogCapacity)(Pr_Logger *, pr_u32_t);
 
 PR_CPP_PROTECT_OFF
 

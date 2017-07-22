@@ -64,7 +64,6 @@ void Pr_WriteLog(Pr_Logger * ap_log, char * ap_txt)
 
     if (!lp_ent) return;
 
-    if (!Pr_PushBackListData(ap_log->entries, lp_ent)) return;
     if (!Pr_PushBackList(ap_log->entries, lp_ent)) return;
 
     if (Pr_ListSize(ap_log->entries) != 0) {
