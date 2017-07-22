@@ -58,6 +58,15 @@ PR_CPP_PROTECT_ON
 
         Pr_WidgetRef    hoveredWidget;
         Pr_WidgetRef    clickedWidget;
+        Pr_WidgetRef    focusedWidget;
+
+        struct {
+            Pr_Signal * mouseMoved;
+            Pr_Signal * buttonPressed;
+            Pr_Signal * buttonReleased;
+            Pr_Signal * keyPressed;
+            Pr_Signal * keyReleased; 
+        } input;
     };
 
     extern PRISM_API pr_bool_t  Pr_SetWidgetParent(Pr_WidgetRef, Pr_WidgetContainerRef);

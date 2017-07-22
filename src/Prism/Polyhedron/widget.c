@@ -81,7 +81,7 @@ static void s_Pr_DestructWidget(Pr_ObjectRef ap_obj)
 }
 
 Pr_Class Pr_WidgetClass = {
-    "Pr_WidgetClass",
+    "Pr_Widget",
     sizeof(Pr_Widget),
     0,
     &Pr_ObjectClass,
@@ -249,6 +249,39 @@ static void s_ContainerOnButtonReleased_Slot(void * ap_obj, va_list ap_args)
     s_ContainerOnButtonReleased(ap_obj, l_b, l_x, l_y);
 }
 
+static pr_bool_t s_MakeInput(Pr_WidgetContainerRef ap_cont)
+{
+    Pr_WidgetRef lp_wid = (Pr_WidgetRef)ap_cont;
+
+    ap_cont->input.mouseMoved = Pr_NewSignal();
+    ap_cont->input.buttonPressed = Pr_NewSignal();
+    ap_cont->input.buttonReleased = Pr_NewSignal();
+    ap_cont->input.keyPressed = Pr_NewSignal();
+    ap_cont->input.keyReleased = Pr_NewSignal();
+
+    if (ap_cont->input.mouseMoved
+        && ap_cont->input.buttonPressed
+        && ap_cont->input.buttonReleased
+        && ap_cont->input.keyPressed
+        && ap_cont->input.keyReleased
+    ) {
+        if (Pr_ConnectRelay(Pr_MouseMoved(), ap_cont->input.mouseMoved)
+            && Pr_ConnectRelay(Pr_MouseButtonDown(), ap_cont->input.buttonPressed)
+            && Pr_ConnectRelay(Pr_MouseButtonUp(), ap_cont->input.buttonReleased)
+        ) {
+            return PR_TRUE;
+        }
+    }
+
+    Pr_DeleteSignal(ap_cont->input.mouseMoved);
+    Pr_DeleteSignal(ap_cont->input.buttonPressed);
+    Pr_DeleteSignal(ap_cont->input.buttonReleased);
+    Pr_DeleteSignal(ap_cont->input.keyPressed);
+    Pr_DeleteSignal(ap_cont->input.keyReleased);
+
+    return PR_FALSE;
+}
+
 static pr_bool_t s_ConstructWidgetContainer(Pr_ObjectRef ap_obj)
 {
     Pr_WidgetRef lp_wid = (Pr_WidgetRef)ap_obj;
@@ -256,9 +289,15 @@ static pr_bool_t s_ConstructWidgetContainer(Pr_ObjectRef ap_obj)
 
     lp_cont->hoveredWidget = NULL;
     lp_cont->clickedWidget = NULL;
+    lp_cont->focusedWidget = NULL;
 
     lp_cont->children = Pr_NewList();
     if (!lp_cont->children) {
+        return PR_FALSE;
+    }
+
+    if (!s_MakeInput(lp_cont)) {
+        Pr_DeleteList(lp_cont->children);
         return PR_FALSE;
     }
 
@@ -271,15 +310,15 @@ static pr_bool_t s_ConstructWidgetContainer(Pr_ObjectRef ap_obj)
     lp_wid->onButtonReleased        = s_ContainerOnButtonReleased;
     lp_wid->slot_onButtonReleased   = s_ContainerOnButtonReleased_Slot;
 
-    Pr_Connect(Pr_MouseMoved(), lp_wid, lp_wid->slot_onMouseMoved);
-    Pr_Connect(Pr_MouseButtonDown(), lp_wid, lp_wid->slot_onButtonPressed);
-    Pr_Connect(Pr_MouseButtonUp(), lp_wid, lp_wid->slot_onButtonReleased);
+    Pr_Connect(lp_cont->input.mouseMoved, lp_wid, lp_wid->slot_onMouseMoved);
+    Pr_Connect(lp_cont->input.buttonPressed, lp_wid, lp_wid->slot_onButtonPressed);
+    Pr_Connect(lp_cont->input.buttonReleased, lp_wid, lp_wid->slot_onButtonReleased);
 
     return PR_TRUE;
 }
 
 Pr_Class Pr_WidgetContainerClass = {
-    "_Pr_WidgetContainerClass",
+    "Pr_WidgetContainer",
     sizeof(Pr_WidgetContainer),
     0,
     &Pr_WidgetClass,
@@ -332,7 +371,7 @@ pr_bool_t Pr_SetWidgetParent(Pr_WidgetRef ap_w, Pr_WidgetContainerRef ap_p)
         return PR_FALSE;
     }
 
-    if (!Pr_PushBackListData(ap_p->children, ap_w)) {
+    if (!Pr_PushBackList(ap_p->children, ap_w)) {
         return PR_FALSE;
     }
 
