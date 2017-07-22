@@ -2,7 +2,6 @@
 #define H_PRISM_INCLUDED
 
 #include <Prism/application.h>
-#include <Prism/array.h>
 #include <Prism/config.h>
 #include <Prism/list.h>
 #include <Prism/logger.h>
