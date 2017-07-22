@@ -1,6 +1,7 @@
 #include <Prism/memory.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 struct pr_memorypool_t {
     pr_u32_t        blockSize;
@@ -110,4 +111,125 @@ void Pr_FreeBlock(Pr_MemoryPool * ap_pool, void * ap_ptr)
             free(ap_ptr);
         }
     }
+}
+
+struct pr_array_t {
+    pr_u32_t        size;
+    pr_u32_t        capacity;
+    pr_u32_t        stride;
+    Pr_Initializer  initializer;
+    char *          data;
+};
+
+static pr_bool_t s_Pr_DefaultInitializer(void * ap_data, pr_u32_t size)
+{
+    memset(ap_data, 0, size);
+
+    return PR_TRUE;
+}
+
+Pr_Array * Pr_NewArray(pr_u32_t a_stride, Pr_Initializer af_init)
+{
+    Pr_Array * lp_out;
+
+    if (!a_stride) return NULL;
+
+    lp_out = malloc(sizeof(Pr_Array));
+    if (!lp_out) return NULL;
+
+    lp_out->data = malloc(a_stride);
+    if (!lp_out->data) {
+        free(lp_out);
+        return NULL;
+    }
+
+    lp_out->stride      = a_stride;
+    lp_out->size        = 0;
+    lp_out->capacity    = 1;
+    lp_out->initializer = af_init ? af_init : s_Pr_DefaultInitializer;
+
+    return lp_out;
+}
+
+void Pr_DeleteArray(Pr_Array * ap_array)
+{
+    if (!ap_array) return;
+
+    free(ap_array->data);
+    free(ap_array);
+}
+
+pr_u32_t Pr_ArraySize(Pr_Array * ap_array)
+{
+    return ap_array ? ap_array->size : 0;
+}
+
+void * const Pr_GetArrayData(Pr_Array * ap_array)
+{
+    return ap_array ? ap_array->data : NULL;
+}
+
+pr_bool_t Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
+{
+    if (!ap_array) return PR_FALSE;
+
+    while (a_at >= ap_array->capacity) {
+        void * lp_data = ap_array->data;
+        lp_data = realloc(lp_data, ap_array->capacity * 2 * ap_array->stride);
+        if (lp_data) {
+            ap_array->data      = lp_data;
+            ap_array->capacity  *= 2;
+            for ( ; ap_array->size < a_at ; ap_array->size++) {
+                ap_array->initializer(&ap_array->data[ap_array->size], ap_array->stride);
+            }
+
+            ap_array->size = a_at + 1;
+
+        } else {
+            return PR_FALSE;
+        }
+    }
+        
+    if (ap_data) {
+        memcpy((void *)&ap_array->data[a_at], ap_data, ap_array->stride);
+    } else {
+        ap_array->initializer(&ap_array->data[a_at], ap_array->stride);
+    }
+
+    return PR_TRUE;
+}
+
+Pr_BitSet * Pr_NewBitSet()
+{
+    return Pr_NewArray(sizeof(pr_u32_t), NULL);
+}
+
+pr_bool_t Pr_SetBitSetAt(Pr_BitSet * ap_bitset, pr_u32_t a_at, char bit)
+{
+    if (!ap_bitset) return PR_FALSE;
+
+    while (a_at >= (ap_bitset->capacity * 32)) {
+        void * lp_data = ap_bitset->data;
+        lp_data = realloc(lp_data, ap_bitset->capacity * 2 * ap_bitset->stride);
+        if (lp_data) {
+            ap_bitset->data      = lp_data;
+            ap_bitset->capacity  *= 2;
+            for ( ; ap_bitset->size < a_at ; ap_bitset->size++) {
+                ap_bitset->initializer(&ap_bitset->data[ap_bitset->size], ap_bitset->stride);
+            }
+
+            ap_bitset->size = a_at + 1;
+
+        } else {
+            return PR_FALSE;
+        }
+    }
+
+    if (bit) {
+        ap_bitset->data[a_at / 32] |= (1 << a_at % 32);
+    } else {
+        ap_bitset->data[a_at / 32] &= ~(1 << a_at % 32);
+    }
+
+    return PR_TRUE;
 }
