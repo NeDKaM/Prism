@@ -10,78 +10,54 @@
 #include <Prism/application.h>
 #include <Prism/window.h>
 #include <Prism/list.h>
-#include <Prism/array.h>
 #include <Prism/string.h>
 #include <stdio.h>
 #include <Prism/logger.h>
 #include <string.h>
 
+enum {
+    QUIT,
+    START,
+    MOUSEMOVED,
+    MOUSEBUTTONDOWN,
+    MOUSEBUTTONUP,
+    KEYUP,
+    KEYDOWN,
+    TEXTINPUT,
+
+    SIGNAL_COUNT
+};
+
 struct {
     pr_bool_t   initialized;
     Pr_List *   wndlist;
     Pr_Logger * log;
-    Pr_List *   signals;
+    Pr_Signal * signals[SIGNAL_COUNT];
     SDL_Event   input;
-} static s_app = { 0, NULL, NULL, NULL };
-
-enum {
-    PR_QUIT = 0,
-    PR_START,
-
-    PR_MOUSE_MOVED,
-    PR_MOUSEBUTTON_UP,
-    PR_MOUSEBUTTON_DOWN,
-
-    PR_KEY_UP,
-    PR_KEY_DOWN,
-
-    PR_TEXT_INPUT,
-
-    PR_SIGNALS_COUNT
-};
+} static s_app = { 0, NULL, NULL, NULL};
 
 static void s_Pr_DeleteSignalList(void)
 {
-    Pr_ListIterator lp_it;
+    pr_u32_t l_i;
 
-    PR_LIST_FOREACH(s_app.signals, lp_it) {
-        Pr_Signal * lp_tmp = Pr_ListIteratorData(lp_it);
-        if (lp_tmp) {
-            Pr_DeleteSignal(lp_tmp);
-        }
+    for (l_i = 0 ; l_i < SIGNAL_COUNT ; l_i++) {
+        Pr_DeleteSignal(s_app.signals[l_i]);
     }
-
-    Pr_DeleteList(s_app.signals);
-    s_app.signals = NULL;
 }
 
 static pr_bool_t s_Pr_CreateSignals(void)
 {
-    int l_i = 0;
-    pr_bool_t l_fail = PR_FALSE;
+    pr_u32_t l_i;
 
-    s_app.signals = Pr_NewList();
-    if (!s_app.signals) return PR_FALSE;
-    
-    while (l_i < PR_SIGNALS_COUNT) {
-        Pr_Signal * lp_tmp = Pr_NewSignal();
-        if (lp_tmp) {
-            if (!Pr_PushBackListData(s_app.signals, lp_tmp)) {
-                l_fail = PR_TRUE;
-                Pr_DeleteSignal(lp_tmp);
-                break;
-            }
-        } else {
-            l_fail = PR_TRUE;
-            break;
+    /* make sure... */
+    memset(s_app.signals, 0, SIGNAL_COUNT * sizeof(Pr_Signal *));
+
+    for (l_i = 0 ; l_i < SIGNAL_COUNT ; l_i++) {
+        s_app.signals[l_i] = Pr_NewSignal();
+        if (!s_app.signals[l_i]) {
+            s_Pr_DeleteSignalList();
+            return PR_FALSE;
         }
-
-        l_i++;
-    }
-
-    if (l_fail) {
-        s_Pr_DeleteSignalList();
-        return PR_FALSE;
     }
 
     return PR_TRUE;
@@ -199,7 +175,7 @@ static void s_Pr_QuitApp(void)
     unsigned int l_i = 0;
 
     while (Pr_ListSize(s_app.wndlist)) {
-        Pr_Delete(Pr_FrontList(s_app.wndlist));
+        Pr_Delete(Pr_ListIteratorData(Pr_ListBegin(s_app.wndlist)));
     }
 
     Pr_DeleteList(s_app.wndlist);
@@ -274,17 +250,17 @@ Pr_Logger * Pr_GetAppLog(void)
     Pr_Signal * name(void) \
     { \
         if (!s_app.initialized) return NULL; \
-        return Pr_ListAt(s_app.signals, signalId); \
+        return s_app.signals[signalId]; \
     }
 
-PR_SIG_IMPL(Pr_KeyUp,           PR_KEY_UP)
-PR_SIG_IMPL(Pr_KeyDown,         PR_KEY_DOWN)
-PR_SIG_IMPL(Pr_MouseButtonUp,   PR_MOUSEBUTTON_UP)
-PR_SIG_IMPL(Pr_MouseButtonDown, PR_MOUSEBUTTON_DOWN)
-PR_SIG_IMPL(Pr_MouseMoved,      PR_MOUSE_MOVED)
-PR_SIG_IMPL(Pr_AppStarted,      PR_START)
-PR_SIG_IMPL(Pr_AppQuitted,      PR_QUIT)
-PR_SIG_IMPL(Pr_TextInput,       PR_TEXT_INPUT)
+PR_SIG_IMPL(Pr_KeyUp,           KEYUP)
+PR_SIG_IMPL(Pr_KeyDown,         KEYDOWN)
+PR_SIG_IMPL(Pr_MouseButtonUp,   MOUSEBUTTONUP)
+PR_SIG_IMPL(Pr_MouseButtonDown, MOUSEBUTTONDOWN)
+PR_SIG_IMPL(Pr_MouseMoved,      MOUSEMOVED)
+PR_SIG_IMPL(Pr_AppStarted,      START)
+PR_SIG_IMPL(Pr_AppQuitted,      QUIT)
+PR_SIG_IMPL(Pr_TextInput,       TEXTINPUT)
 
 pr_bool_t Pr_RegisterWindow(Pr_SystemWindowRef ap_wnd)
 {
@@ -300,25 +276,20 @@ pr_bool_t Pr_RegisterWindow(Pr_SystemWindowRef ap_wnd)
         }
     }
 
-    return Pr_PushBackListData(s_app.wndlist, ap_wnd) ? PR_TRUE : PR_FALSE;
     return Pr_PushBackList(s_app.wndlist, ap_wnd) ? PR_TRUE : PR_FALSE;
 }
 
 void Pr_UnregisterWindow(Pr_SystemWindowRef ap_wnd)
 {
     Pr_ListIterator l_it;
-    int l_i=0;
 
     if (!ap_wnd) return;
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
         if (Pr_ListIteratorData(l_it) == ap_wnd) {
-            Pr_PopListAt(s_app.wndlist,l_i);
             Pr_EraseListElement(l_it);
             return;
         }
-
-        l_i++;
     }
 }
 

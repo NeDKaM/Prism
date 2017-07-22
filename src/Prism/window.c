@@ -4,27 +4,6 @@
 #include <Prism/list.h>
 #include <string.h>
 
-enum {
-    PR_ONDISPLAY,
-    PR_SHOWN,
-    PR_HIDDEN,
-    PR_EXPOSED,
-    PR_SIZE_CHANGED,
-    PR_RESIZED,
-    PR_ENTER,
-    PR_LEAVE,
-    PR_FOCUS_GAINED,
-    PR_FOCUS_LOST,
-    PR_MINIMIZED,
-    PR_MAXIMIZED,
-    PR_CLOSED,
-    PR_MOVED,
-    PR_RESTORED,
-    PR_FRAMED,
-
-    PR_SIGNALS_COUNT
-};
-
 #define PR_WINDOW_SLOT(name) void name##_Slot(void * ap_obj, va_list ap_args)
 
 void Pr_SetWindowTitle(Pr_SystemWindowRef ap_wnd, pr_cstring_t ap_title)
@@ -132,44 +111,26 @@ PR_WINDOW_SLOT(Pr_ShowWindow)
 
 static void s_Pr_DeleteWindowSignalList(Pr_SystemWindow * ap_wnd)
 {
-    Pr_ListIterator lp_it;
+    pr_u32_t l_i;
 
-    PR_LIST_FOREACH(ap_wnd->signals, lp_it) {
-        Pr_Signal * lp_tmp = Pr_ListIteratorData(lp_it);
-        Pr_DeleteSignal(lp_tmp);
+    for (l_i = 0 ; l_i < PR_WINDOW_SIGNALCOUNT ; l_i++) {
+        Pr_DeleteSignal(ap_wnd->signals[l_i]);
     }
-
-    Pr_DeleteList(ap_wnd->signals);
-    ap_wnd->signals = NULL;
 }
 
 static pr_bool_t s_Pr_CreateWindowSignals(Pr_SystemWindow * ap_wnd)
 {
-    int l_i = 0;
-    pr_bool_t l_fail = PR_FALSE;
+    pr_u32_t l_i;
 
-    ap_wnd->signals = Pr_NewList();
-    if (!ap_wnd->signals) return PR_FALSE;
+    /* make sure... */
+    memset(ap_wnd->signals, 0, PR_WINDOW_SIGNALCOUNT * sizeof(Pr_Signal *));
 
-    while (l_i < PR_SIGNALS_COUNT) {
-        Pr_Signal * lp_tmp = Pr_NewSignal();
-        if (lp_tmp) {
-            if (!Pr_PushBackListData(ap_wnd->signals, lp_tmp)) {
-                l_fail = PR_TRUE;
-                Pr_DeleteSignal(lp_tmp);
-                break;
-            }
-        } else {
-            l_fail = PR_TRUE;
-            break;
+    for (l_i = 0 ; l_i < PR_WINDOW_SIGNALCOUNT ; l_i++) {
+        ap_wnd->signals[l_i] = Pr_NewSignal();
+        if (!ap_wnd->signals[l_i]) {
+            s_Pr_DeleteWindowSignalList(ap_wnd);
+            return PR_FALSE;
         }
-
-        l_i++;
-    }
-
-    if (l_fail) {
-        s_Pr_DeleteWindowSignalList(ap_wnd);
-        return PR_FALSE;
     }
 
     return PR_TRUE;
@@ -232,7 +193,6 @@ static pr_bool_t s_Pr_ConstructWindow(Pr_ObjectRef ap_obj)
 
     SDL_DestroyWindow(lp_wnd);
 
-    lp_this->signals    = NULL;
     lp_this->sdlWindow  = NULL;
     lp_this->id         = 0;
 
@@ -268,23 +228,23 @@ Pr_Class Pr_SystemWindowClass = {
 #define PR_SIG_IMPL(name, signalId) \
     Pr_Signal * name(Pr_SystemWindowRef ap_wnd) \
     { \
-        if (!ap_wnd) return NULL; \
-        return Pr_ListAt(ap_wnd->signals, signalId); \
+        if (!ap_wnd) return NULL;  \
+        return ap_wnd->signals[signalId]; \
     } 
 
-PR_SIG_IMPL(Pr_WindowClosed,        PR_CLOSED)
-PR_SIG_IMPL(Pr_WindowMoved,         PR_MOVED)
-PR_SIG_IMPL(Pr_WindowSizeChanged,   PR_SIZE_CHANGED)
-PR_SIG_IMPL(Pr_WindowFramed,        PR_FRAMED)
-PR_SIG_IMPL(Pr_WindowHidden,        PR_HIDDEN)
-PR_SIG_IMPL(Pr_WindowShown,         PR_SHOWN)
-PR_SIG_IMPL(Pr_WindowMinimized,     PR_MINIMIZED)
-PR_SIG_IMPL(Pr_WindowMaximized,     PR_MAXIMIZED)
-PR_SIG_IMPL(Pr_WindowFocusGained,   PR_FOCUS_GAINED)
-PR_SIG_IMPL(Pr_WindowFocusLost,     PR_FOCUS_LOST)
-PR_SIG_IMPL(Pr_WindowEntered,       PR_ENTER)
-PR_SIG_IMPL(Pr_WindowLeaved,        PR_LEAVE)
-PR_SIG_IMPL(Pr_WindowRestored,      PR_RESTORED)
-PR_SIG_IMPL(Pr_WindowOnDisplay,     PR_ONDISPLAY)
+PR_SIG_IMPL(Pr_WindowClosed,        CLOSED)
+PR_SIG_IMPL(Pr_WindowMoved,         MOVED)
+PR_SIG_IMPL(Pr_WindowSizeChanged,   SIZECHANGED)
+PR_SIG_IMPL(Pr_WindowFramed,        FRAMED)
+PR_SIG_IMPL(Pr_WindowHidden,        HIDDEN)
+PR_SIG_IMPL(Pr_WindowShown,         SHOWN)
+PR_SIG_IMPL(Pr_WindowMinimized,     MINIMIZED)
+PR_SIG_IMPL(Pr_WindowMaximized,     MAXIMIZED)
+PR_SIG_IMPL(Pr_WindowFocusGained,   FOCUSGAINED)
+PR_SIG_IMPL(Pr_WindowFocusLost,     FOCUSLOST)
+PR_SIG_IMPL(Pr_WindowEntered,       ENTER)
+PR_SIG_IMPL(Pr_WindowLeaved,        LEAVE)
+PR_SIG_IMPL(Pr_WindowRestored,      RESTORED)
+PR_SIG_IMPL(Pr_WindowOnDisplay,     ONDISPLAY)
 
 

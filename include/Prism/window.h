@@ -20,13 +20,34 @@
 
 PR_CPP_PROTECT_ON
 
+    enum {
+        ONDISPLAY,
+        SHOWN,
+        HIDDEN,
+        EXPOSED,
+        SIZECHANGED,
+        RESIZED,
+        ENTER,
+        LEAVE,
+        FOCUSGAINED,
+        FOCUSLOST,
+        MINIMIZED,
+        MAXIMIZED,
+        CLOSED,
+        MOVED,
+        RESTORED,
+        FRAMED,
+
+        PR_WINDOW_SIGNALCOUNT
+    };
+
     PR_OBJECT(pr_systemwindow_t, Pr_SystemWindow) {
 
         PR_INHERIT(Pr_Object);
 
         void *          sdlWindow;
         pr_u32_t        id;
-        Pr_List *       signals;
+        Pr_Signal *     signals[PR_WINDOW_SIGNALCOUNT];
 
         void (*getSize)(Pr_SystemWindowRef, pr_u32_t *, pr_u32_t *);
 
