@@ -23,32 +23,31 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void               Pr_ClearList(Pr_List *);
     extern PRISM_API Pr_List *          Pr_CopyList(Pr_List *);
 
-    extern PRISM_API Pr_ListIterator    Pr_PushFrontList(Pr_List *);
-    extern PRISM_API Pr_ListIterator    Pr_PushBackList(Pr_List *);
-    extern PRISM_API Pr_ListIterator    Pr_InsertList(Pr_List *, pr_u32_t, void *);
-    extern PRISM_API Pr_ListIterator    Pr_PushBackListData(Pr_List *, void *);
+    extern PRISM_API Pr_ListIterator    Pr_PushBackList(Pr_List *, void *);
+    extern PRISM_API Pr_ListIterator    Pr_PushFrontList(Pr_List *, void *);
 
-    extern PRISM_API void               Pr_PopFrontList(Pr_List *);
-    extern PRISM_API void               Pr_PopBackList(Pr_List *);
-    extern PRISM_API void               Pr_PopListAt(Pr_List *, pr_u32_t);
+    extern PRISM_API Pr_ListIterator    Pr_EraseListElement(Pr_ListIterator);
 
     extern PRISM_API pr_u32_t           Pr_ListSize(Pr_List *);
     
-    extern PRISM_API void *             Pr_ListAt(Pr_List *, pr_u32_t);
-    extern PRISM_API void *             Pr_FrontList(Pr_List *);
-    extern PRISM_API void *             Pr_BackList(Pr_List *);
-    
-    extern PRISM_API Pr_ListIterator    Pr_FrontListIterator(Pr_List *);
+    extern PRISM_API Pr_ListIterator    Pr_ListBegin(Pr_List *);
+    extern PRISM_API Pr_ListIterator    Pr_ListBack(Pr_List *);
     extern PRISM_API Pr_ListIterator    Pr_NextListIterator(Pr_ListIterator);
+    extern PRISM_API Pr_ListIterator    Pr_PreviousListIterator(Pr_ListIterator);
     extern PRISM_API void *             Pr_ListIteratorData(Pr_ListIterator);
     extern PRISM_API void               Pr_SetListIteratorData(Pr_ListIterator, void *);
 
     extern PRISM_API void               Pr_SwapListElements(Pr_ListIterator, Pr_ListIterator);
-    
 
-	#define	PR_LIST_FOREACH(list,it) \
-        for ((it)=Pr_FrontListIterator(list) ; (it)!=NULL ; (it)=Pr_NextListIterator(it))
+    #define	PR_LIST_FOREACH(list, it) \
+        for ((it)=Pr_ListBegin(list) ; (it)!=NULL ; (it)=Pr_NextListIterator(it))
+
+    typedef int (*Pr_ListComparator)(void const *, void const *);
+
+    extern PRISM_API void Pr_SortList(Pr_ListIterator ap_from, Pr_ListIterator ap_to, Pr_ListComparator af_comp);
 
 PR_CPP_PROTECT_OFF
 
 #endif /* H_PRISM_LIST_INCLUDED */
+
+

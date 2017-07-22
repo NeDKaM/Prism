@@ -65,11 +65,13 @@ void Pr_WriteLog(Pr_Logger * ap_log, char * ap_txt)
     if (!lp_ent) return;
 
     if (!Pr_PushBackListData(ap_log->entries, lp_ent)) return;
+    if (!Pr_PushBackList(ap_log->entries, lp_ent)) return;
 
     if (Pr_ListSize(ap_log->entries) != 0) {
         if (Pr_ListSize(ap_log->entries) > ap_log->capacity) {
-            Pr_DeleteString(Pr_FrontList(ap_log->entries));
-            Pr_PopFrontList(ap_log->entries);
+            Pr_ListIterator lp_tmp = Pr_ListBegin(ap_log->entries);
+            Pr_DeleteString(Pr_ListIteratorData(lp_tmp));
+            Pr_EraseListElement(lp_tmp);
         }   
     }
     
@@ -88,8 +90,9 @@ void Pr_ClearLog(Pr_Logger * ap_log)
     if (!ap_log) return;
 
     while (Pr_ListSize(ap_log->entries)) {
-        Pr_DeleteString(Pr_FrontList(ap_log->entries));
-        Pr_PopFrontList(ap_log->entries);
+        Pr_ListIterator lp_tmp = Pr_ListBegin(ap_log->entries);
+        Pr_DeleteString(Pr_ListIteratorData(lp_tmp));
+        Pr_EraseListElement(lp_tmp);
     }
 
     Pr_Emit(Pr_LogUpdated(ap_log), NULL);
@@ -116,8 +119,9 @@ void Pr_SetLogCapacity(Pr_Logger * ap_log, pr_u32_t a_size)
     l_diff = ap_log->capacity - a_size;
 
     while (l_diff--) {
-        Pr_DeleteString(Pr_FrontList(ap_log->entries));
-        Pr_PopFrontList(ap_log->entries);
+        Pr_ListIterator lp_tmp = Pr_ListBegin(ap_log->entries);
+        Pr_DeleteString(Pr_ListIteratorData(lp_tmp));
+        Pr_EraseListElement(lp_tmp);
     }
 
     ap_log->capacity = a_size;

@@ -301,6 +301,7 @@ pr_bool_t Pr_RegisterWindow(Pr_SystemWindowRef ap_wnd)
     }
 
     return Pr_PushBackListData(s_app.wndlist, ap_wnd) ? PR_TRUE : PR_FALSE;
+    return Pr_PushBackList(s_app.wndlist, ap_wnd) ? PR_TRUE : PR_FALSE;
 }
 
 void Pr_UnregisterWindow(Pr_SystemWindowRef ap_wnd)
@@ -313,6 +314,7 @@ void Pr_UnregisterWindow(Pr_SystemWindowRef ap_wnd)
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
         if (Pr_ListIteratorData(l_it) == ap_wnd) {
             Pr_PopListAt(s_app.wndlist,l_i);
+            Pr_EraseListElement(l_it);
             return;
         }
 
