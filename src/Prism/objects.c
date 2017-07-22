@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 Pr_Class Pr_ObjectClass = {
-    /* name */          "Pr_ObjectClass",
+    /* name */          "Pr_Object",
     /* objectSize */    sizeof(Pr_Object),
     /* refCount */      0,
     /* inherit */       NULL,
