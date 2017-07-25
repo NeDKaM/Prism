@@ -15,7 +15,8 @@ PR_CPP_PROTECT_ON
     
     PR_STRUCT(pr_array_t, Pr_Array);
 
-    typedef pr_bool_t (*Pr_Initializer)(void *, pr_u32_t);
+    typedef pr_bool_t   (*Pr_Initializer)(void *, pr_u32_t);
+    typedef void        (*Pr_Deleter)(void *);
 
     Pr_Array *      Pr_NewArray(pr_u32_t stride, Pr_Initializer);
     void            Pr_DeleteArray(Pr_Array *);
