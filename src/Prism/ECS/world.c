@@ -52,6 +52,10 @@ Pr_World *      Pr_NewWorld(void)
 
 static void s_Pr_DeleteSystem(Pr_System * ap_sys)
 {
+    if (ap_sys->info->deleter) {
+        ap_sys->info->deleter(ap_sys->data);
+    }
+
     free(ap_sys->data);
     Pr_DeleteList(ap_sys->entities);
     free(ap_sys);
@@ -85,7 +89,7 @@ static pr_bool_t s_Pr_CompareComponents(Pr_Entity * ap_ent, Pr_System * ap_sys)
 
     if (lp_required) {
         pr_u32_t l_size = lp_required[0];
-        for (l_i=1 ; l_i<l_size ; l_i++) {
+        for (l_i=1 ; l_i<=l_size ; l_i++) {
             if (lp_required[l_i] >= Pr_ArraySize(ap_ent->componentHandlers)) {
                 return PR_FALSE;   
             }
@@ -98,7 +102,7 @@ static pr_bool_t s_Pr_CompareComponents(Pr_Entity * ap_ent, Pr_System * ap_sys)
 
     if (lp_excluded) {
         pr_u32_t l_size = lp_excluded[0];
-        for (l_i=1 ; l_i<l_size ; l_i++) {
+        for (l_i=1 ; l_i<=l_size ; l_i++) {
             if (lp_excluded[l_i] >= Pr_ArraySize(ap_ent->componentHandlers)) {
                 continue;
             }
@@ -168,7 +172,6 @@ static pr_u32_t s_Pr_GetFreeEntityId(Pr_World * ap_world)
 {
     if (Pr_ListSize(ap_world->freeEntities)) {
         Pr_Entity * lp_ent = Pr_ListIteratorData(Pr_ListBegin(ap_world->freeEntities));
-        Pr_EraseListElement(Pr_ListBegin(ap_world->freeEntities));
         return lp_ent->id;
     }
 
@@ -191,15 +194,15 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
 
     if (!ap_world) return NULL;
 
-    l_ent.componentHandlers = Pr_NewArray(sizeof(Pr_ComponentHandler), s_Pr_ComponentInitializer);
-
-    if (!l_ent.componentHandlers) {
-        return NULL;
-    }
-
     l_ent.id = s_Pr_GetFreeEntityId(ap_world);
     if (!l_ent.id) {
         l_ent.id = Pr_ArraySize(ap_world->entities);
+        l_ent.componentHandlers = Pr_NewArray(sizeof(Pr_ComponentHandler), s_Pr_ComponentInitializer);
+        if (!l_ent.componentHandlers) {
+            return NULL;
+        }
+    } else {
+        Pr_EraseListElement(Pr_ListBegin(ap_world->freeEntities));
     }
 
     l_ent.world = ap_world;
