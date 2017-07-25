@@ -19,8 +19,8 @@ PR_CPP_PROTECT_ON
         Pr_SystemInfo *     info;
         Pr_List *           entities;
         Pr_World *          world;
-        void *              data;
         pr_bool_t           active;
+        void *              data;
     };
 
     typedef void (*Pr_SystemCallback)(Pr_System *, float);
@@ -29,6 +29,7 @@ PR_CPP_PROTECT_ON
         Pr_SystemCallback   callback;
         pr_u32_t            dataSize;
         Pr_Initializer      initializer;
+        Pr_Deleter          deleter;
         pr_u32_t *          requiredComponents;
         pr_u32_t *          excludedComponents;
     };
