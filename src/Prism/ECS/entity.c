@@ -14,7 +14,7 @@ void *     Pr_GetEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_in
 
     lp_components = Pr_GetArrayData(ap_entity->componentHandlers);
 
-    return (lp_components[ap_info->id].id) ? &lp_components[ap_info->id] : NULL;
+    return (lp_components[ap_info->id].info) ? &lp_components[ap_info->id] : NULL;
 }
 
 void *     Pr_AddEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_info)
@@ -30,7 +30,7 @@ void *     Pr_AddEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_in
     if (!lp_data) return NULL;
 
     l_hnd.data = lp_data;
-    l_hnd.id = ap_info->id;
+    l_hnd.info = ap_info;
 
     if (ap_info->initializer(l_hnd.data, ap_info->dataSize)) {
         if (Pr_SetArrayAt(ap_entity->componentHandlers, ap_info->id, &l_hnd)) {

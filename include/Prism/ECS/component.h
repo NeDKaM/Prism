@@ -11,12 +11,13 @@ PR_CPP_PROTECT_ON
     struct pr_componentinfo_t {
         pr_u32_t        id;
         Pr_Initializer  initializer;
+        Pr_Deleter      deleter;
         pr_u32_t        dataSize;
     };
 
     PR_STRUCT(pr_componenthandler_t, Pr_ComponentHandler) {
-        pr_u32_t    id;
-        void *      data;
+        Pr_ComponentInfo *  info;
+        void *              data;
     };
 
 PR_CPP_PROTECT_OFF

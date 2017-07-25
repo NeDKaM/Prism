@@ -90,7 +90,7 @@ static pr_bool_t s_Pr_CompareComponents(Pr_Entity * ap_ent, Pr_System * ap_sys)
                 return PR_FALSE;   
             }
 
-            if (!lp_components[lp_required[l_i]].id) {
+            if (!lp_components[lp_required[l_i]].info) {
                 return PR_FALSE;
             }
         }
@@ -103,7 +103,7 @@ static pr_bool_t s_Pr_CompareComponents(Pr_Entity * ap_ent, Pr_System * ap_sys)
                 continue;
             }
 
-            if (lp_components[lp_excluded[l_i]].id) {
+            if (lp_components[lp_excluded[l_i]].info) {
                 return PR_FALSE;
             }
         }
@@ -179,7 +179,7 @@ static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
 {
     Pr_ComponentHandler * lp_hnd = ap_data;
 
-    lp_hnd->id = 0;
+    lp_hnd->info = NULL;
     lp_hnd->data = NULL;
 
     return PR_TRUE;
@@ -240,8 +240,16 @@ void           Pr_RemoveWorldEntity(Pr_World * ap_world, Pr_Entity * ap_entity)
 
     lp_components = Pr_GetArrayData(ap_entity->componentHandlers);
     for (l_i=0 ; l_i<Pr_ArraySize(ap_entity->componentHandlers) ; l_i++) {
-        free(lp_components[l_i].data);
-        lp_components[l_i].id = 0;
+        Pr_ComponentHandler * lp_tmp = &lp_components[l_i];
+        if (lp_tmp->info) {
+            if (lp_tmp->info->deleter) {
+                lp_tmp->info->deleter(lp_tmp->data);
+            }
+
+            free(lp_tmp->data);
+            lp_tmp->data = NULL;
+            lp_tmp->info = NULL;
+        }
     }
 
     ap_world->needUpdate = PR_TRUE;
