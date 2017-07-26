@@ -18,6 +18,7 @@ static void s_Pr_RenderPresent_Slot(void * ap_obj, va_list ap)
     s_currentRenderer = lp_wnd->renderer;
 
     SDL_RenderPresent(s_currentRenderer);
+    SDL_SetRenderDrawColor(s_currentRenderer, 0, 0, 0, 0);
     SDL_RenderClear(s_currentRenderer);
 }
 
