@@ -4,6 +4,7 @@
 #include <Prism/config.h>
 
 #include <Prism/ECS/component.h>
+#include <Prism/RainbowSDL/renderable.h>
 
 #include <Prism/memory.h>
 

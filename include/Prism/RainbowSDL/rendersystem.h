@@ -5,6 +5,8 @@
 
 #include <Prism/ECS/system.h>
 
+#include <SDL2/SDL.h>
+
 PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_SystemInfo Pr_RenderSystemInfo;
