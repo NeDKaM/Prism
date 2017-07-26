@@ -22,7 +22,7 @@ PR_CPP_PROTECT_ON
     void            Pr_DeleteArray(Pr_Array *);
     pr_bool_t       Pr_SetArrayAt(Pr_Array *, pr_u32_t, void *);
     pr_u32_t        Pr_ArraySize(Pr_Array *);
-    void * const    Pr_GetArrayData(Pr_Array *);
+    void *          Pr_GetArrayData(Pr_Array *);
 
     typedef Pr_Array Pr_BitSet;
 

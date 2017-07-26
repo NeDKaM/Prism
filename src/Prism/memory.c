@@ -164,7 +164,7 @@ pr_u32_t Pr_ArraySize(Pr_Array * ap_array)
     return ap_array ? ap_array->size : 0;
 }
 
-void * const Pr_GetArrayData(Pr_Array * ap_array)
+void * Pr_GetArrayData(Pr_Array * ap_array)
 {
     return ap_array ? ap_array->data : NULL;
 }
@@ -180,21 +180,20 @@ pr_bool_t Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
             ap_array->data      = lp_data;
             ap_array->capacity  *= 2;
             for ( ; ap_array->size < a_at ; ap_array->size++) {
-                ap_array->initializer(&ap_array->data[ap_array->size], ap_array->stride);
+                ap_array->initializer(&ap_array->data[ap_array->size * ap_array->stride], ap_array->stride);
             }
-
-            ap_array->size = a_at + 1;
-
         } else {
             return PR_FALSE;
         }
     }
         
     if (ap_data) {
-        memcpy((void *)&ap_array->data[a_at], ap_data, ap_array->stride);
+        memcpy(&ap_array->data[a_at * ap_array->stride], ap_data, ap_array->stride);
     } else {
-        ap_array->initializer(&ap_array->data[a_at], ap_array->stride);
+        ap_array->initializer(&ap_array->data[a_at * ap_array->stride], ap_array->stride);
     }
+
+    ap_array->size = a_at + 1;
 
     return PR_TRUE;
 }
