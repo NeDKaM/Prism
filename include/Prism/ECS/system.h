@@ -7,13 +7,11 @@
 
 #include <stdarg.h>
 
-#include <Prism/ECS/world.h>
-
 PR_CPP_PROTECT_ON
 
-    typedef struct pr_systeminfo_t Pr_SystemInfo;
-
     PR_STRUCT(pr_world_t, Pr_World);
+
+    PR_STRUCT(pr_systeminfo_t, Pr_SystemInfo);
 
     PR_STRUCT(pr_system_t, Pr_System) {
         Pr_SystemInfo *     info;

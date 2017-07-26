@@ -5,13 +5,11 @@
 #include <Prism/memory.h>
 #include <Prism/list.h>
 
-#include <Prism/ECS/system.h>
 #include <Prism/ECS/entity.h>
 #include <Prism/ECS/component.h>
+#include <Prism/ECS/system.h>
 
 PR_CPP_PROTECT_ON
-
-    PR_STRUCT(pr_entity_t, Pr_Entity);
 
     PR_STRUCT(pr_world_t, Pr_World);
 

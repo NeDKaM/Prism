@@ -1,7 +1,5 @@
 #include <Prism/RainbowSDL/rendersystem.h>
 
-#include <stdlib.h>
-
 #include <Prism/RainbowSDL/geometrycomponent.h>
 #include <Prism/RainbowSDL/rendercomponent.h>
 
@@ -9,10 +7,14 @@
 
 #include <Prism/RainbowSDL/gfxwindow.h>
 
+#include <Prism/ECS/entity.h>
+
+#include <stdlib.h>
+
 static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
 {
-    Pr_ListIterator * lp_it;
-    Pr_RenderSystem * lp_system = ap_sys->data;
+    Pr_ListIterator     lp_it;
+    Pr_RenderSystem *   lp_system = ap_sys->data;
 
     if (!lp_system->renderer) return;
 
@@ -26,12 +28,11 @@ static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
         for (l_i=0 ; l_i<Pr_ArraySize(lp_render->renderables) ; l_i++) {
             Pr_Renderable * lp_renderable = &lp_renderables[l_i];
 
-            SDL_Rect l_dstRect = {
-                lp_geometry->rectangle.x + lp_renderable->origin.x,
-                lp_geometry->rectangle.y + lp_renderable->origin.y,
-                lp_geometry->rectangle.w,
-                lp_geometry->rectangle.h
-            };
+            SDL_Rect l_dstRect;
+                l_dstRect.x = lp_geometry->rectangle.x + lp_renderable->origin.x;
+                l_dstRect.y = lp_geometry->rectangle.y + lp_renderable->origin.y;
+                l_dstRect.w = lp_geometry->rectangle.w;
+                l_dstRect.h = lp_geometry->rectangle.h;
 
             SDL_RenderCopyEx(lp_system->renderer,
                 lp_renderable->texture,
@@ -41,6 +42,11 @@ static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
                 &lp_renderable->origin,
                 SDL_FLIP_NONE
             );
+
+            #ifdef PRISM_DEBUG
+                SDL_SetRenderDrawColor(lp_system->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_RenderDrawRect(lp_system->renderer, &l_dstRect);
+            #endif
         }
     }
 }

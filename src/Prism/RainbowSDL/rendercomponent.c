@@ -1,7 +1,4 @@
 #include <Prism/RainbowSDL/rendercomponent.h>
-#include <Prism/RainbowSDL/renderable.h>
-
-#include <Prism/types.h>
 
 static pr_bool_t s_Pr_RenderableInitializer(void * ap_data, pr_u32_t a_size)
 {
@@ -21,7 +18,7 @@ static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
 {
     Pr_RenderComponent * lp_component = ap_data;
 
-    lp_component->renderables = Pr_NewArray(sizeof(Pr_RenderComponent), s_Pr_RenderableInitializer);
+    lp_component->renderables = Pr_NewArray(sizeof(Pr_Renderable), s_Pr_RenderableInitializer);
     if (!lp_component->renderables) return PR_FALSE;
 
     return PR_TRUE;
@@ -45,7 +42,7 @@ Pr_ComponentInfo Pr_RenderComponentInfo = {
 
 pr_bool_t  Pr_AttachRenderable(Pr_RenderComponent * ap_comp, Pr_Renderable * ap_rnd)
 {
-    if (!ap_comp || ap_rnd) return PR_FALSE;
+    if (!ap_comp || !ap_rnd) return PR_FALSE;
 
     return Pr_SetArrayAt(ap_comp->renderables, Pr_ArraySize(ap_comp->renderables), ap_rnd);
 }

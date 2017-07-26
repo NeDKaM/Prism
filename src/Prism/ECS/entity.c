@@ -1,4 +1,5 @@
 #include <Prism/ECS/entity.h>
+#include <Prism/ECS/world.h>
 
 #include <stdlib.h>
 
@@ -14,7 +15,7 @@ void *     Pr_GetEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_in
 
     lp_components = Pr_GetArrayData(ap_entity->componentHandlers);
 
-    return (lp_components[ap_info->id].info) ? &lp_components[ap_info->id] : NULL;
+    return (lp_components[ap_info->id].info) ? lp_components[ap_info->id].data : NULL;
 }
 
 void *     Pr_AddEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_info)
@@ -36,7 +37,7 @@ void *     Pr_AddEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_in
         if (Pr_SetArrayAt(ap_entity->componentHandlers, ap_info->id, &l_hnd)) {
             Pr_ComponentHandler * lp_components = Pr_GetArrayData(ap_entity->componentHandlers);
             Pr_InvalidateWorldEntity(ap_entity->world, ap_entity);
-            return &lp_components[ap_info->id];
+            return lp_components[ap_info->id].data;
         }
     }
 

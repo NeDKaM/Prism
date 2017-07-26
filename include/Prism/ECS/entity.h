@@ -5,15 +5,17 @@
 #include <Prism/memory.h>
 
 #include <Prism/ECS/component.h>
-#include <Prism/ECS/world.h>
 
 PR_CPP_PROTECT_ON
+
+    PR_STRUCT(pr_world_t, Pr_World);
 
     PR_STRUCT(pr_entity_t, Pr_Entity) {
         pr_u32_t    id; 
         Pr_World *  world;
         Pr_Array *  componentHandlers;
         pr_bool_t   alive;
+        pr_bool_t   dirty;
     };
 
     extern PRISM_API void *     Pr_GetEntityComponent(Pr_Entity *, Pr_ComponentInfo *);
