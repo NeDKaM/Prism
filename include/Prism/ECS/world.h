@@ -25,6 +25,8 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API pr_bool_t      Pr_RegisterWorldSystem(Pr_World *, Pr_SystemInfo *);
 
+    extern PRISM_API void *         Pr_GetWorldSystem(Pr_World *, Pr_SystemInfo *);
+
 PR_CPP_PROTECT_OFF
 
 #endif /* H_ECS_WORLD_INCLUDED */

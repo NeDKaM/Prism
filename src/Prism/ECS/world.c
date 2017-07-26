@@ -318,5 +318,20 @@ void           Pr_InvalidateWorldEntity(Pr_World * ap_world, Pr_Entity * ap_ent)
 
     ap_world->needUpdate = PR_TRUE;
 }
+
+void *         Pr_GetWorldSystem(Pr_World * ap_world, Pr_SystemInfo * ap_info)
+{
+    Pr_ListIterator lp_it;
+
+    if (!ap_world || !ap_info) return NULL;
+
+    PR_LIST_FOREACH(ap_world->systems, lp_it) {
+        Pr_System * lp_tmp = Pr_ListIteratorData(lp_it);
+        if (lp_tmp->info == ap_info) {
+            return lp_tmp->data;
+        }
+    }
+
+    return NULL;
 }
 
