@@ -20,6 +20,8 @@ PR_CPP_PROTECT_ON
 
 	typedef void (*Pr_Slot)(void *, va_list);
 
+    #define PR_SLOT(name)           name##_Slot
+
 	extern PRISM_API Pr_Signal *    Pr_NewSignal(void);
 	extern PRISM_API void           Pr_DeleteSignal(Pr_Signal *);
 	extern PRISM_API pr_bool_t      Pr_Connect(Pr_Signal *, void *, Pr_Slot);
@@ -29,8 +31,8 @@ PR_CPP_PROTECT_ON
     /*< noimpl >*/ extern PRISM_API void           Pr_SetSignalMuted(Pr_Signal *, pr_bool_t);
     /*< noimpl >*/ extern PRISM_API long           Pr_SignalState(Pr_Signal *);
 
-#define PR_SIGNAL(name)             Pr_Signal * name
-#define PR_SLOT(name)               void name##_Slot(void *, va_list); \
+    #define PR_SIGNAL(name)         Pr_Signal * name
+    #define PR_SLOT_PROTOTYPE(name) void name##_Slot(void *, va_list); \
                                     void name
 
 PR_CPP_PROTECT_OFF
