@@ -65,10 +65,18 @@ static void s_Pr_DeleteSystem(Pr_System * ap_sys)
 void            Pr_DeleteWorld(Pr_World * ap_world)
 {
     Pr_ListIterator lp_it;
+    pr_u32_t l_i;
 
     if (!ap_world) return;
 
+    for (l_i=0 ; l_i<Pr_ArraySize(ap_world->entities) ; l_i++) {
+        Pr_Entity * lp_entities = Pr_GetArrayData(ap_world->entities);
+        Pr_RemoveWorldEntity(ap_world, &lp_entities[l_i]);
+        Pr_DeleteArray(lp_entities[l_i].componentHandlers);
+    } 
+
     Pr_DeleteArray(ap_world->entities);
+
     Pr_DeleteList(ap_world->freeEntities);
     Pr_DeleteList(ap_world->dirtyEntities);
     
@@ -149,13 +157,17 @@ static void     s_Pr_UpdateSystem(Pr_System * ap_sys, Pr_World * ap_world)
 void            Pr_UpdateWorld(Pr_World * ap_world, float a_delta)
 {
     Pr_ListIterator lp_it;
+    pr_bool_t       l_clean = PR_TRUE;
 
     if (!ap_world) return;
 
     PR_LIST_FOREACH(ap_world->systems, lp_it) {
         Pr_System * lp_sys = Pr_ListIteratorData(lp_it);
 
-        if (!lp_sys->active) continue;
+        if (!lp_sys->active) {
+            l_clean = PR_FALSE;
+            continue;
+        }
 
         if (ap_world->needUpdate) {
             s_Pr_UpdateSystem(lp_sys, ap_world);
@@ -164,12 +176,14 @@ void            Pr_UpdateWorld(Pr_World * ap_world, float a_delta)
         lp_sys->info->callback(lp_sys, a_delta);
     }
 
-    PR_LIST_FOREACH(ap_world->dirtyEntities, lp_it) {
-        Pr_Entity * lp_ent = Pr_ListIteratorData(lp_it);
-        lp_ent->dirty = PR_FALSE;
-    }
+    if (l_clean) {
+        PR_LIST_FOREACH(ap_world->dirtyEntities, lp_it) {
+            Pr_Entity * lp_ent = Pr_ListIteratorData(lp_it);
+            lp_ent->dirty = PR_FALSE;
+        }
 
-    Pr_ClearList(ap_world->dirtyEntities);
+        Pr_ClearList(ap_world->dirtyEntities);
+    }
 
     ap_world->needUpdate = PR_FALSE;
 }
@@ -178,7 +192,7 @@ static pr_u32_t s_Pr_GetFreeEntityId(Pr_World * ap_world)
 {
     if (Pr_ListSize(ap_world->freeEntities)) {
         Pr_Entity * lp_ent = Pr_ListIteratorData(Pr_ListBegin(ap_world->freeEntities));
-        return lp_ent->id;
+            return lp_ent->id;
     }
 
     return 0;
@@ -209,6 +223,7 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
         }
     } else {
         Pr_EraseListElement(Pr_ListBegin(ap_world->freeEntities));
+
     }
 
     l_ent.world = ap_world;
