@@ -27,7 +27,7 @@ void *     Pr_AddEntityComponent(Pr_Entity * ap_entity, Pr_ComponentInfo * ap_in
 
     if (!ap_entity->alive) return NULL;
 
-    lp_data = malloc(sizeof(ap_info->dataSize));
+    lp_data = malloc(ap_info->dataSize);
     if (!lp_data) return NULL;
 
     l_hnd.data = lp_data;
