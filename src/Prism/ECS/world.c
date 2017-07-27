@@ -350,3 +350,22 @@ void *         Pr_GetWorldSystem(Pr_World * ap_world, Pr_SystemInfo * ap_info)
     return NULL;
 }
 
+void           Pr_SetWorldSystemActivated(Pr_World * ap_world, Pr_SystemInfo * ap_info, pr_bool_t a_bool)
+{
+    Pr_ListIterator lp_it;
+
+    if (!ap_world || !ap_info) return;
+
+    PR_LIST_FOREACH(ap_world->systems, lp_it) {
+        Pr_System * lp_tmp = Pr_ListIteratorData(lp_it);
+        if (lp_tmp->info == ap_info) {
+            lp_tmp->active = a_bool;
+            if (a_bool) {
+                ap_world->needUpdate = PR_TRUE;
+            }
+
+            return;
+        }
+    }
+}
+
