@@ -22,10 +22,7 @@ Pr_StateMachine *   Pr_NewStateMachine(Pr_State * ap_state)
         return NULL;
     }
 
-    if (!Pr_PushBackList(lp_out->states, ap_state)) {
-        Pr_DeleteStateMachine(lp_out);
-        return NULL;
-    }
+    Pr_PushStateMachine(lp_out, ap_state);
 
     return lp_out;
 }
@@ -45,21 +42,25 @@ void                Pr_DeleteStateMachine(Pr_StateMachine * ap_fsm)
     free(ap_fsm);
 }
 
-pr_bool_t           Pr_UpdateStateMachine(Pr_StateMachine * ap_fsm, float a_time)
+void        PR_SLOT(Pr_UpdateStateMachine)(void * ap_obj, va_list ap_args)
 {
-    pr_bool_t       lp_out = PR_TRUE;
+    if (!ap_args) return;
+
+    Pr_UpdateStateMachine(ap_obj, va_arg(ap_args, float));
+}
+
+void        Pr_UpdateStateMachine(Pr_StateMachine * ap_fsm, float a_time)
+{
     Pr_ListIterator lp_it;
 
-    if (!ap_fsm) return PR_FALSE;
+    if (!ap_fsm) return;
 
     PR_LIST_FOREACH(ap_fsm->states, lp_it) {
         Pr_State * lp_state = Pr_ListIteratorData(lp_it);
         if (!lp_state->update(lp_state, a_time)) {
-            lp_out = PR_FALSE;
+            return;
         }
     }
-
-    return lp_out;
 }
 
 void                Pr_ChangeStateMachine(Pr_StateMachine * ap_fsm, Pr_State * ap_state)
@@ -105,6 +106,7 @@ void                Pr_PushStateMachine(Pr_StateMachine * ap_fsm, Pr_State * ap_
         }
 
         if (Pr_PushBackList(ap_fsm->states, ap_state)) {
+            ap_state->fsm = ap_fsm;
             ap_state->enter(ap_state);
         }
     }

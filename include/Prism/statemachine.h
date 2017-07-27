@@ -1,8 +1,9 @@
 #ifndef H_PRISM_STATEMACHINE_INCLUDED
-#define H_PRISM_STATEMACHONE_INCLUDED
+#define H_PRISM_STATEMACHINE_INCLUDED
 
 #include <Prism/config.h>
 #include <Prism/types.h>
+#include <Prism/sigslot.h>
 
 PR_CPP_PROTECT_ON
 
@@ -20,7 +21,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API Pr_StateMachine *   Pr_NewStateMachine(Pr_State *);
     extern PRISM_API void                Pr_DeleteStateMachine(Pr_StateMachine *);
 
-    extern PRISM_API pr_bool_t           Pr_UpdateStateMachine(Pr_StateMachine *, float);
+    PR_SLOT_EXTERN_API(Pr_UpdateStateMachine)(Pr_StateMachine *, float);
 
     extern PRISM_API void                Pr_ChangeStateMachine(Pr_StateMachine *, Pr_State *);
     extern PRISM_API Pr_State *          Pr_GetCurrentState(Pr_StateMachine *);
