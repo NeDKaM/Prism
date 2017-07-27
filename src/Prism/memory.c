@@ -174,13 +174,14 @@ pr_bool_t Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
     if (!ap_array) return PR_FALSE;
 
     while (a_at >= ap_array->capacity) {
-        void * lp_data = ap_array->data;
+        char * lp_data = ap_array->data;
         lp_data = realloc(lp_data, ap_array->capacity * 2 * ap_array->stride);
         if (lp_data) {
+            pr_u32_t l_i;
             ap_array->data      = lp_data;
             ap_array->capacity  *= 2;
-            for ( ; ap_array->size < a_at ; ap_array->size++) {
-                ap_array->initializer(&ap_array->data[ap_array->size * ap_array->stride], ap_array->stride);
+            for (l_i=ap_array->size ; l_i < ap_array->capacity ; l_i++) {
+                ap_array->initializer(&ap_array->data[l_i * ap_array->stride], ap_array->stride);
             }
         } else {
             return PR_FALSE;
