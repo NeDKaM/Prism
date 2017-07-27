@@ -16,10 +16,10 @@ static pr_bool_t s_Pr_RenderableInitializer(void * ap_data, pr_u32_t a_size)
 
 static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
 {
-    Pr_RenderComponent * lp_component = ap_data;
+    Pr_RenderComponent * lp_render = ap_data;
 
-    lp_component->renderables = Pr_NewArray(sizeof(Pr_Renderable), s_Pr_RenderableInitializer);
-    if (!lp_component->renderables) return PR_FALSE;
+    lp_render->renderables = Pr_NewArray(sizeof(Pr_Renderable), s_Pr_RenderableInitializer);
+    if (!lp_render->renderables) return PR_FALSE;
 
     return PR_TRUE;
 }
