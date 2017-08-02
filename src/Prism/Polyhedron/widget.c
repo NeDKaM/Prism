@@ -147,7 +147,6 @@ static void s_ContainerOnMouseMoved(Pr_WidgetRef ap_wid, long a_x, long a_y)
 {
     Pr_WidgetContainerRef lp_cont = (Pr_WidgetContainerRef)ap_wid;
     pr_bool_t l_collide = PR_FALSE;
-    Pr_ListIterator lp_it;
     Pr_WidgetRef lp_entry = NULL;
 
     static pr_bool_t sl_mouseIn = PR_FALSE;
@@ -167,6 +166,7 @@ static void s_ContainerOnMouseMoved(Pr_WidgetRef ap_wid, long a_x, long a_y)
     }
 
     if (sl_mouseIn) {
+        Pr_ListIterator lp_it;
         PR_LIST_FOREACH(lp_cont->children, lp_it) {
             Pr_WidgetRef lp_tmp = Pr_ListIteratorData(lp_it);
             if (s_collide(lp_tmp, a_x, a_y)) {
@@ -251,8 +251,6 @@ static void s_ContainerOnButtonReleased_Slot(void * ap_obj, va_list ap_args)
 
 static pr_bool_t s_MakeInput(Pr_WidgetContainerRef ap_cont)
 {
-    Pr_WidgetRef lp_wid = (Pr_WidgetRef)ap_cont;
-
     ap_cont->input.mouseMoved = Pr_NewSignal();
     ap_cont->input.buttonPressed = Pr_NewSignal();
     ap_cont->input.buttonReleased = Pr_NewSignal();
