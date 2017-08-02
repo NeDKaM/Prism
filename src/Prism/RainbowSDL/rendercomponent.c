@@ -8,8 +8,11 @@ static pr_bool_t s_Pr_RenderableInitializer(void * ap_data, pr_u32_t a_size)
     lp_renderable->texture          = NULL;
     lp_renderable->textureCoords    = l_zero;
 
-    lp_renderable->origin.x = 0;
-    lp_renderable->origin.y = 0;
+    lp_renderable->origin.x         = 0;
+    lp_renderable->origin.y         = 0;
+
+    lp_renderable->dstSize.w        = 0;
+    lp_renderable->dstSize.h        = 0;
 
     return PR_TRUE;
 }
