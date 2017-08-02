@@ -39,10 +39,10 @@ static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
             Pr_Renderable * lp_renderable = &lp_renderables[l_i];
 
             SDL_Rect l_dstRect;
-                l_dstRect.x = lp_geometry->rectangle.x + lp_renderable->origin.x;
-                l_dstRect.y = lp_geometry->rectangle.y + lp_renderable->origin.y;
-                l_dstRect.w = lp_geometry->rectangle.w;
-                l_dstRect.h = lp_geometry->rectangle.h;
+                l_dstRect.x = lp_geometry->position.x + lp_renderable->origin.x;
+                l_dstRect.y = lp_geometry->position.y + lp_renderable->origin.y;
+                l_dstRect.w = lp_renderable->dstSize.w;
+                l_dstRect.h = lp_renderable->dstSize.h;
 
             SDL_RenderCopyEx(lp_system->renderer,
                 lp_renderable->texture,
