@@ -40,7 +40,6 @@ Pr_ComponentInfo Pr_RenderComponentInfo = {
     sizeof(Pr_RenderComponent)
 };
 
-pr_bool_t  Pr_AttachRenderable(Pr_RenderComponent * ap_comp, Pr_Renderable * ap_rnd)
 Pr_Renderable * Pr_AttachRenderable(Pr_RenderComponent * ap_comp, Pr_Renderable * ap_rnd)
 {
     if (!ap_comp || !ap_rnd) return PR_FALSE;
