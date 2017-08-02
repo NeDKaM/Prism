@@ -11,6 +11,16 @@
 
 #include <stdlib.h>
 
+#ifdef PRISM_DEBUG
+    static void s_Pr_RenderEntityOrigin(SDL_Renderer * ap_rnd, long a_x, long a_y)
+    {
+        SDL_SetRenderDrawColor(ap_rnd, 0, 255, 0, 127);
+        SDL_RenderDrawLine(ap_rnd, a_x, a_y, a_x, a_y + 20);
+        SDL_SetRenderDrawColor(ap_rnd, 0, 0, 255, 127);
+        SDL_RenderDrawLine(ap_rnd, a_x, a_y, a_x + 20, a_y);
+    }
+#endif
+
 static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
 {
     Pr_ListIterator     lp_it;
@@ -48,6 +58,10 @@ static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
                 SDL_RenderDrawRect(lp_system->renderer, &l_dstRect);
             #endif
         }
+
+        #ifdef PRISM_DEBUG
+            s_Pr_RenderEntityOrigin(lp_system->renderer, lp_geometry->position.x, lp_geometry->position.y);
+        #endif
     }
 }
 
