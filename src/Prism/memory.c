@@ -18,7 +18,6 @@ Pr_MemoryPool * Pr_NewMemoryPool(Pr_MemoryPool * ap_prev, pr_u32_t a_blockSize, 
     Pr_MemoryPool * lp_out = NULL;
     pr_u8_t * lp_chunk = NULL;
     void ** lp_freeList = NULL;
-    int l_i;
 
     if (!a_blockSize || !a_count) return NULL;
 
@@ -29,6 +28,7 @@ Pr_MemoryPool * Pr_NewMemoryPool(Pr_MemoryPool * ap_prev, pr_u32_t a_blockSize, 
     if (lp_chunk && lp_freeList) {
         lp_out = malloc(sizeof(Pr_MemoryPool));
         if (lp_out) {
+            pr_u32_t l_i;
             for (l_i = 0 ; l_i < a_count ; l_i++) {
                 lp_freeList[l_i] = &lp_chunk[a_blockSize * (a_count - l_i - 1)];
             }
@@ -169,9 +169,11 @@ void * Pr_GetArrayData(Pr_Array * ap_array)
     return ap_array ? ap_array->data : NULL;
 }
 
-pr_bool_t Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
+void * Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
 {
-    if (!ap_array) return PR_FALSE;
+    void * lp_out;
+
+    if (!ap_array) return NULL;
 
     while (a_at >= ap_array->capacity) {
         char * lp_data = ap_array->data;
@@ -184,19 +186,21 @@ pr_bool_t Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
                 ap_array->initializer(&ap_array->data[l_i * ap_array->stride], ap_array->stride);
             }
         } else {
-            return PR_FALSE;
+            return NULL;
         }
     }
         
+    lp_out = &ap_array->data[a_at * ap_array->stride];
+
     if (ap_data) {
-        memcpy(&ap_array->data[a_at * ap_array->stride], ap_data, ap_array->stride);
+        memcpy(lp_out, ap_data, ap_array->stride);
     } else {
-        ap_array->initializer(&ap_array->data[a_at * ap_array->stride], ap_array->stride);
+        ap_array->initializer(lp_out, ap_array->stride);
     }
 
     ap_array->size = a_at + 1;
 
-    return PR_TRUE;
+    return lp_out;
 }
 
 Pr_BitSet * Pr_NewBitSet()
