@@ -14,8 +14,9 @@ PR_CPP_PROTECT_ON
     extern PRISM_API Pr_ComponentInfo Pr_GeometryComponentInfo;
 
     PR_STRUCT(pr_geometrycomponent_t, Pr_GeometryComponent) {
-        SDL_Rect    rectangle;
-        float       rotation;
+        struct { long x, y; }       position;
+        struct { pr_u32_t w, h; }   size;
+        float                       rotation;
     };
 
 PR_CPP_PROTECT_OFF
