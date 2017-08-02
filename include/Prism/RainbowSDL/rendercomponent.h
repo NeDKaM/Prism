@@ -18,7 +18,7 @@ PR_CPP_PROTECT_ON
         Pr_Array *  renderables;
     };
 
-    extern PRISM_API pr_bool_t  Pr_AttachRenderable(Pr_RenderComponent *, Pr_Renderable *);
+    extern PRISM_API Pr_Renderable * Pr_AttachRenderable(Pr_RenderComponent *, Pr_Renderable *);
 
 PR_CPP_PROTECT_OFF
 
