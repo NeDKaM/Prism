@@ -1,7 +1,7 @@
-#include <Prism/RainbowSDL/rendersystem.h>
+#include <Prism/RainbowSDL/Systems/rendersystem.h>
 
-#include <Prism/RainbowSDL/geometrycomponent.h>
-#include <Prism/RainbowSDL/rendercomponent.h>
+#include <Prism/RainbowSDL/Components/geometrycomponent.h>
+#include <Prism/RainbowSDL/Components/rendercomponent.h>
 
 #include <Prism/RainbowSDL/renderable.h>
 
@@ -21,7 +21,7 @@
     }
 #endif
 
-static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
+static void s_Pr_RenderSystemCallback(Pr_System * ap_sys, float a_time)
 {
     Pr_ListIterator     lp_it;
     Pr_RenderSystem *   lp_system = ap_sys->data;
@@ -39,10 +39,24 @@ static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
             Pr_Renderable * lp_renderable = &lp_renderables[l_i];
 
             SDL_Rect l_dstRect;
+            if (!lp_renderable->originOnly) {
                 l_dstRect.x = lp_geometry->position.x + lp_renderable->origin.x;
                 l_dstRect.y = lp_geometry->position.y + lp_renderable->origin.y;
+            } else {
+                l_dstRect.x = lp_renderable->origin.x;
+                l_dstRect.y = lp_renderable->origin.y;
+            }
                 l_dstRect.w = lp_renderable->dstSize.w;
                 l_dstRect.h = lp_renderable->dstSize.h;
+
+            SDL_SetRenderDrawColor(lp_system->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
+            SDL_SetTextureAlphaMod(lp_renderable->texture, lp_renderable->colorMod.a);
+            SDL_SetTextureBlendMode(lp_renderable->texture, lp_renderable->blendMode);
+            SDL_SetTextureColorMod(lp_renderable->texture, 
+                lp_renderable->colorMod.r,
+                lp_renderable->colorMod.g,
+                lp_renderable->colorMod.b
+            );
 
             SDL_RenderCopyEx(lp_system->renderer,
                 lp_renderable->texture,
@@ -52,9 +66,9 @@ static void s_Pr_SystemCallback(Pr_System * ap_sys, float a_time)
                 &lp_renderable->origin,
                 SDL_FLIP_NONE
             );
-
+            
             #ifdef PRISM_DEBUG
-                SDL_SetRenderDrawColor(lp_system->renderer, 255, 0, 0, SDL_ALPHA_OPAQUE);
+                SDL_SetRenderDrawColor(lp_system->renderer, 127, 0, 0, 127);
                 SDL_RenderDrawRect(lp_system->renderer, &l_dstRect);
             #endif
         }
@@ -76,12 +90,12 @@ static pr_bool_t s_Pr_SystemInitializer(void * ap_data, pr_u32_t a_size)
 
 static pr_u32_t s_requiredComponents[] = {
     2,
-    PR_GEOMETRYCOMPONENT,
-    PR_RENDERCOMPONENT
+    PR_COMPONENT_GEOMETRY,
+    PR_COMPONENT_RENDER
 };
 
 Pr_SystemInfo Pr_RenderSystemInfo = {
-    s_Pr_SystemCallback,
+    s_Pr_RenderSystemCallback,
     sizeof(Pr_RenderSystem),
     s_Pr_SystemInitializer,
     NULL,

@@ -9,7 +9,7 @@
 
 PR_CPP_PROTECT_ON
 
-    #define PR_GEOMETRYCOMPONENT /**/ 0 /**/
+    #define PR_COMPONENT_GEOMETRY /**/ 0 /**/
 
     extern PRISM_API Pr_ComponentInfo Pr_GeometryComponentInfo;
 

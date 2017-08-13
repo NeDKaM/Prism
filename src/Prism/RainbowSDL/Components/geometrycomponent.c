@@ -1,4 +1,4 @@
-#include <Prism/RainbowSDL/geometrycomponent.h>
+#include <Prism/RainbowSDL/Components/geometrycomponent.h>
 
 #include <string.h>
 
@@ -18,7 +18,7 @@ static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
 }
 
 Pr_ComponentInfo Pr_GeometryComponentInfo = {
-    PR_GEOMETRYCOMPONENT,
+    PR_COMPONENT_GEOMETRY,
     s_Pr_ComponentInitializer,
     NULL,
     sizeof(Pr_GeometryComponent)
