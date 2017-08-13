@@ -7,8 +7,7 @@
 
 PR_CPP_PROTECT_ON
 
-    typedef struct pr_componentinfo_t Pr_ComponentInfo;
-    struct pr_componentinfo_t {
+    PR_STRUCT(pr_componentinfo_t, Pr_ComponentInfo) {
         pr_u32_t        id;
         Pr_Initializer  initializer;
         Pr_Deleter      deleter;
