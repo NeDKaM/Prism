@@ -15,11 +15,6 @@ PR_CPP_PROTECT_ON
         pr_u32_t        dataSize;
     };
 
-    PR_STRUCT(pr_componenthandler_t, Pr_ComponentHandler) {
-        Pr_ComponentInfo *  info;
-        void *              data;
-    };
-
 PR_CPP_PROTECT_OFF
 
 #endif /* H_ECS_COMPONENET_INCLUDED */

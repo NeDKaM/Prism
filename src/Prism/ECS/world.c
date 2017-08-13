@@ -10,6 +10,11 @@ struct pr_world_t  {
     pr_bool_t   needUpdate;
 };
 
+PR_STRUCT(pr_componenthandler_t, Pr_ComponentHandler) {
+    Pr_ComponentInfo *  info;
+    void *              data;
+};
+
 static pr_bool_t s_Pr_EntityInitializer(void * ap_data, pr_u32_t a_size)
 {
     Pr_Entity * lp_ent = ap_data;
