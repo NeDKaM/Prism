@@ -203,37 +203,15 @@ void * Pr_SetArrayAt(Pr_Array * ap_array, pr_u32_t a_at, void * ap_data)
     return lp_out;
 }
 
-Pr_BitSet * Pr_NewBitSet()
+pr_bool_t       Pr_ResizeArray(Pr_Array * ap_array, pr_u32_t a_size)
 {
-    return Pr_NewArray(sizeof(pr_u32_t), NULL);
-}
+    if (!ap_array) return PR_FALSE;
 
-pr_bool_t Pr_SetBitSetAt(Pr_BitSet * ap_bitset, pr_u32_t a_at, char bit)
-{
-    if (!ap_bitset) return PR_FALSE;
-
-    while (a_at >= (ap_bitset->capacity * 32)) {
-        void * lp_data = ap_bitset->data;
-        lp_data = realloc(lp_data, ap_bitset->capacity * 2 * ap_bitset->stride);
-        if (lp_data) {
-            ap_bitset->data      = lp_data;
-            ap_bitset->capacity  *= 2;
-            for ( ; ap_bitset->size < a_at ; ap_bitset->size++) {
-                ap_bitset->initializer(&ap_bitset->data[ap_bitset->size], ap_bitset->stride);
-            }
-
-            ap_bitset->size = a_at + 1;
-
-        } else {
-            return PR_FALSE;
-        }
+    if (a_size > Pr_ArraySize(ap_array)) {
+        return (Pr_SetArrayAt(ap_array, a_size, NULL)) ? PR_TRUE : PR_FALSE;
     }
 
-    if (bit) {
-        ap_bitset->data[a_at / 32] |= (1 << a_at % 32);
-    } else {
-        ap_bitset->data[a_at / 32] &= ~(1 << a_at % 32);
-    }
+    ap_array->size = a_size;
 
     return PR_TRUE;
 }
