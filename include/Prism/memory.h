@@ -25,7 +25,6 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void *     Pr_GetArrayData(Pr_Array *);
     extern PRISM_API pr_bool_t  Pr_ResizeArray(Pr_Array *, pr_u32_t);
 
-    typedef Pr_Array Pr_BitSet;
 
 
 PR_CPP_PROTECT_OFF
