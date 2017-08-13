@@ -71,7 +71,7 @@ void            Pr_DeleteWorld(Pr_World * ap_world)
 
     for (l_i=0 ; l_i<Pr_ArraySize(ap_world->entities) ; l_i++) {
         Pr_Entity * lp_entities = Pr_GetArrayData(ap_world->entities);
-        Pr_RemoveWorldEntity(ap_world, &lp_entities[l_i]);
+        Pr_RemoveWorldEntity(&lp_entities[l_i]);
         Pr_DeleteArray(lp_entities[l_i].componentHandlers);
     } 
 
@@ -231,8 +231,8 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
     l_ent.dirty = PR_FALSE;
 
     if (Pr_SetArrayAt(ap_world->entities, l_ent.id, &l_ent)) {
-        Pr_Entity * lp_entities = Pr_GetArrayData(ap_world->entities);
-        Pr_InvalidateWorldEntity(ap_world, &lp_entities[l_ent.id]);
+        lp_entities = Pr_GetArrayData(ap_world->entities);
+        Pr_InvalidateWorldEntity(&lp_entities[l_ent.id]);
         return &lp_entities[l_ent.id];
     }
 
@@ -241,19 +241,19 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
     return NULL;
 }
 
-void           Pr_RemoveWorldEntity(Pr_World * ap_world, Pr_Entity * ap_entity)
+void           Pr_RemoveWorldEntity(Pr_Entity * ap_entity)
 {
     Pr_ComponentHandler * lp_components;
     pr_u32_t l_i;
 
-    if (!ap_world || !ap_entity) return;
+    if (!ap_entity) return;
     
     if (!ap_entity->alive) return;
 
     ap_entity->alive = PR_FALSE;
     ap_entity->dirty = PR_TRUE;
 
-    if (!Pr_PushBackList(ap_world->freeEntities, ap_entity)) {
+    if (!Pr_PushBackList(ap_entity->world->freeEntities, ap_entity)) {
 
         /* CRITICAL */
 
@@ -274,7 +274,7 @@ void           Pr_RemoveWorldEntity(Pr_World * ap_world, Pr_Entity * ap_entity)
         }
     }
 
-    ap_world->needUpdate = PR_TRUE;
+    ap_entity->world->needUpdate = PR_TRUE;
 }
 
 static Pr_System * s_Pr_NewSystem(Pr_SystemInfo * ap_info)
@@ -322,16 +322,18 @@ pr_bool_t      Pr_RegisterWorldSystem(Pr_World * ap_world, Pr_SystemInfo * ap_in
     return PR_FALSE;
 }
 
-void           Pr_InvalidateWorldEntity(Pr_World * ap_world, Pr_Entity * ap_ent)
+void           Pr_InvalidateWorldEntity(Pr_Entity * ap_ent)
 {
-    if (!ap_world || !ap_ent) return;
+    if (!ap_ent) return;
+
+    if (!ap_ent->alive) return;
 
     if (!ap_ent->dirty) {
-        Pr_PushBackList(ap_world->dirtyEntities, ap_ent);
+        Pr_PushBackList(ap_ent->world->dirtyEntities, ap_ent);
         ap_ent->dirty = PR_TRUE;
     }
 
-    ap_world->needUpdate = PR_TRUE;
+    ap_ent->world->needUpdate = PR_TRUE;
 }
 
 void *         Pr_GetWorldSystem(Pr_World * ap_world, Pr_SystemInfo * ap_info)

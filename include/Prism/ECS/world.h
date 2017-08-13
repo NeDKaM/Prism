@@ -19,9 +19,9 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void           Pr_UpdateWorld(Pr_World *, float);
 
     extern PRISM_API Pr_Entity *    Pr_CreateWorldEntity(Pr_World *);
-    extern PRISM_API void           Pr_RemoveWorldEntity(Pr_World *, Pr_Entity *);
+    extern PRISM_API void           Pr_RemoveWorldEntity(Pr_Entity *);
 
-    extern PRISM_API void           Pr_InvalidateWorldEntity(Pr_World *, Pr_Entity *);
+    extern PRISM_API void           Pr_InvalidateWorldEntity(Pr_Entity *);
 
     extern PRISM_API pr_bool_t      Pr_RegisterWorldSystem(Pr_World *, Pr_SystemInfo *);
 
