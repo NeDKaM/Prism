@@ -137,13 +137,22 @@ static void     s_Pr_UpdateSystem(Pr_System * ap_sys, Pr_World * ap_world)
     for (lp_it=Pr_ListBegin(ap_sys->entities) ; lp_it!=NULL ; ) {
         Pr_Entity * lp_ent = Pr_ListIteratorData(lp_it);
 
+        if (!lp_ent) break;
+
         if (!lp_ent->alive) {
-            Pr_EraseListElement(lp_it);
+            lp_it = Pr_EraseListElement(lp_it);
             continue;
         }
 
+        if (lp_ent->dirty) {
+            lp_it = Pr_EraseListElement(lp_it);
+            continue;
+            /* TODO : shouldnt be done that way, entity should stay in system but 
+                not be added once more from dirty entities */
+        }
+
         if (!s_Pr_CompareComponents(lp_ent, ap_sys)) {
-            Pr_EraseListElement(lp_it);
+            lp_it = Pr_EraseListElement(lp_it);
             continue;
         }
 
@@ -216,8 +225,11 @@ static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
 Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
 {
     Pr_Entity   l_ent;
+    Pr_Entity * lp_entities;
 
     if (!ap_world) return NULL;
+
+    lp_entities = Pr_GetArrayData(ap_world->entities);
 
     l_ent.id = s_Pr_GetFreeEntityId(ap_world);
     if (!l_ent.id) {
@@ -227,8 +239,13 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
             return NULL;
         }
     } else {
+        Pr_Entity * lp_entity = &lp_entities[l_ent.id];
+        lp_entity->alive = PR_TRUE;
+        lp_entity->dirty = PR_FALSE;
+        Pr_InvalidateWorldEntity(lp_entity);
         Pr_EraseListElement(Pr_ListBegin(ap_world->freeEntities));
 
+        return lp_entity;
     }
 
     l_ent.world = ap_world;
