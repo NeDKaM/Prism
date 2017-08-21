@@ -32,7 +32,7 @@ PR_CPP_PROTECT_ON
     /*< noimpl >*/ extern PRISM_API long           Pr_SignalState(Pr_Signal *);
 
     #define PR_SIGNAL(name)         Pr_Signal * name
-    #define PR_SLOT_PROTOTYPE(name) void name##_Slot(void *, va_list); \
+    #define PR_SLOT_PROTOTYPE(name) void PR_SLOT(name)(void *, va_list); \
                                     void name
 
 PR_CPP_PROTECT_OFF
