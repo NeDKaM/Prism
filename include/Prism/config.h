@@ -31,9 +31,13 @@
     #define PR_CPP_PROTECT_OFF
 #endif
 
-#define PR_STRUCT(name_t,name) \
+#define PR_STRUCT(name_t, name) \
     typedef struct name_t name; \
     struct name_t
+
+#define PR_ENUM(name_t, name) \
+    typedef enum name_t name; \
+    enum name_t
 
 #define PR_SLOT_EXTERN_API(name)    extern PRISM_API void name##_Slot(void *, va_list); \
                                     extern PRISM_API void name
