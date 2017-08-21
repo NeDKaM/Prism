@@ -5,6 +5,8 @@
 #include <Prism/memory.h>
 #include <Prism/sigslot.h>
 
+#include <string.h>
+
 PR_CPP_PROTECT_ON
 
     #define PR_OBJECT(name_t, name) \
@@ -47,6 +49,9 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void *     Pr_Alloc(Pr_Class *);
 
     extern PRISM_API pr_bool_t  Pr_Construct(Pr_ObjectRef);
+
+    #define PR_CAST(_class, _objRef) \
+        ((strcmp(((Pr_ObjectRef)(_objRef))->class->name, (_class).name) == 0) ? (void *)(_objRef) : NULL)
 
 PR_CPP_PROTECT_OFF
 
