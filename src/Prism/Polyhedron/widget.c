@@ -117,6 +117,8 @@ void Pr_SetWidgetSize(Pr_WidgetRef ap_wid, pr_u32_t a_w, pr_u32_t a_h)
     ap_wid->boundingBox.w = a_w;
     ap_wid->boundingBox.h = a_h;
 
+    ap_wid->layout(ap_wid);
+
     Pr_Emit(ap_wid->sizeChanged, a_w, a_h);
 }
 
@@ -127,6 +129,8 @@ void Pr_SetWidgetPosition(Pr_WidgetRef ap_wid, long a_x, long a_y)
 {
     ap_wid->boundingBox.x = a_x;
     ap_wid->boundingBox.y = a_y;
+
+    ap_wid->layout(ap_wid);
 
     Pr_Emit(ap_wid->moved, a_x, a_y);
 }
