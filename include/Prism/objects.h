@@ -13,7 +13,7 @@ PR_CPP_PROTECT_ON
         struct name_t 
 
     #define Pr_SlotFunction(name) \
-        Pr_Slot slot_##name; \
+        Pr_Slot PR_SLOT(name); \
         void (*name)
 
     #define PR_INHERIT(type) type self

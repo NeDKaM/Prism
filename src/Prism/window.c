@@ -177,15 +177,15 @@ static pr_bool_t s_Pr_ConstructWindow(Pr_ObjectRef ap_obj)
             lp_this->show           = Pr_ShowWindow;
             lp_this->raise          = NULL;
 
-            lp_this->slot_setTitle      = Pr_SetWindowTitle_Slot;
-            lp_this->slot_setPosition   = Pr_SetWindowPosition_Slot;
-            lp_this->slot_setSize       = Pr_SetWindowSize_Slot;
-            lp_this->slot_setMaximized  = NULL;
-            lp_this->slot_setMinimized  = NULL;
-            lp_this->slot_setBordered   = Pr_SetWindowBordered_Slot;
-            lp_this->slot_hide          = Pr_HideWindow_Slot;
-            lp_this->slot_show          = Pr_ShowWindow_Slot;
-            lp_this->slot_raise         = NULL;
+            lp_this->PR_SLOT(setTitle)      = PR_SLOT(Pr_SetWindowTitle);
+            lp_this->PR_SLOT(setPosition)   = PR_SLOT(Pr_SetWindowPosition);
+            lp_this->PR_SLOT(setSize)       = PR_SLOT(Pr_SetWindowSize);
+            lp_this->PR_SLOT(setMaximized)  = NULL;
+            lp_this->PR_SLOT(setMinimized)  = NULL;
+            lp_this->PR_SLOT(setBordered)   = PR_SLOT(Pr_SetWindowBordered);
+            lp_this->PR_SLOT(hide)          = PR_SLOT(Pr_HideWindow);
+            lp_this->PR_SLOT(show)          = PR_SLOT(Pr_ShowWindow);
+            lp_this->PR_SLOT(raise)         = NULL;
 
             return PR_TRUE;
         }

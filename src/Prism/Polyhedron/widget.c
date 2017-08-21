@@ -4,27 +4,47 @@
 
 static void s_OnButtonPressed(Pr_WidgetRef ap_wid, long a_button, long a_x, long a_y)
 {}
-static void s_OnButtonPressed_Slot(void * ap_obj, va_list ap_args)
+static void PR_SLOT(s_OnButtonPressed)(void * ap_obj, va_list ap_args)
 {}
 
 static void s_OnButtonReleased(Pr_WidgetRef ap_wid, long a_button, long a_x, long a_y)
 {}
-static void s_OnButtonReleased_Slot(void * ap_obj, va_list ap_args)
+static void PR_SLOT(s_OnButtonReleased)(void * ap_obj, va_list ap_args)
 {}
 
 static void s_OnMouseEnter(Pr_WidgetRef ap_wid)
 {}
-static void s_OnMouseEnter_Slot(void * ap_obj, va_list ap_args)
+static void PR_SLOT(s_OnMouseEnter)(void * ap_obj, va_list ap_args)
 {}
 
 static void s_OnMouseExit(Pr_WidgetRef ap_wid)
 {}
-static void s_OnMouseExit_Slot(void * ap_obj, va_list ap_args)
+static void PR_SLOT(s_OnMouseExit)(void * ap_obj, va_list ap_args)
 {}
 
 static void s_OnMouseMoved(Pr_WidgetRef ap_wid, long a_x, long a_y)
 {}
-static void s_OnMouseMoved_Slot(void * ap_obj, va_list ap_args)
+static void PR_SLOT(s_OnMouseMoved)(void * ap_obj, va_list ap_args)
+{}
+
+static void s_Layout(Pr_WidgetRef ap_wid)
+{}
+static void PR_SLOT(s_Layout)(void * ap_obj, va_list ap_args)
+{}
+
+static void s_Show(Pr_WidgetRef ap_wid, pr_bool_t a_bool)
+{}
+static void PR_SLOT(s_Show)(void * ap_obj, va_list ap_args)
+{}
+
+static void s_onKeyPressed(Pr_WidgetRef ap_wid, long a_k)
+{}
+static void PR_SLOT(s_onKeyPressed)(void * ap_obj, va_list ap_args)
+{}
+
+static void s_onKeyReleased(Pr_WidgetRef ap_wid, long a_k)
+{}
+static void PR_SLOT(s_onKeyReleased)(void * ap_obj, va_list ap_args)
 {}
 
 static pr_bool_t s_Pr_ConstructWidget(Pr_ObjectRef ap_obj)
@@ -42,20 +62,20 @@ static pr_bool_t s_Pr_ConstructWidget(Pr_ObjectRef ap_obj)
         return PR_FALSE;
     }
 
-    #define _SETSLOT(name, func, slot) lp_widget->name = func, lp_widget->slot_##name = slot;
-        _SETSLOT(onButtonPressed, s_OnButtonPressed, s_OnButtonPressed_Slot);
-        _SETSLOT(onButtonReleased, s_OnButtonReleased, s_OnButtonReleased_Slot);
-        _SETSLOT(onMouseEnter, s_OnMouseEnter, s_OnMouseEnter_Slot);
-        _SETSLOT(onMouseExit, s_OnMouseExit, s_OnMouseExit_Slot);
-        _SETSLOT(onMouseMoved, s_OnMouseMoved, s_OnMouseMoved_Slot);
-        _SETSLOT(onKeyPressed, NULL, NULL);
-        _SETSLOT(onKeyReleased, NULL, NULL);
+    #define _SETSLOT(name, func) lp_widget->name = func, lp_widget->PR_SLOT(name) = PR_SLOT(func)
+        _SETSLOT(onButtonPressed, s_OnButtonPressed);
+        _SETSLOT(onButtonReleased, s_OnButtonReleased);
+        _SETSLOT(onMouseEnter, s_OnMouseEnter);
+        _SETSLOT(onMouseExit, s_OnMouseExit);
+        _SETSLOT(onMouseMoved, s_OnMouseMoved);
+        _SETSLOT(onKeyPressed, s_onKeyPressed);
+        _SETSLOT(onKeyReleased, s_onKeyReleased);
 
-        _SETSLOT(setSize, Pr_SetWidgetSize, Pr_SetWidgetSize_Slot);
-        _SETSLOT(setPosition, Pr_SetWidgetPosition, Pr_SetWidgetPosition_Slot);
+        _SETSLOT(setSize, Pr_SetWidgetSize);
+        _SETSLOT(setPosition, Pr_SetWidgetPosition);
 
-        _SETSLOT(layout, NULL, NULL);
-        _SETSLOT(show, NULL, NULL);
+        _SETSLOT(layout, s_Layout);
+        _SETSLOT(show, s_Show);
     #undef _SETSLOT
 
     lp_widget->enabled = PR_FALSE;
@@ -92,16 +112,6 @@ Pr_Class Pr_WidgetClass = {
     s_Pr_DestructWidget
 };
 
-#define PR_WIDGET_SLOT(name) void name##_Slot(void * ap_obj, va_list ap_args)
-
-PR_WIDGET_SLOT(Pr_SetWidgetSize)
-{   
-    pr_u32_t l_w = va_arg(ap_args, pr_u32_t);
-    pr_u32_t l_h = va_arg(ap_args, pr_u32_t);
-
-    Pr_SetWidgetSize((Pr_WidgetRef)ap_obj, l_w, l_h);
-}
-
 void Pr_SetWidgetSize(Pr_WidgetRef ap_wid, pr_u32_t a_w, pr_u32_t a_h)
 {
     ap_wid->boundingBox.w = a_w;
@@ -110,13 +120,7 @@ void Pr_SetWidgetSize(Pr_WidgetRef ap_wid, pr_u32_t a_w, pr_u32_t a_h)
     Pr_Emit(ap_wid->sizeChanged, a_w, a_h);
 }
 
-
-PR_WIDGET_SLOT(Pr_SetWidgetPosition)
-{
-    long l_x = va_arg(ap_args, long);
-    long l_y = va_arg(ap_args, long);
-
-    Pr_SetWidgetPosition((Pr_WidgetRef)ap_obj, l_x, l_y);
+        Pr_SetWidgetSize(ap_obj, l_w, l_h);
 }
 
 void Pr_SetWidgetPosition(Pr_WidgetRef ap_wid, long a_x, long a_y)
@@ -125,6 +129,12 @@ void Pr_SetWidgetPosition(Pr_WidgetRef ap_wid, long a_x, long a_y)
     ap_wid->boundingBox.y = a_y;
 
     Pr_Emit(ap_wid->moved, a_x, a_y);
+}
+    void PR_SLOT(Pr_SetWidgetPosition)(void * ap_obj, va_list ap_args) {
+        long l_x = va_arg(ap_args, long);
+        long l_y = va_arg(ap_args, long);
+
+        Pr_SetWidgetPosition(ap_obj, l_x, l_y);
 }
 
 static pr_bool_t s_collide(Pr_WidgetRef ap_wid, long a_x, long a_y)
@@ -300,17 +310,17 @@ static pr_bool_t s_ConstructWidgetContainer(Pr_ObjectRef ap_obj)
     }
 
     lp_wid->onMouseMoved            = s_ContainerOnMouseMoved;
-    lp_wid->slot_onMouseMoved       = s_ContainerOnMouseMoved_Slot; 
+    lp_wid->PR_SLOT(onMouseMoved)       = PR_SLOT(s_ContainerOnMouseMoved); 
 
     lp_wid->onButtonPressed         = s_ContainerOnButtonPressed;
-    lp_wid->slot_onButtonPressed    = s_ContainerOnButtonPressed_Slot;
+    lp_wid->PR_SLOT(onButtonPressed)    = PR_SLOT(s_ContainerOnButtonPressed);
 
     lp_wid->onButtonReleased        = s_ContainerOnButtonReleased;
-    lp_wid->slot_onButtonReleased   = s_ContainerOnButtonReleased_Slot;
+    lp_wid->PR_SLOT(onButtonReleased)   = PR_SLOT(s_ContainerOnButtonReleased);
 
-    Pr_Connect(lp_cont->input.mouseMoved, lp_wid, lp_wid->slot_onMouseMoved);
-    Pr_Connect(lp_cont->input.buttonPressed, lp_wid, lp_wid->slot_onButtonPressed);
-    Pr_Connect(lp_cont->input.buttonReleased, lp_wid, lp_wid->slot_onButtonReleased);
+    Pr_Connect(lp_cont->input.mouseMoved, lp_wid, lp_wid->PR_SLOT(onMouseMoved));
+    Pr_Connect(lp_cont->input.buttonPressed, lp_wid, lp_wid->PR_SLOT(onButtonPressed));
+    Pr_Connect(lp_cont->input.buttonReleased, lp_wid, lp_wid->PR_SLOT(onButtonReleased));
 
     return PR_TRUE;
 }
