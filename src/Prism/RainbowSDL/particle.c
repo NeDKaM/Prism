@@ -22,22 +22,7 @@ PR_STRUCT(pr_particlecontrollerhandler_t, Pr_ParticleControllerHandler) {
 
 static void s_Pr_RenderableInitializer(Pr_Renderable * ap_rnd)
 {
-    SDL_Rect l_rectZero = { 0, 0, 0, 0 };
-    SDL_Color l_color = { 255, 255, 255, SDL_ALPHA_OPAQUE };
-
-    ap_rnd->texture = NULL;
-
-    ap_rnd->origin.x = 0;
-    ap_rnd->origin.y = 0;
-
-    ap_rnd->dstSize.w = 0;
-    ap_rnd->dstSize.h = 0;
-
-    ap_rnd->textureCoords = l_rectZero;
-
-    ap_rnd->colorMod = l_color;
-
-    ap_rnd->blendMode = SDL_BLENDMODE_BLEND;
+    *ap_rnd = Pr_MakeRenderable();
 
     ap_rnd->originOnly = PR_TRUE;
 }

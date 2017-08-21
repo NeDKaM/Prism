@@ -21,61 +21,106 @@
     }
 #endif
 
+static void s_Pr_DrawRenderable(Pr_Renderable * ap_it, Pr_RenderSystem * ap_sys, Pr_GeometryComponent * ap_g)
+{
+    SDL_Rect l_dstRect;
+
+    if (ap_it->shape.type == PR_SHAPE_NONE) return;
+
+    SDL_SetRenderDrawColor(
+        ap_sys->renderer, 
+        ap_it->colorMod.r, ap_it->colorMod.g, ap_it->colorMod.b, 
+        ap_it->colorMod.a
+    );
+    SDL_SetRenderDrawBlendMode(ap_sys->renderer, ap_it->blendMode);
+
+    if (ap_it->shape.type == PR_SHAPE_LINE) {
+        SDL_Point p1 = ap_it->shape.data.line.start;
+        SDL_Point p2 = ap_it->shape.data.line.end;
+        SDL_RenderDrawLine(ap_sys->renderer, p1.x, p1.y, p2.x, p2.y);
+        return;
+    }
+
+    if (!ap_it->originOnly) {
+        l_dstRect.x = ap_g->position.x + ap_it->origin.x;
+        l_dstRect.y = ap_g->position.y + ap_it->origin.y;
+    } else {
+        l_dstRect.x = ap_it->origin.x;
+        l_dstRect.y = ap_it->origin.y;
+    }
+        l_dstRect.w = ap_it->shape.data.size.w;
+        l_dstRect.h = ap_it->shape.data.size.h;
+
+    if (ap_it->shape.type == PR_SHAPE_RECT) {
+        SDL_RenderDrawRect(ap_sys->renderer, &l_dstRect);
+        return;
+    }
+
+    if (ap_it->shape.type == PR_SHAPE_FILLEDRECT) {
+        if (!ap_it->texture) {
+            SDL_RenderFillRect(ap_sys->renderer, &l_dstRect);
+            return;
+        }
+
+        SDL_SetTextureAlphaMod(ap_it->texture, ap_it->colorMod.a);
+        SDL_SetTextureBlendMode(ap_it->texture, ap_it->blendMode);
+        SDL_SetTextureColorMod(ap_it->texture, 
+            ap_it->colorMod.r,
+            ap_it->colorMod.g,
+            ap_it->colorMod.b
+        );
+
+        SDL_RenderCopyEx(ap_sys->renderer,
+            ap_it->texture,
+            &ap_it->textureCoords,
+            &l_dstRect,
+            ap_g->rotation,
+            &ap_it->origin,
+            SDL_FLIP_NONE
+        );
+
+        #ifdef PRISM_DEBUG
+            SDL_SetRenderDrawColor(ap_sys->renderer, 127, 0, 0, 127);
+            SDL_RenderDrawRect(ap_sys->renderer, &l_dstRect);
+        #endif
+    }
+}
+
+static void s_Pr_RenderEntity(Pr_RenderSystem * ap_sys, Pr_Entity * ap_ent)
+{
+    Pr_Entity * lp_entity = ap_ent;
+    Pr_GeometryComponent * lp_geometry = Pr_GetEntityComponent(lp_entity, &Pr_GeometryComponentInfo);
+    Pr_RenderComponent * lp_render = Pr_GetEntityComponent(lp_entity, &Pr_RenderComponentInfo);
+    Pr_Renderable * lp_renderables = Pr_GetArrayData(lp_render->renderables);
+    pr_u32_t l_i;
+
+    for (l_i=0 ; l_i<Pr_ArraySize(lp_render->renderables) ; l_i++) {
+        s_Pr_DrawRenderable(&lp_renderables[l_i], ap_sys, lp_geometry);
+    }
+
+    if (lp_render->renderableList) {
+        for (l_i=0 ; l_i<lp_render->listSize ; l_i++) {
+            s_Pr_DrawRenderable(&lp_render->renderableList[l_i], ap_sys, lp_geometry);
+        }
+    }
+
+    #ifdef PRISM_DEBUG
+        s_Pr_RenderEntityOrigin(ap_sys->renderer, lp_geometry->position.x, lp_geometry->position.y);
+    #endif
+}
+
 static void s_Pr_RenderSystemCallback(Pr_System * ap_sys, float a_time)
 {
-    Pr_ListIterator     lp_it;
     Pr_RenderSystem *   lp_system = ap_sys->data;
+    pr_u32_t            l_i;
+    Pr_Entity *         lp_entities;
 
     if (!lp_system->renderer) return;
 
-    PR_LIST_FOREACH(ap_sys->entities, lp_it) {
-        Pr_Entity * lp_entity = Pr_ListIteratorData(lp_it);
-        Pr_GeometryComponent * lp_geometry = Pr_GetEntityComponent(lp_entity, &Pr_GeometryComponentInfo);
-        Pr_RenderComponent * lp_render = Pr_GetEntityComponent(lp_entity, &Pr_RenderComponentInfo);
-        Pr_Renderable * lp_renderables = Pr_GetArrayData(lp_render->renderables);
-        pr_u32_t l_i;
+    lp_entities = Pr_GetArrayData(ap_sys->entities);
 
-        for (l_i=0 ; l_i<Pr_ArraySize(lp_render->renderables) ; l_i++) {
-            Pr_Renderable * lp_renderable = &lp_renderables[l_i];
-
-            SDL_Rect l_dstRect;
-            if (!lp_renderable->originOnly) {
-                l_dstRect.x = lp_geometry->position.x + lp_renderable->origin.x;
-                l_dstRect.y = lp_geometry->position.y + lp_renderable->origin.y;
-            } else {
-                l_dstRect.x = lp_renderable->origin.x;
-                l_dstRect.y = lp_renderable->origin.y;
-            }
-                l_dstRect.w = lp_renderable->dstSize.w;
-                l_dstRect.h = lp_renderable->dstSize.h;
-
-            SDL_SetRenderDrawColor(lp_system->renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);
-            SDL_SetTextureAlphaMod(lp_renderable->texture, lp_renderable->colorMod.a);
-            SDL_SetTextureBlendMode(lp_renderable->texture, lp_renderable->blendMode);
-            SDL_SetTextureColorMod(lp_renderable->texture, 
-                lp_renderable->colorMod.r,
-                lp_renderable->colorMod.g,
-                lp_renderable->colorMod.b
-            );
-
-            SDL_RenderCopyEx(lp_system->renderer,
-                lp_renderable->texture,
-                &lp_renderable->textureCoords,
-                &l_dstRect,
-                lp_geometry->rotation,
-                &lp_renderable->origin,
-                SDL_FLIP_NONE
-            );
-            
-            #ifdef PRISM_DEBUG
-                SDL_SetRenderDrawColor(lp_system->renderer, 127, 0, 0, 127);
-                SDL_RenderDrawRect(lp_system->renderer, &l_dstRect);
-            #endif
-        }
-
-        #ifdef PRISM_DEBUG
-            s_Pr_RenderEntityOrigin(lp_system->renderer, lp_geometry->position.x, lp_geometry->position.y);
-        #endif
+    for (l_i=0 ; l_i<Pr_ArraySize(ap_sys->entities) ; l_i++) {
+        s_Pr_RenderEntity(lp_system, &lp_entities[l_i]);
     }
 }
 

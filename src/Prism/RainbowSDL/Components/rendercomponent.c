@@ -3,25 +3,8 @@
 static pr_bool_t s_Pr_RenderableInitializer(void * ap_data, pr_u32_t a_size)
 {
     Pr_Renderable * lp_renderable = ap_data;
-    SDL_Rect l_zero = { 0, 0, 0, 0 };
 
-    lp_renderable->texture          = NULL;
-    lp_renderable->textureCoords    = l_zero;
-
-    lp_renderable->origin.x         = 0;
-    lp_renderable->origin.y         = 0;
-
-    lp_renderable->dstSize.w        = 0;
-    lp_renderable->dstSize.h        = 0;
-
-    lp_renderable->colorMod.r       = 255;
-    lp_renderable->colorMod.g       = 255;
-    lp_renderable->colorMod.b       = 255;
-    lp_renderable->colorMod.a       = SDL_ALPHA_OPAQUE;
-
-    lp_renderable->blendMode        = SDL_BLENDMODE_BLEND;
-    
-    lp_renderable->originOnly       = PR_FALSE;
+    *lp_renderable = Pr_MakeRenderable();
 
     return PR_TRUE;
 }

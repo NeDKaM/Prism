@@ -15,21 +15,14 @@ struct pr_textsprite_t {
 
 static void s_Pr_InitializeGlyph(Pr_Renderable * ap_rnd, struct pr_simpletextrendererinfo_t * ap_info, SDL_Rect * ap_texRect)
 {
-    ap_rnd->texture = Pr_GetFontTexture(ap_info->font);
-
-    ap_rnd->origin.x = 0;
-    ap_rnd->origin.y = 0;
-
-    ap_rnd->dstSize.w = (pr_u32_t)((float)ap_texRect->w * ap_info->scale);
-    ap_rnd->dstSize.h = (pr_u32_t)((float)ap_texRect->h * ap_info->scale);
-
-    ap_rnd->textureCoords = *ap_texRect;
+    *ap_rnd = Pr_MakeRenderableSprite(
+        Pr_GetFontTexture(ap_info->font), 
+        *ap_texRect, 
+        (pr_u32_t)((float)ap_texRect->w * ap_info->scale), 
+        (pr_u32_t)((float)ap_texRect->h * ap_info->scale)
+    );
 
     ap_rnd->colorMod = ap_info->colorMod;
-
-    ap_rnd->blendMode = SDL_BLENDMODE_BLEND;
-
-    ap_rnd->originOnly = PR_FALSE;
 }
 
 static void s_Pr_SimpleTextRenderer(void * ap_data, Pr_Array * ap_renderables, pr_cstring_t ap_text)
