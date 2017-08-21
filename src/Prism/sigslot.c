@@ -67,11 +67,29 @@ void Pr_DeleteSignal(Pr_Signal * ap_sig)
         Pr_ListIterator lp_itrelay;
         Pr_Signal * lp_emitter = Pr_ListIteratorData(lp_it);
 
-        PR_LIST_FOREACH(lp_emitter->relays, lp_itrelay) {
+        for (lp_itrelay=Pr_ListBegin(lp_emitter->relays) ; lp_itrelay!=NULL ; ) {
             Pr_Signal * lp_relay = Pr_ListIteratorData(lp_itrelay);
             if (lp_relay == ap_sig) {
-                Pr_EraseListElement(lp_itrelay);
+                lp_itrelay = Pr_EraseListElement(lp_itrelay);
+                continue;
             }
+
+            lp_itrelay = Pr_NextListIterator(lp_itrelay);
+        }
+    }
+
+    PR_LIST_FOREACH(ap_sig->relays, lp_it) {
+        Pr_Signal * lp_relay = Pr_ListIteratorData(lp_it);
+        Pr_ListIterator lp_itemitter;
+
+        for (lp_itemitter=Pr_ListBegin(lp_relay->emitters) ; lp_itemitter!=NULL ; ) {
+            Pr_Signal * lp_emitter = Pr_ListIteratorData(lp_itemitter);
+            if (lp_emitter == ap_sig) {
+                lp_itemitter = Pr_EraseListElement(lp_itemitter);
+                continue;
+            }
+
+            lp_itemitter = Pr_NextListIterator(lp_itemitter);
         }
     }
 
@@ -153,7 +171,15 @@ pr_bool_t Pr_ConnectRelay(Pr_Signal * ap_sig, Pr_Signal * ap_relay)
         }
     }
 
-    return Pr_PushBackList(ap_sig->relays, ap_relay) ? PR_TRUE : PR_FALSE;
+    if (Pr_PushBackList(ap_sig->relays, ap_relay)) {
+        if (Pr_PushBackList(ap_relay->emitters, ap_sig)) {
+            return PR_TRUE;
+        }
+
+        Pr_EraseListElement(Pr_ListBack(ap_sig->relays));
+    }
+
+    return PR_FALSE;
 }
 
 void Pr_SetSignalMuted(Pr_Signal * ap_sig, pr_bool_t a_bool)
