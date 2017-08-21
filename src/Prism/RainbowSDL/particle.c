@@ -185,15 +185,18 @@ void    Pr_UpdateParticleEmitter(Pr_ParticleEmitter * ap_emitter, float a_time)
 
     if (!ap_emitter) return;
 
-    PR_LIST_FOREACH(ap_emitter->groups, lp_it) {
+    for (lp_it=Pr_ListBegin(ap_emitter->groups) ; lp_it!=NULL ; ) {
         Pr_ParticleGroup * lp_group = Pr_ListIteratorData(lp_it);
 
         if (ap_emitter->active) {
-            pr_u32_t l_particleGenerated = 0;
             pr_u32_t l_particleCount = Pr_ArraySize(lp_group->particles);
 
             if (l_particleCount < lp_group->generator->maxParticleCount) {
-                lp_group->generator->timeAccumulator += a_time;
+                pr_u32_t l_particleGenerated = 0;
+
+                if (lp_group->generator->persistent) {
+                    lp_group->generator->timeAccumulator += a_time;
+                }
 
                 while (lp_group->generator->timeAccumulator > 1.f / lp_group->generator->emissionRate) {
                     if (l_particleGenerated + l_particleCount < lp_group->generator->maxParticleCount) {
@@ -213,6 +216,14 @@ void    Pr_UpdateParticleEmitter(Pr_ParticleEmitter * ap_emitter, float a_time)
         }
 
         s_Pr_UpdateParticleGroup(lp_group, a_time);
+
+        if (!lp_group->generator->persistent && !Pr_ArraySize(lp_group->particles)) {
+            s_Pr_DeleteParticleGroup(lp_group);
+            Pr_EraseListElement(lp_it);
+            continue;
+        }
+
+        lp_it = Pr_NextListIterator(lp_it);
     }
 }
 

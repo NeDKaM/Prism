@@ -24,6 +24,7 @@ PR_CPP_PROTECT_ON
         float       timeAccumulator;
         pr_u32_t    maxParticleCount;
         void *      data;
+        pr_bool_t   persistent;
 
         void        (*generate)(Pr_Particle *, void *);
     };
