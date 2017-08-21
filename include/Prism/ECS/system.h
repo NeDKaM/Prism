@@ -15,7 +15,7 @@ PR_CPP_PROTECT_ON
 
     PR_STRUCT(pr_system_t, Pr_System) {
         Pr_SystemInfo *     info;
-        Pr_List *           entities;
+        Pr_Array *          entities;
         Pr_World *          world;
         pr_bool_t           active;
         void *              data;
