@@ -393,3 +393,16 @@ void           Pr_SetWorldSystemActivated(Pr_World * ap_world, Pr_SystemInfo * a
     }
 }
 
+Pr_Entity *    Pr_GetWorldEntity(Pr_World * ap_world, pr_u32_t ap_id)
+{
+    Pr_Entity * lp_entities;
+
+    if (!ap_world || ap_id == 0) return NULL;
+
+    if (ap_id >= Pr_ArraySize(ap_world->entities)) return NULL;
+
+    lp_entities = Pr_GetArrayData(ap_world->entities);
+
+    return &lp_entities[ap_id];
+}
+
