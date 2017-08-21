@@ -15,7 +15,10 @@ PR_CPP_PROTECT_ON
     extern PRISM_API Pr_ComponentInfo Pr_RenderComponentInfo;
 
     PR_STRUCT(pr_rendercomponent_t, Pr_RenderComponent) {
-        Pr_Array *  renderables;
+        Pr_Array *      renderables;
+
+        Pr_Renderable * renderableList;
+        pr_u32_t        listSize;
     };
 
     extern PRISM_API Pr_Renderable *    Pr_AttachRenderable(Pr_RenderComponent *, Pr_Renderable *);

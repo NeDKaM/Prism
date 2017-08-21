@@ -16,6 +16,9 @@ static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
     lp_render->renderables = Pr_NewArray(sizeof(Pr_Renderable), s_Pr_RenderableInitializer);
     if (!lp_render->renderables) return PR_FALSE;
 
+    lp_render->renderableList = NULL;
+    lp_render->listSize = 0;
+
     return PR_TRUE;
 }
 
@@ -47,17 +50,22 @@ void            Pr_ClearComponentRenderables(Pr_RenderComponent * ap_comp)
     if (!ap_comp) return;
 
     Pr_ResizeArray(ap_comp->renderables, 0);
+
+    ap_comp->renderableList = NULL;
+    ap_comp->listSize = 0;
 }
 
 Pr_Renderable *    Pr_AttachRenderableList(Pr_RenderComponent * ap_comp, Pr_Renderable * ap_rnds, pr_u32_t a_size)
 {
-    pr_u32_t l_i;
+    if (!ap_rnds) return NULL;
 
-    if (!ap_rnds || !a_size) return NULL;
-
-    for (l_i=0 ; l_i<a_size ; l_i++) {
-        Pr_AttachRenderable(ap_comp, &ap_rnds[l_i]);
+    if (!a_size || !ap_rnds) {
+        ap_comp->renderableList = NULL;
+        ap_comp->listSize = 0;
+    } else {
+        ap_comp->renderableList = ap_rnds;
+        ap_comp->listSize = a_size;
     }
 
-    return Pr_GetArrayData(ap_comp->renderables);
+    return ap_rnds;
 }
