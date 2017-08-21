@@ -40,8 +40,12 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Class Pr_ObjectClass;
 
-    extern PRISM_API void * Pr_New(Pr_Class *);
-    extern PRISM_API void   Pr_Delete(Pr_ObjectRef);
+    extern PRISM_API void *     Pr_New(Pr_Class *);
+    extern PRISM_API void       Pr_Delete(Pr_ObjectRef);
+
+    extern PRISM_API void *     Pr_Alloc(Pr_Class *);
+
+    extern PRISM_API pr_bool_t  Pr_Construct(Pr_ObjectRef);
 
 PR_CPP_PROTECT_OFF
 

@@ -45,10 +45,11 @@ static pr_bool_t s_Pr_InheritedConstructs(Pr_ObjectRef ap_obj)
         }
 
         if (lp_cls->construct) {
+            Pr_Emit(ap_obj->onConstruction, ap_obj, lp_cls);
             if (!lp_cls->construct(ap_obj)) {
                 l_err++;
                 break;
-            }
+            } 
         }
 
         l_counter--;
@@ -56,9 +57,10 @@ static pr_bool_t s_Pr_InheritedConstructs(Pr_ObjectRef ap_obj)
     }
 
     if (lp_cls->construct) {
+        Pr_Emit(ap_obj->onConstruction, ap_obj, lp_cls);
         if (!lp_cls->construct(ap_obj)) {
             l_err++;
-        }
+        } 
     }
 
     return (l_err) ? PR_FALSE : PR_TRUE; 
@@ -82,6 +84,22 @@ static void s_Pr_InheritedDestructs(Pr_ObjectRef ap_obj)
 
 void * Pr_New(Pr_Class * ap_cls)
 {
+    Pr_ObjectRef lp_out;
+
+    lp_out = Pr_Alloc(ap_cls);
+    if (lp_out) {
+        if (Pr_Construct(lp_out)) {
+            return lp_out;
+        } 
+
+        Pr_Delete(lp_out);
+    }
+
+    return NULL;
+}
+
+void * Pr_Alloc(Pr_Class * ap_cls)
+{
     Pr_ObjectRef lp_out = NULL;
 
     if (!ap_cls) return NULL;
@@ -104,17 +122,14 @@ void * Pr_New(Pr_Class * ap_cls)
 
     lp_out->class = ap_cls;
     lp_out->onDelete = Pr_NewSignal();
+    lp_out->onConstruction = Pr_NewSignal();
 
-    if (lp_out->onDelete) {
-        if (s_Pr_InheritedConstructs(lp_out)) {
-            s_Pr_UpdateClassRefCounters(ap_cls, 1);
-            return lp_out;
-        }
-
-        Pr_DeleteSignal(lp_out->onDelete);
+    if (lp_out->onDelete && lp_out->onConstruction) {
+        s_Pr_UpdateClassRefCounters(ap_cls, 1);
+        return lp_out;
     }
 
-    Pr_FreeBlock(ap_cls->memoryPool, lp_out);
+    Pr_Delete(lp_out);
 
     return NULL;
 }
@@ -131,6 +146,9 @@ void Pr_Delete(Pr_ObjectRef ap_obj)
 
     s_Pr_InheritedDestructs(ap_obj);
 
+    Pr_DeleteSignal(ap_obj->onConstruction);
+    Pr_DeleteSignal(ap_obj->onDelete);
+
     Pr_FreeBlock(lp_cls->memoryPool, ap_obj);
 
     s_Pr_UpdateClassRefCounters(lp_cls, -1);
@@ -139,5 +157,17 @@ void Pr_Delete(Pr_ObjectRef ap_obj)
         Pr_DeleteMemoryPool(lp_cls->memoryPool);
         lp_cls->memoryPool = NULL;
     }
+}
+
+pr_bool_t  Pr_Construct(Pr_ObjectRef ap_obj)
+{
+    if (!ap_obj) return PR_FALSE;
+
+    if (s_Pr_InheritedConstructs(ap_obj)) {
+        return PR_TRUE;
+    }
+
+    s_Pr_InheritedDestructs(ap_obj);
+    return PR_FALSE;
 }
 
