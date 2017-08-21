@@ -63,7 +63,7 @@ static void s_Pr_DeleteSystem(Pr_System * ap_sys)
     }
 
     free(ap_sys->data);
-    Pr_DeleteList(ap_sys->entities);
+    Pr_DeleteArray(ap_sys->entities);
     free(ap_sys);
 }
 
@@ -130,40 +130,52 @@ static pr_bool_t s_Pr_CompareComponents(Pr_Entity * ap_ent, Pr_System * ap_sys)
     return PR_TRUE;
 }
 
+static void s_Pr_RemoveSystemEntity(Pr_Entity * ap_ent, Pr_Array * ap_entities)
+{
+    Pr_Entity * lp_entities = Pr_GetArrayData(ap_entities);
+    pr_u32_t    l_lastIndex = Pr_ArraySize(ap_entities) - 1;
+
+    if (l_lastIndex != 0) {
+        *ap_ent = lp_entities[l_lastIndex];
+    }
+
+    Pr_ResizeArray(ap_entities, l_lastIndex);
+}
+
 static void     s_Pr_UpdateSystem(Pr_System * ap_sys, Pr_World * ap_world)
 {
     Pr_ListIterator lp_it;
+    pr_u32_t l_i;
 
-    for (lp_it=Pr_ListBegin(ap_sys->entities) ; lp_it!=NULL ; ) {
-        Pr_Entity * lp_ent = Pr_ListIteratorData(lp_it);
-
-        if (!lp_ent) break;
+    for (l_i=0 ; l_i<Pr_ArraySize(ap_sys->entities) ; ) {
+        Pr_Entity * lp_entities = Pr_GetArrayData(ap_sys->entities);
+        Pr_Entity * lp_ent = &lp_entities[l_i];
 
         if (!lp_ent->alive) {
-            lp_it = Pr_EraseListElement(lp_it);
+            s_Pr_RemoveSystemEntity(lp_ent, ap_sys->entities);
             continue;
         }
 
         if (lp_ent->dirty) {
-            lp_it = Pr_EraseListElement(lp_it);
+            s_Pr_RemoveSystemEntity(lp_ent, ap_sys->entities);
             continue;
             /* TODO : shouldnt be done that way, entity should stay in system but 
                 not be added once more from dirty entities */
         }
 
         if (!s_Pr_CompareComponents(lp_ent, ap_sys)) {
-            lp_it = Pr_EraseListElement(lp_it);
+            s_Pr_RemoveSystemEntity(lp_ent, ap_sys->entities);
             continue;
         }
 
-        lp_it = Pr_NextListIterator(lp_it);
+        l_i++;
     }
 
     PR_LIST_FOREACH(ap_world->dirtyEntities, lp_it) {
         Pr_Entity * lp_ent = Pr_ListIteratorData(lp_it);
 
         if (s_Pr_CompareComponents(lp_ent, ap_sys)) {
-            Pr_PushBackList(ap_sys->entities, lp_ent);
+            Pr_SetArrayAt(ap_sys->entities, Pr_ArraySize(ap_sys->entities), lp_ent);
         }
     }
 }
@@ -306,7 +318,7 @@ static Pr_System * s_Pr_NewSystem(Pr_SystemInfo * ap_info)
     lp_out = malloc(sizeof(Pr_System));
     if (!lp_out) return NULL;
 
-    lp_out->entities = Pr_NewList();
+    lp_out->entities = Pr_NewArray(sizeof(Pr_Entity), s_Pr_EntityInitializer);
     lp_out->data = malloc(ap_info->dataSize);
     
     if (lp_out->data
