@@ -1,16 +1,17 @@
 #include <Prism/RainbowSDL/text.h>
 
-struct pr_simpletextrendererinfo_t Pr_SimpleTextRendererInfo = {
+struct pr_simpletextrendererinfo_t Pr_SimpleTextRendererData = {
     { 255, 255, 255, SDL_ALPHA_OPAQUE },
     NULL,
     1.f
 };
 
 struct pr_textsprite_t {
-    Pr_TextRenderer renderer;
-    void *          renderData;
-    Pr_Array *      renderables;
-    Pr_String *     text;
+    Pr_TextRenderer     renderer;
+    void *              renderData;
+    Pr_Array *          renderables;
+    Pr_String *         text;
+    SDL_Rect            boundingBox;   
 };
 
 static void s_Pr_InitializeGlyph(Pr_Renderable * ap_rnd, struct pr_simpletextrendererinfo_t * ap_info, SDL_Rect * ap_texRect)
@@ -25,14 +26,16 @@ static void s_Pr_InitializeGlyph(Pr_Renderable * ap_rnd, struct pr_simpletextren
     ap_rnd->colorMod = ap_info->colorMod;
 }
 
-static void s_Pr_SimpleTextRenderer(void * ap_data, Pr_Array * ap_renderables, pr_cstring_t ap_text)
+static void s_Pr_SimpleTextRenderer(void * ap_data, Pr_Array * ap_renderables, pr_cstring_t ap_text, SDL_Rect * ap_bbox)
 {
     struct pr_simpletextrendererinfo_t * lp_info = ap_data;
     
     pr_cstring_t    lp_ptr;
     pr_u32_t        l_i = 0;
     long            l_x = 0;
-    pr_u32_t        l_y = 0;
+    long            l_y = 0;
+    pr_u32_t        l_h = 0;
+    pr_u32_t        l_w = 0;
 
     if (!lp_info) return;
 
@@ -41,11 +44,19 @@ static void s_Pr_SimpleTextRenderer(void * ap_data, Pr_Array * ap_renderables, p
 
     lp_ptr = ap_text;
 
-    Pr_GetFontSize(lp_info->font, &l_y);
+    Pr_GetFontSize(lp_info->font, &l_h);
+    l_y = l_h;
 
     while (*ap_text) {
         Pr_GlyphMetrics l_metrics;
-        Pr_Renderable l_renderable; 
+        Pr_Renderable l_renderable;
+
+        if (*ap_text == '\n') {
+            l_y += l_h;
+            l_x = 0;
+            *ap_text++;
+            continue;
+        }
 
         Pr_GetFontGlyphMetrics(lp_info->font, &l_metrics, *ap_text);
 
@@ -64,9 +75,15 @@ static void s_Pr_SimpleTextRenderer(void * ap_data, Pr_Array * ap_renderables, p
 
         l_x += (long)(l_metrics.horiAdvance * lp_info->scale);
 
+        l_w = ((pr_u32_t)l_x > l_w) ? l_x : l_w;
+
         l_i++;
+
         ap_text++;
     }
+
+    ap_bbox->w = l_w;
+    ap_bbox->h = l_y;
 }
 
 Pr_TextRenderer const Pr_SimpleTextRenderer = s_Pr_SimpleTextRenderer;
@@ -83,7 +100,11 @@ Pr_TextSprite *    Pr_NewTextSprite(void)
 
     if (lp_out->renderables) {
         lp_out->renderer = Pr_SimpleTextRenderer;
-        lp_out->renderData = &Pr_SimpleTextRendererInfo;
+        lp_out->renderData = &Pr_SimpleTextRendererData;
+        lp_out->boundingBox.w = 0;
+        lp_out->boundingBox.h = 0;
+        lp_out->boundingBox.x = 0;
+        lp_out->boundingBox.y = 0;
         return lp_out;
     }
 
@@ -119,8 +140,19 @@ Pr_Array * const   Pr_UpdateTextSprite(Pr_TextSprite * ap_spr)
 {
     if (!ap_spr) return NULL;
 
-    ap_spr->renderer(ap_spr->renderData, ap_spr->renderables, Pr_StringCStr(ap_spr->text));
+    ap_spr->renderer(ap_spr->renderData, ap_spr->renderables, Pr_StringCStr(ap_spr->text), &ap_spr->boundingBox);
 
     return ap_spr->renderables;
+}
+
+SDL_Rect           Pr_GetTextBoundingBox(Pr_TextSprite * ap_spr)
+{
+    SDL_Rect l_out = { 0, 0, 0, 0 };
+
+    if (ap_spr) {
+        l_out = ap_spr->boundingBox;
+    }
+
+    return l_out;
 }
 

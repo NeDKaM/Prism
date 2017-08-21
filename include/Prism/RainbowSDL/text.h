@@ -11,13 +11,14 @@ PR_CPP_PROTECT_ON
 
     PR_STRUCT(pr_textsprite_t, Pr_TextSprite);
 
-    typedef void (*Pr_TextRenderer)(void * data, Pr_Array * renderables, pr_cstring_t);
+    typedef void (*Pr_TextRenderer)(void * data, Pr_Array * renderables, pr_cstring_t, SDL_Rect *);
 
     extern PRISM_API Pr_TextSprite *    Pr_NewTextSprite(void);
     extern PRISM_API void               Pr_DeleteTextSprite(Pr_TextSprite *);
 
     extern PRISM_API void               Pr_SetTextSpriteRenderer(Pr_TextSprite *, Pr_TextRenderer, void *);
     extern PRISM_API Pr_String * const  Pr_GetTextSpriteStr(Pr_TextSprite *);
+    extern PRISM_API SDL_Rect           Pr_GetTextBoundingBox(Pr_TextSprite *);
 
     extern PRISM_API Pr_Array * const   Pr_UpdateTextSprite(Pr_TextSprite *);
 
@@ -27,7 +28,7 @@ PR_CPP_PROTECT_ON
         SDL_Color   colorMod;
         Pr_Font *   font;
         float       scale; 
-    } extern PRISM_API Pr_SimpleTextRendererInfo;
+    } extern PRISM_API Pr_SimpleTextRendererData;
 
 PR_CPP_PROTECT_OFF
 
