@@ -26,6 +26,8 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API Pr_Logger * Pr_GetAppLog(void);
 
+    extern PRISM_API pr_bool_t  Pr_RegisterUserClass(Pr_Class *, const pr_cstring_t, Pr_Class * parent);
+
     /**< signals >*/
 
     extern PRISM_API PR_SIGNAL(Pr_KeyDown)(void);         /**< (int) >*/

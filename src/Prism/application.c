@@ -308,4 +308,20 @@ PR_SLOT_IMPL(Pr_QuitApp_Slot)
     Pr_QuitApp();
 }
 
+pr_bool_t  Pr_RegisterUserClass(Pr_Class * ap_cls, const pr_cstring_t ap_name, Pr_Class * ap_parent)
+{
+    if (!ap_cls) return PR_FALSE;
+
+    ap_cls->inherit = ap_parent;
+
+    if (ap_name && ap_name[0]) {
+        ap_cls->name = ap_name;
+    } else {
+        ap_cls->name = "UnnamedClass";
+    }
+
+    /* TODO: handle class collision */
+
+    return PR_TRUE;
+}
 
