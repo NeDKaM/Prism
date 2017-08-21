@@ -10,6 +10,8 @@ PR_CPP_PROTECT_ON
 
     PR_STRUCT(pr_world_t, Pr_World);
 
+    typedef pr_u32_t pr_entityid_t;
+
     PR_STRUCT(pr_entity_t, Pr_Entity) {
         pr_u32_t    id; 
         Pr_World *  world;
@@ -20,7 +22,6 @@ PR_CPP_PROTECT_ON
 
     extern PRISM_API void *     Pr_GetEntityComponent(Pr_Entity *, Pr_ComponentInfo *);
     extern PRISM_API void *     Pr_AddEntityComponent(Pr_Entity *, Pr_ComponentInfo *);
-
 
 PR_CPP_PROTECT_OFF
 
