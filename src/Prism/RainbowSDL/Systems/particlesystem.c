@@ -7,13 +7,14 @@
 
 static void s_Pr_ParticleSystemCallback(Pr_System * ap_sys, float a_dt)
 {
-    Pr_ListIterator lp_it;
     Pr_ParticleSystem * lp_system = ap_sys->data;
+    pr_u32_t            l_i;
+    Pr_Entity *         lp_entities = Pr_GetArrayData(ap_sys->entities);
 
     lp_system->emitterCount = 0;
 
-    PR_LIST_FOREACH(ap_sys->entities, lp_it) {
-        Pr_Entity *     lp_entity = Pr_ListIteratorData(lp_it);
+    for (l_i=0 ; l_i<Pr_ArraySize(ap_sys->entities) ; l_i++)  {
+        Pr_Entity *     lp_entity = &lp_entities[l_i];
         Pr_ParticleEmitterComponent * lp_emitterComp = Pr_GetEntityComponent(lp_entity, &Pr_ParticleEmitterComponentInfo);
 
         Pr_UpdateParticleEmitter(lp_emitterComp->emitter, a_dt);
