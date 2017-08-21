@@ -32,7 +32,7 @@ PR_CPP_PROTECT_ON
         Pr_SlotFunction(onMouseExit)(Pr_WidgetRef);
 
         Pr_SlotFunction(layout)(Pr_WidgetRef);
-        Pr_SlotFunction(show)(Pr_WidgetRef);
+        Pr_SlotFunction(show)(Pr_WidgetRef, pr_bool_t);
 
         Pr_SlotFunction(setSize)(Pr_WidgetRef, pr_u32_t, pr_u32_t);
         Pr_Signal * sizeChanged;
@@ -47,7 +47,6 @@ PR_CPP_PROTECT_ON
 
     PR_SLOT_EXTERN_API(Pr_SetWidgetSize)(Pr_WidgetRef, pr_u32_t, pr_u32_t);
     PR_SLOT_EXTERN_API(Pr_SetWidgetPosition)(Pr_WidgetRef, long, long);
-
 
     extern PRISM_API Pr_Class Pr_WidgetContainerClass;
 
