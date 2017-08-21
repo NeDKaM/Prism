@@ -114,6 +114,8 @@ Pr_Class Pr_WidgetClass = {
 
 void Pr_SetWidgetSize(Pr_WidgetRef ap_wid, pr_u32_t a_w, pr_u32_t a_h)
 {
+    if (!ap_wid) return;
+
     ap_wid->boundingBox.w = a_w;
     ap_wid->boundingBox.h = a_h;
 
@@ -121,12 +123,17 @@ void Pr_SetWidgetSize(Pr_WidgetRef ap_wid, pr_u32_t a_w, pr_u32_t a_h)
 
     Pr_Emit(ap_wid->sizeChanged, a_w, a_h);
 }
+    void PR_SLOT(Pr_SetWidgetSize)(void * ap_obj, va_list ap_args) {   
+        pr_u32_t l_w = va_arg(ap_args, pr_u32_t);
+        pr_u32_t l_h = va_arg(ap_args, pr_u32_t);
 
         Pr_SetWidgetSize(ap_obj, l_w, l_h);
 }
 
 void Pr_SetWidgetPosition(Pr_WidgetRef ap_wid, long a_x, long a_y)
 {
+    if (!ap_wid) return;
+
     ap_wid->boundingBox.x = a_x;
     ap_wid->boundingBox.y = a_y;
 
@@ -155,6 +162,12 @@ static void s_DestructWidgetContainer(Pr_ObjectRef ap_obj)
     Pr_WidgetContainerRef lp_cont = (Pr_WidgetContainerRef)ap_obj;
 
     Pr_DeleteList(lp_cont->children);
+
+    Pr_DeleteSignal(lp_cont->input.mouseMoved);
+    Pr_DeleteSignal(lp_cont->input.buttonPressed);
+    Pr_DeleteSignal(lp_cont->input.buttonReleased);
+    Pr_DeleteSignal(lp_cont->input.keyPressed);
+    Pr_DeleteSignal(lp_cont->input.keyReleased);
 }
 
 static void s_ContainerOnMouseMoved(Pr_WidgetRef ap_wid, long a_x, long a_y)
@@ -341,11 +354,6 @@ Pr_Class Pr_WidgetContainerClass = {
     s_DestructWidgetContainer
 };
 
-static void s_Pr_DeleteWidget_Slot(void * ap_obj, va_list ap_args)
-{
-    Pr_Delete((Pr_ObjectRef)ap_obj);
-}
-
 static pr_bool_t s_Pr_FindParent(Pr_WidgetRef ap_wid, Pr_WidgetContainerRef ap_parent)
 {
     Pr_WidgetContainerRef lp_tmp = ap_wid->parent;
@@ -375,12 +383,23 @@ pr_bool_t Pr_SetWidgetParent(Pr_WidgetRef ap_w, Pr_WidgetContainerRef ap_p)
 {
     Pr_ObjectRef lp_pobj = (Pr_ObjectRef)ap_p;
 
-    if (!ap_w || !ap_p) {
+    if (!ap_w) {
         return PR_FALSE;
     }
 
-    if (s_Pr_FindParent(ap_w, ap_p)) {
-        return PR_FALSE;
+    if (ap_w->parent == ap_p) return PR_TRUE;
+
+    if (ap_w->parent) {
+        Pr_ListIterator lp_it;
+        PR_LIST_FOREACH(ap_w->parent->children, lp_it) {
+            if (ap_w == Pr_ListIteratorData(lp_it)) {
+                Pr_EraseListElement(lp_it);
+                ap_w->parent = NULL;
+                break;
+            }
+        }
+
+        if (!ap_p) return PR_TRUE;
     }
 
     if (!Pr_PushBackList(ap_p->children, ap_w)) {
@@ -388,8 +407,6 @@ pr_bool_t Pr_SetWidgetParent(Pr_WidgetRef ap_w, Pr_WidgetContainerRef ap_p)
     }
 
     ap_w->parent = ap_p;
-
-    Pr_Connect(lp_pobj->onDelete, ap_w, s_Pr_DeleteWidget_Slot);
 
     return PR_TRUE;
 }
