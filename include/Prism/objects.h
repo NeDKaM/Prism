@@ -23,6 +23,7 @@ PR_CPP_PROTECT_ON
     PR_OBJECT(pr_object_t, Pr_Object) {
         Pr_Class *  class;
         Pr_Signal * onDelete;
+        Pr_Signal * onConstruction;
     };
 
     struct pr_class_t {
