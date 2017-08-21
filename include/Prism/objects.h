@@ -27,7 +27,7 @@ PR_CPP_PROTECT_ON
     };
 
     struct pr_class_t {
-        char const *    name;
+        pr_cstring_t    name;
         pr_u32_t        objectSize;
         pr_u32_t        refCount;
         Pr_Class *      inherit;
