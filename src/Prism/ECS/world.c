@@ -255,7 +255,7 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
         lp_entity->alive = PR_TRUE;
         lp_entity->dirty = PR_FALSE;
         Pr_InvalidateWorldEntity(lp_entity);
-        Pr_EraseListElement(Pr_ListBegin(ap_world->freeEntities));
+        Pr_EraseListElement(ap_world->freeEntities, Pr_ListBegin(ap_world->freeEntities));
 
         return lp_entity;
     }

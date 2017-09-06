@@ -90,7 +90,7 @@ Pr_State *          Pr_PopStateMachine(Pr_StateMachine * ap_fsm)
     lp_state = Pr_ListIteratorData(lp_it);
     if (lp_state) {
         lp_state->leave(lp_state);
-        Pr_EraseListElement(lp_it);
+        Pr_EraseListElement(ap_fsm->states, lp_it);
     }
 
     return lp_state;

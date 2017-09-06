@@ -70,7 +70,7 @@ void Pr_DeleteSignal(Pr_Signal * ap_sig)
         for (lp_itrelay=Pr_ListBegin(lp_emitter->relays) ; lp_itrelay!=NULL ; ) {
             Pr_Signal * lp_relay = Pr_ListIteratorData(lp_itrelay);
             if (lp_relay == ap_sig) {
-                lp_itrelay = Pr_EraseListElement(lp_itrelay);
+                lp_itrelay = Pr_EraseListElement(lp_emitter->relays, lp_itrelay);
                 continue;
             }
 
@@ -85,7 +85,7 @@ void Pr_DeleteSignal(Pr_Signal * ap_sig)
         for (lp_itemitter=Pr_ListBegin(lp_relay->emitters) ; lp_itemitter!=NULL ; ) {
             Pr_Signal * lp_emitter = Pr_ListIteratorData(lp_itemitter);
             if (lp_emitter == ap_sig) {
-                lp_itemitter = Pr_EraseListElement(lp_itemitter);
+                lp_itemitter = Pr_EraseListElement(lp_relay->emitters, lp_itemitter);
                 continue;
             }
 
@@ -176,7 +176,7 @@ pr_bool_t Pr_ConnectRelay(Pr_Signal * ap_sig, Pr_Signal * ap_relay)
             return PR_TRUE;
         }
 
-        Pr_EraseListElement(Pr_ListBack(ap_sig->relays));
+        Pr_EraseListElement(ap_sig->relays, Pr_ListBack(ap_sig->relays));
     }
 
     return PR_FALSE;

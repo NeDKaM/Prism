@@ -70,7 +70,7 @@ void Pr_WriteLog(Pr_Logger * ap_log, char * ap_txt)
         if (Pr_ListSize(ap_log->entries) > ap_log->capacity) {
             Pr_ListIterator lp_tmp = Pr_ListBegin(ap_log->entries);
             Pr_DeleteString(Pr_ListIteratorData(lp_tmp));
-            Pr_EraseListElement(lp_tmp);
+            Pr_EraseListElement(ap_log->entries, lp_tmp);
         }   
     }
     
@@ -91,7 +91,7 @@ void Pr_ClearLog(Pr_Logger * ap_log)
     while (Pr_ListSize(ap_log->entries)) {
         Pr_ListIterator lp_tmp = Pr_ListBegin(ap_log->entries);
         Pr_DeleteString(Pr_ListIteratorData(lp_tmp));
-        Pr_EraseListElement(lp_tmp);
+        Pr_EraseListElement(ap_log->entries, lp_tmp);
     }
 
     Pr_Emit(Pr_LogUpdated(ap_log), NULL);
@@ -120,7 +120,7 @@ void Pr_SetLogCapacity(Pr_Logger * ap_log, pr_u32_t a_size)
     while (l_diff--) {
         Pr_ListIterator lp_tmp = Pr_ListBegin(ap_log->entries);
         Pr_DeleteString(Pr_ListIteratorData(lp_tmp));
-        Pr_EraseListElement(lp_tmp);
+        Pr_EraseListElement(ap_log->entries, lp_tmp);
     }
 
     ap_log->capacity = a_size;

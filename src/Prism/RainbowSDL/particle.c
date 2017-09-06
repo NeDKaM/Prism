@@ -219,7 +219,7 @@ void    Pr_UpdateParticleEmitter(Pr_ParticleEmitter * ap_emitter, float a_time)
 
         if (!lp_group->generator->persistent && !Pr_ArraySize(lp_group->particles)) {
             s_Pr_DeleteParticleGroup(lp_group);
-            Pr_EraseListElement(lp_it);
+            Pr_EraseListElement(ap_emitter->groups, lp_it);
             continue;
         }
 

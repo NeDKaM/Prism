@@ -287,7 +287,7 @@ void Pr_UnregisterWindow(Pr_SystemWindowRef ap_wnd)
 
     PR_LIST_FOREACH(s_app.wndlist, l_it) {
         if (Pr_ListIteratorData(l_it) == ap_wnd) {
-            Pr_EraseListElement(l_it);
+            Pr_EraseListElement(s_app.wndlist, l_it);
             return;
         }
     }

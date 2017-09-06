@@ -26,7 +26,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API Pr_ListIterator    Pr_PushBackList(Pr_List *, void *);
     extern PRISM_API Pr_ListIterator    Pr_PushFrontList(Pr_List *, void *);
 
-    extern PRISM_API Pr_ListIterator    Pr_EraseListElement(Pr_ListIterator);
+    extern PRISM_API Pr_ListIterator    Pr_EraseListElement(Pr_List *, Pr_ListIterator);
 
     extern PRISM_API pr_u32_t           Pr_ListSize(Pr_List *);
     
