@@ -234,12 +234,12 @@ static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
     return PR_TRUE;
 }
 
-Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
+pr_entityid_t     Pr_CreateWorldEntity(Pr_World * ap_world)
 {
     Pr_Entity   l_ent;
     Pr_Entity * lp_entities;
 
-    if (!ap_world) return NULL;
+    if (!ap_world) return 0;
 
     lp_entities = Pr_GetArrayData(ap_world->entities);
 
@@ -248,7 +248,7 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
         l_ent.id = Pr_ArraySize(ap_world->entities);
         l_ent.componentHandlers = Pr_NewArray(sizeof(Pr_ComponentHandler), s_Pr_ComponentInitializer);
         if (!l_ent.componentHandlers) {
-            return NULL;
+            return 0;
         }
     } else {
         Pr_Entity * lp_entity = &lp_entities[l_ent.id];
@@ -257,7 +257,7 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
         Pr_InvalidateWorldEntity(lp_entity);
         Pr_EraseListElement(ap_world->freeEntities, Pr_ListBegin(ap_world->freeEntities));
 
-        return lp_entity;
+        return lp_entity->id;
     }
 
     l_ent.world = ap_world;
@@ -267,12 +267,12 @@ Pr_Entity *     Pr_CreateWorldEntity(Pr_World * ap_world)
     if (Pr_SetArrayAt(ap_world->entities, l_ent.id, &l_ent)) {
         lp_entities = Pr_GetArrayData(ap_world->entities);
         Pr_InvalidateWorldEntity(&lp_entities[l_ent.id]);
-        return &lp_entities[l_ent.id];
+        return l_ent.id;
     }
 
     Pr_DeleteArray(l_ent.componentHandlers);
 
-    return NULL;
+    return 0;
 }
 
 void           Pr_RemoveWorldEntity(Pr_Entity * ap_entity)

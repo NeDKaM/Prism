@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-static Pr_Entity * s_Pr_CreateEntity(Pr_CanvasRef ap_canvas)
+static pr_entityid_t s_Pr_CreateEntity(Pr_CanvasRef ap_canvas)
 {
     return Pr_CreateWorldEntity(ap_canvas->world);
 }
