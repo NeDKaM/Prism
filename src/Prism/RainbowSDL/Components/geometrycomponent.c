@@ -1,6 +1,6 @@
 #include <Prism/RainbowSDL/Components/geometrycomponent.h>
 
-#include <string.h>
+#include <stdlib.h>
 
 static pr_bool_t s_Pr_ComponentInitializer(void * ap_data, pr_u32_t a_size)
 {

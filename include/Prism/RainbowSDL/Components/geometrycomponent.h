@@ -5,8 +5,6 @@
 
 #include <Prism/ECS/component.h>
 
-#include <SDL2/SDL.h>
-
 PR_CPP_PROTECT_ON
 
     #define PR_COMPONENT_GEOMETRY /**/ 0 /**/
