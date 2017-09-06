@@ -308,6 +308,8 @@ void           Pr_RemoveWorldEntity(Pr_Entity * ap_entity)
         }
     }
 
+    Pr_ResizeArray(ap_entity->componentHandlers, 0);
+
     ap_entity->world->needUpdate = PR_TRUE;
 }
 
