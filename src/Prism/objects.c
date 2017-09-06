@@ -1,4 +1,8 @@
 #include <Prism/objects.h>
+
+#include <Prism/table.h>
+#include <Prism/string.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -169,6 +173,74 @@ pr_bool_t  Pr_Construct(Pr_ObjectRef ap_obj)
 
     s_Pr_InheritedDestructs(ap_obj);
     return PR_FALSE;
+}
+
+struct pr_objectlibrary_t {
+    Pr_String * name;
+    Pr_Table *  objects;
+};
+
+Pr_ObjectLibrary *  Pr_NewObjectLibrary(pr_cstring_t const ap_name)
+{
+    Pr_ObjectLibrary * lp_out;
+
+    lp_out = malloc(sizeof(Pr_ObjectLibrary));
+    if (!lp_out) return NULL;
+
+    lp_out->name = Pr_NewString();
+    lp_out->objects = Pr_NewTable(NULL);
+
+    if (lp_out->name && lp_out->objects) {
+        Pr_SetStringStr(lp_out->name, (ap_name && ap_name[0]) ? ap_name : "UnnamedLibrary");
+        return lp_out;
+    }
+
+    Pr_DeleteObjectLibrary(lp_out);
+
+    return NULL;
+}
+
+void                Pr_DeleteObjectLibrary(Pr_ObjectLibrary * ap_lib)
+{
+    if (!ap_lib) return;
+
+    Pr_DeleteString(ap_lib->name);
+    Pr_DeleteTable(ap_lib->objects);
+
+    free(ap_lib);
+}
+
+pr_bool_t           Pr_RegisterObject(Pr_ObjectLibrary * ap_lib, Pr_ObjectRef ap_obj, pr_cstring_t const ap_str)
+{
+    Pr_ListIterator lp_it;
+
+    if (!ap_lib || !ap_obj || !ap_str) return PR_FALSE;
+
+    lp_it = Pr_GetTableIterator(ap_lib->objects, PR_TKEY_STR(ap_str));
+    if (lp_it) {
+        Pr_SetListIteratorData(lp_it, ap_obj);
+        return PR_TRUE;
+    }
+
+    return PR_FALSE;
+}
+
+void                Pr_UnregisterObject(Pr_ObjectLibrary * ap_lib, pr_cstring_t const ap_str)
+{
+    if (!ap_lib || !ap_str) return;
+
+    Pr_EraseTableElement(ap_lib->objects, PR_TKEY_STR(ap_str));
+}
+
+Pr_ObjectRef        Pr_GetObject(Pr_ObjectLibrary * ap_lib, pr_cstring_t const ap_str)
+{
+    if (!ap_lib || !ap_str) return NULL;
+
+    if (Pr_TableElementExists(ap_lib->objects, PR_TKEY_STR(ap_str))) {
+        return Pr_ListIteratorData(Pr_GetTableIterator(ap_lib->objects, PR_TKEY_STR(ap_str)));
+    }
+
+    return NULL;
 }
 
 pr_bool_t Pr_IsBaseOf(Pr_Class * ap_class, Pr_Class * ap_inherit)

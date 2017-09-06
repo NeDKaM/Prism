@@ -21,12 +21,21 @@ PR_CPP_PROTECT_ON
     #define PR_INHERIT(type) type self
 
     typedef struct pr_class_t Pr_Class;
-   
+
     PR_OBJECT(pr_object_t, Pr_Object) {
         Pr_Class *  class;
         Pr_Signal * onDelete;
         Pr_Signal * onConstruction;
     };
+
+    PR_STRUCT(pr_objectlibrary_t, Pr_ObjectLibrary);
+
+    Pr_ObjectLibrary *  Pr_NewObjectLibrary(pr_cstring_t const);
+    void                Pr_DeleteObjectLibrary(Pr_ObjectLibrary *);
+
+    pr_bool_t           Pr_RegisterObject(Pr_ObjectLibrary *, Pr_ObjectRef, pr_cstring_t const);
+    void                Pr_UnregisterObject(Pr_ObjectLibrary *, pr_cstring_t const);
+    Pr_ObjectRef        Pr_GetObject(Pr_ObjectLibrary *, pr_cstring_t const);
 
     struct pr_class_t {
         pr_cstring_t    name;
