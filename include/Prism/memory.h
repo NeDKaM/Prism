@@ -22,6 +22,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API void       Pr_DeleteArray(Pr_Array *);
     extern PRISM_API void *     Pr_SetArrayAt(Pr_Array *, pr_u32_t, void *);
     extern PRISM_API pr_u32_t   Pr_ArraySize(Pr_Array *);
+    extern PRISM_API pr_u32_t   Pr_ArrayCapacity(Pr_Array *);
     extern PRISM_API void *     Pr_GetArrayData(Pr_Array *);
     extern PRISM_API pr_bool_t  Pr_ResizeArray(Pr_Array *, pr_u32_t);
 

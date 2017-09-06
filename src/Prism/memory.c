@@ -215,3 +215,8 @@ pr_bool_t       Pr_ResizeArray(Pr_Array * ap_array, pr_u32_t a_size)
 
     return PR_TRUE;
 }
+
+pr_u32_t   Pr_ArrayCapacity(Pr_Array * ap_array)
+{
+    return (ap_array) ? ap_array->capacity : 0;
+}
