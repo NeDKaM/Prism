@@ -171,3 +171,19 @@ pr_bool_t  Pr_Construct(Pr_ObjectRef ap_obj)
     return PR_FALSE;
 }
 
+pr_bool_t Pr_IsBaseOf(Pr_Class * ap_class, Pr_Class * ap_inherit)
+{
+    Pr_Class * lp_tmp;
+
+    if (!ap_class || !ap_inherit) return PR_FALSE;
+
+    lp_tmp = ap_class;
+
+    while (lp_tmp) {
+        if (lp_tmp == ap_inherit) return PR_TRUE;
+        lp_tmp = lp_tmp->inherit;
+    }
+
+    return PR_FALSE;
+}
+

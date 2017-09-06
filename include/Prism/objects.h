@@ -41,14 +41,14 @@ PR_CPP_PROTECT_ON
         void        (*destruct)(Pr_ObjectRef);
     };
 
-    extern PRISM_API Pr_Class Pr_ObjectClass;
+    extern PRISM_API pr_bool_t  Pr_IsBaseOf(Pr_Class *, Pr_Class * inherit);
 
     extern PRISM_API void *     Pr_New(Pr_Class *);
     extern PRISM_API void       Pr_Delete(Pr_ObjectRef);
-
     extern PRISM_API void *     Pr_Alloc(Pr_Class *);
-
     extern PRISM_API pr_bool_t  Pr_Construct(Pr_ObjectRef);
+
+    extern PRISM_API Pr_Class Pr_ObjectClass;
 
     #define PR_CAST(_class, _objRef) \
         ((strcmp(((Pr_ObjectRef)(_objRef))->class->name, (_class).name) == 0) ? (void *)(_objRef) : NULL)
