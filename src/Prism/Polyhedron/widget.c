@@ -393,7 +393,7 @@ pr_bool_t Pr_SetWidgetParent(Pr_WidgetRef ap_w, Pr_WidgetContainerRef ap_p)
         Pr_ListIterator lp_it;
         PR_LIST_FOREACH(ap_w->parent->children, lp_it) {
             if (ap_w == Pr_ListIteratorData(lp_it)) {
-                Pr_EraseListElement(lp_it);
+                Pr_EraseListElement(ap_w->parent->children, lp_it);
                 ap_w->parent = NULL;
                 break;
             }
