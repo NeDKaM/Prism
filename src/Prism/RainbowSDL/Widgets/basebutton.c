@@ -73,13 +73,13 @@ static pr_bool_t s_Pr_ConstructBaseButton(Pr_ObjectRef ap_obj)
     lp_btn->clicked = Pr_NewSignal();
     lp_btn->pushed = Pr_NewSignal();
 
-    lp_renderableEntity = lp_canvas->createEntity(lp_canvas);
-    lp_btn->renderableEntity = lp_renderableEntity->id;
+    lp_btn->renderableEntity = lp_canvas->createEntity(lp_canvas);
+    lp_renderableEntity = Pr_GetWorldEntity(lp_canvas->world, lp_btn->renderableEntity);
         Pr_AddEntityComponent(lp_renderableEntity, &Pr_GeometryComponentInfo);
         Pr_AddEntityComponent(lp_renderableEntity, &Pr_RenderComponentInfo);
 
-    lp_textEntity = lp_canvas->createEntity(lp_canvas);
-    lp_btn->textEntity = lp_textEntity->id;
+    lp_btn->textEntity = lp_canvas->createEntity(lp_canvas);
+    lp_textEntity = Pr_GetWorldEntity(lp_canvas->world, lp_btn->textEntity);
         Pr_AddEntityComponent(lp_textEntity, &Pr_GeometryComponentInfo);
         Pr_AddEntityComponent(lp_textEntity, &Pr_RenderComponentInfo);
 

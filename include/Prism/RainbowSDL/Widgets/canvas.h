@@ -10,7 +10,7 @@ PR_CPP_PROTECT_ON
     PR_OBJECT(pr_canvas_t, Pr_Canvas) {
         PR_INHERIT(Pr_WidgetContainer);
 
-        Pr_Entity * (*createEntity)(Pr_CanvasRef);
+        pr_entityid_t (*createEntity)(Pr_CanvasRef);
 
         Pr_World *  world;
     };
