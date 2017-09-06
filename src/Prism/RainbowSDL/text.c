@@ -18,7 +18,7 @@ static void s_Pr_InitializeGlyph(Pr_Renderable * ap_rnd, struct pr_simpletextren
 {
     *ap_rnd = Pr_MakeRenderableSprite(
         Pr_GetFontTexture(ap_info->font), 
-        *ap_texRect, 
+        ap_texRect, 
         (pr_u32_t)((float)ap_texRect->w * ap_info->scale), 
         (pr_u32_t)((float)ap_texRect->h * ap_info->scale)
     );

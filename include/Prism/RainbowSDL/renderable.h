@@ -42,7 +42,7 @@ PR_CPP_PROTECT_ON
     extern PRISM_API Pr_Renderable Pr_MakeRenderable(void);
     extern PRISM_API Pr_Renderable Pr_MakeRenderableLine(SDL_Point, SDL_Point);
     extern PRISM_API Pr_Renderable Pr_MakeRenderableRect(pr_u32_t, pr_u32_t, pr_bool_t);
-    extern PRISM_API Pr_Renderable Pr_MakeRenderableSprite(SDL_Texture *, SDL_Rect, pr_u32_t, pr_u32_t);
+    extern PRISM_API Pr_Renderable Pr_MakeRenderableSprite(SDL_Texture *, SDL_Rect *, pr_u32_t, pr_u32_t);
 
 PR_CPP_PROTECT_OFF
 

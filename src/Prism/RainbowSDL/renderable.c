@@ -50,13 +50,24 @@ Pr_Renderable Pr_MakeRenderableRect(pr_u32_t a_w, pr_u32_t a_h, pr_bool_t a_fill
     return l_out;
 }
 
-Pr_Renderable Pr_MakeRenderableSprite(SDL_Texture * a_tex, SDL_Rect a_texRect, pr_u32_t a_w, pr_u32_t a_h)
+Pr_Renderable Pr_MakeRenderableSprite(SDL_Texture * a_tex, SDL_Rect * ap_texRect, pr_u32_t a_w, pr_u32_t a_h)
 {
     Pr_Renderable l_out;
 
     l_out = Pr_MakeRenderableRect(a_w, a_h, PR_TRUE);
 
-    l_out.textureCoords = a_texRect;
+    if (!a_tex) return l_out;
+
+    if (!ap_texRect) {
+        SDL_Rect l_texRect;
+            l_texRect.x = 0;
+            l_texRect.y = 0;
+        SDL_QueryTexture(a_tex, NULL, NULL, &l_texRect.w, &l_texRect.h);
+        l_out.textureCoords = l_texRect;
+    } else {
+        l_out.textureCoords = *ap_texRect;
+    }
+
     l_out.texture = a_tex;
 
     return l_out;
